@@ -1,4 +1,4 @@
-TARGET = nitePR
+TARGET = CEFive
 OBJS =  block.o \
 	cheat.o \
 	mips.o \
