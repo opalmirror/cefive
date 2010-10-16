@@ -18,14 +18,15 @@ static int draw_titlecolor_row(OptionsPanel* prPanel);
 int optionspanel_cross_button(OptionsPanel* prPanel) {
     ColorConfig* prColor = NULL;
     DwordColumn* prCol = NULL;
+    CEFiveConfig* prConfig = NULL;
 
     if (prPanel == NULL) {
         return OPTIONSPANEL_MEMORY;
     }
+    prConfig = prPanel->prCEConfig;
     int y = prPanel->cursor.y;
     int x = prPanel->cursor.x;
     if (y == 0) {
-        CEFiveConfig* prConfig = prPanel->prCEConfig;
         GamePauseRow* prRow = &prPanel->rPauseRow;
         ToggleColumn* prToggle = &prRow->rToggle;
         togglecolumn_toggle(prToggle);
@@ -34,7 +35,7 @@ int optionspanel_cross_button(OptionsPanel* prPanel) {
     }
     prCol = &prPanel->rColorCol;
     if (y == 1) {
-        prColor = &prPanel->prCEConfig->rAppletConfig.rPanel.rColor;
+        prColor = cefiveconfig_get_panelcolor(prConfig);
         if (x == 0) {
             if (prPanel->editing == 0) {
                 dwordcolumn_edit(prCol, prColor->background);
@@ -54,7 +55,7 @@ int optionspanel_cross_button(OptionsPanel* prPanel) {
         }
     }
     if (y == 2) {
-        prColor = &prPanel->prCEConfig->rAppletConfig.rPanel.rCursor;
+        prColor = cefiveconfig_get_cursorcolor(prConfig);
         if (x == 0) {
             if (prPanel->editing == 0) {
                 dwordcolumn_edit(prCol, prColor->background);
@@ -74,7 +75,7 @@ int optionspanel_cross_button(OptionsPanel* prPanel) {
         }
     }
     if (y == 3) {
-        prColor = &prPanel->prCEConfig->rAppletConfig.rPanel.rEdit;
+        prColor = cefiveconfig_get_editcolor(prConfig);
         if (x == 0) {
             if (prPanel->editing == 0) {
                 dwordcolumn_edit(prCol, prColor->background);
@@ -94,7 +95,7 @@ int optionspanel_cross_button(OptionsPanel* prPanel) {
         }
     }
     if (y == 4) {
-        prColor = &prPanel->prCEConfig->rAppletConfig.rTitlebar;
+        prColor = cefiveconfig_get_titlecolor(prConfig);
         if (x == 0) {
             if (prPanel->editing == 0) {
                 dwordcolumn_edit(prCol, prColor->background);
@@ -114,7 +115,7 @@ int optionspanel_cross_button(OptionsPanel* prPanel) {
         }
     }
     if (y == 5) {
-        prColor = &prPanel->prCEConfig->rAppletConfig.rStatus;
+        prColor = cefiveconfig_get_statuscolor(prConfig);
         if (x == 0) {
             if (prPanel->editing == 0) {
                 dwordcolumn_edit(prCol, prColor->background);
@@ -508,10 +509,11 @@ static int draw_editcolor_row(OptionsPanel* prPanel) {
     rRow.rLabel.prColor = prColor;
     rRow.rLabel.columns = 30;
     textcolumn_settext(&rRow.rLabel, "Edit Color (bg/fg)");
-    rRow.rBackground.color.background = prPanel->config.color.background;
-    rRow.rBackground.color.text = prPanel->config.color.text;
-    rRow.rText.color.background = prPanel->config.color.background;
-    rRow.rText.color.text = prPanel->config.color.text;
+    prSrc = cefiveconfig_get_panelcolor(prConfig);
+    rRow.rBackground.color.background = prSrc->background;
+    rRow.rBackground.color.text = prSrc->text;
+    rRow.rText.color.background = prSrc->background;
+    rRow.rText.color.text = prSrc->text;
     dwordcolumn_setvalue(&rRow.rBackground, prColor->background);
     dwordcolumn_setvalue(&rRow.rText, prColor->text);
     x = prPanel->config.position.x;
@@ -601,10 +603,11 @@ static int draw_statuscolor_row(OptionsPanel* prPanel) {
     rRow.rLabel.prColor = prColor;
     rRow.rLabel.columns = 30;
     textcolumn_settext(&rRow.rLabel, "Status/Menu Color (bg/fg)");
-    rRow.rBackground.color.background = prPanel->config.color.background;
-    rRow.rBackground.color.text = prPanel->config.color.text;
-    rRow.rText.color.background = prPanel->config.color.background;
-    rRow.rText.color.text = prPanel->config.color.text;
+    prSrc = cefiveconfig_get_panelcolor(prConfig);
+    rRow.rBackground.color.background = prSrc->background;
+    rRow.rBackground.color.text = prSrc->text;
+    rRow.rText.color.background = prSrc->background;
+    rRow.rText.color.text = prSrc->text;
     dwordcolumn_setvalue(&rRow.rBackground, prColor->background);
     dwordcolumn_setvalue(&rRow.rText, prColor->text);
     x = prPanel->config.position.x;
@@ -658,10 +661,11 @@ static int draw_titlecolor_row(OptionsPanel* prPanel) {
     rRow.rLabel.prColor = prColor;
     rRow.rLabel.columns = 30;
     textcolumn_settext(&rRow.rLabel, "Titlebar Color (bg/fg)");
-    rRow.rBackground.color.background = prPanel->config.color.background;
-    rRow.rBackground.color.text = prPanel->config.color.text;
-    rRow.rText.color.background = prPanel->config.color.background;
-    rRow.rText.color.text = prPanel->config.color.text;
+    prSrc = cefiveconfig_get_panelcolor(prConfig);
+    rRow.rBackground.color.background = prSrc->background;
+    rRow.rBackground.color.text = prSrc->text;
+    rRow.rText.color.background = prSrc->background;
+    rRow.rText.color.text = prSrc->text;
     dwordcolumn_setvalue(&rRow.rBackground, prColor->background);
     dwordcolumn_setvalue(&rRow.rText, prColor->text);
     x = prPanel->config.position.x;
