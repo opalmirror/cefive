@@ -42,7 +42,7 @@ static int draw_button_panel(SearchPanel* prPanel) {
         sLabel = "Continue";
     }
     x = prPanel->config.top.x + 2;
-    y = prPanel->config.top.y + 6;
+    y = prPanel->config.top.y + 7;
     row = prPanel->cursor.y;
     col = prPanel->cursor.x;
     if (prApCfg != NULL) {
@@ -50,7 +50,7 @@ static int draw_button_panel(SearchPanel* prPanel) {
     } else {
         prColor = &prPanel->config.color;
     }
-    if (row == 3) {
+    if (row == 4) {
         if (col == 0) {
             if (prApCfg != NULL) {
                 prColor = appletconfig_get_cursorcolor(prApCfg);
@@ -70,7 +70,7 @@ static int draw_button_panel(SearchPanel* prPanel) {
     } else {
         prColor = &prPanel->config.color;
     }
-    if (row == 3) {
+    if (row == 4) {
         if (col == 1) {
             if (prApCfg != NULL) {
                 prColor = appletconfig_get_cursorcolor(prApCfg);
@@ -223,6 +223,37 @@ static int draw_query_panel(SearchPanel* prPanel) {
     pspDebugScreenKprintf("%-50s", sSize);
     y++;
 
+    /* Search Range Row */
+    pspDebugScreenSetBackColor(prColor->background);
+    pspDebugScreenSetTextColor(prColor->text);
+    pspDebugScreenSetXY(x, y);
+    pspDebugScreenPuts("Range:    Start ");
+    DwordColumn *prStart = &prPanel->rStartAddr;
+    DwordColumn *prEnd = &prPanel->rEndAddr;
+    colorconfig_setcolor(&prStart->color, prColor->background, prColor->text);
+    colorconfig_setcolor(&prEnd->color, prColor->background, prColor->text);
+    if (row == 2) {
+        pspDebugScreenSetBackColor(prCursor->background);
+        pspDebugScreenSetTextColor(prCursor->text);
+        if (prPanel->cursor.x == 0) {
+            colorconfig_setcolor(&prStart->color, prCursor->background,
+                    prCursor->text);
+        } else {
+            colorconfig_setcolor(&prEnd->color, prCursor->background,
+                    prCursor->text);
+        }
+    }
+    if (searchpanel_is_editing(prPanel) == 0) {
+        dwordcolumn_setvalue(prStart, prQuery->startAddr & 0xBFFFFFFF);
+        dwordcolumn_setvalue(prEnd, prQuery->endAddr & 0xBFFFFFFF);
+    }
+    dwordcolumn_redraw(prStart);
+    pspDebugScreenSetBackColor(prColor->background);
+    pspDebugScreenSetTextColor(prColor->text);
+    pspDebugScreenPuts(" End ");
+    dwordcolumn_redraw(prEnd);
+    y++;
+
     pspDebugScreenSetBackColor(prColor->background);
     pspDebugScreenSetTextColor(prColor->text);
     pspDebugScreenSetXY(x, y);
@@ -230,7 +261,7 @@ static int draw_query_panel(SearchPanel* prPanel) {
     DwordColumn *prCol = &prPanel->rQueryCol;
     prCol->color.background = prColor->background;
     prCol->color.text = prColor->text;
-    if (row == 2) {
+    if (row == 3) {
         pspDebugScreenSetBackColor(prCursor->background);
         pspDebugScreenSetTextColor(prCursor->text);
         prCol->color.background = prCursor->background;
@@ -283,7 +314,7 @@ static int draw_results_panel(SearchPanel* prPanel) {
     rct = prEngine->result_count;
 
     x = prPanel->config.top.x;
-    y = prPanel->config.top.y + 8;
+    y = prPanel->config.top.y + 9;
 
     pspDebugScreenSetXY(x, y);
     if (prApCfg != NULL) {
@@ -294,7 +325,7 @@ static int draw_results_panel(SearchPanel* prPanel) {
     pspDebugScreenSetBackColor(prColor->background);
     pspDebugScreenSetTextColor(prColor->text);
     pspDebugScreenKprintf("Search Results: %d", rct);
-    prPanel->config.tabletop.y = 10;
+    prPanel->config.tabletop.y = 11;
     prPanel->config.tablesize.height = 20;
     draw_dword_results(prPanel);
     return SEARCHPANEL_SUCCESS;
@@ -390,6 +421,8 @@ int searchpanel_cross_button(SearchPanel* prPanel) {
     if (prPanel == NULL) {
         return SEARCHPANEL_MEMORY;
     }
+    SearchEngine* prEngine = prPanel->prEngine;
+    SearchQuery* prQuery = &prEngine->rQuery;
     x = prPanel->cursor.x;
     y = prPanel->cursor.y;
 
@@ -403,18 +436,39 @@ int searchpanel_cross_button(SearchPanel* prPanel) {
     }
     if (y == 2) {
         if (searchpanel_is_editing(prPanel) == 0) {
+            if (x == 0) {
+                dwordcolumn_edit(&prPanel->rStartAddr, 
+                        prQuery->startAddr & 0xBFFFFFFF);
+            } else {
+                dwordcolumn_edit(&prPanel->rEndAddr, 
+                        prQuery->endAddr & 0xBFFFFFFF);
+            }
+            searchpanel_set_editing(prPanel, 1);
+        } else {
+            if (x == 0) {
+                DwordColumn* prStart = &prPanel->rStartAddr;
+                value = dwordcolumn_commit(prStart);
+                prQuery->startAddr = value | 0x40000000;
+            } else {
+                DwordColumn* prEnd = &prPanel->rEndAddr;
+                value = dwordcolumn_commit(prEnd);
+                prQuery->endAddr = value | 0x40000000;
+            }
+            searchpanel_set_editing(prPanel, 0);
+        }
+    }
+    if (y == 3) {
+        if (searchpanel_is_editing(prPanel) == 0) {
             dwordcolumn_edit(&prPanel->rQueryCol, prPanel->rQueryCol.value);
             searchpanel_set_editing(prPanel, 1);
         } else {
             DwordColumn* prCol = &prPanel->rQueryCol;
             value = dwordcolumn_commit(prCol);
-            SearchEngine* prEngine = prPanel->prEngine;
-            SearchQuery* prQuery = &prEngine->rQuery;
             prQuery->value = value;
             searchpanel_set_editing(prPanel, 0);
         }
     }
-    if (y == 3) {
+    if (y == 4) {
         if (x == 0) {
             search(prPanel);
         }
@@ -433,8 +487,8 @@ int searchpanel_cursor_down(SearchPanel* prPanel) {
     }
     row = prPanel->cursor.y;
     row++;
-    if (row > 3) {
-        row = 3;
+    if (row > 4) {
+        row = 4;
     }
     prPanel->cursor.y = row;
 
@@ -517,26 +571,52 @@ int searchpanel_cycle_searchsize(SearchPanel* prPanel) {
 }
 
 int searchpanel_dpad_down(SearchPanel* prPanel) {
+    DwordColumn* prCol = NULL;
     if (prPanel == NULL) {
         return SEARCHPANEL_MEMORY;
     }
     if (searchpanel_is_editing(prPanel) == 0) {
         searchpanel_cursor_down(prPanel);
     } else {
-        dwordcolumn_decrement(&prPanel->rQueryCol);
+        if (prPanel->cursor.y == 2) {
+            if (prPanel->cursor.x == 0) {
+                prCol = &prPanel->rStartAddr;
+            } else {
+                prCol = &prPanel->rEndAddr;
+            }
+        }
+        if (prPanel->cursor.y == 3) {
+            prCol = &prPanel->rQueryCol;
+        }
+        if (prCol != NULL) {
+            dwordcolumn_decrement(prCol);
+        }
     }
 
     return SEARCHPANEL_SUCCESS;
 }
 
 int searchpanel_dpad_left(SearchPanel* prPanel) {
+    DwordColumn* prCol = NULL;
     if (prPanel == NULL) {
         return SEARCHPANEL_MEMORY;
     }
     if (searchpanel_is_editing(prPanel) == 0) {
         searchpanel_cursor_left(prPanel);
     } else {
-        dwordcolumn_prevdigit(&prPanel->rQueryCol);
+        if (prPanel->cursor.y == 2) {
+            if (prPanel->cursor.x == 0) {
+                prCol = &prPanel->rStartAddr;
+            } else {
+                prCol = &prPanel->rEndAddr;
+            }
+        }
+        if (prPanel->cursor.y == 3) {
+            prCol = &prPanel->rQueryCol;
+        }
+        if (prCol != NULL) {
+            dwordcolumn_prevdigit(prCol);
+        }
     }
 
     return SEARCHPANEL_SUCCESS;
@@ -549,7 +629,16 @@ int searchpanel_dpad_right(SearchPanel* prPanel) {
     if (searchpanel_is_editing(prPanel) == 0) {
         searchpanel_cursor_right(prPanel);
     } else {
-        dwordcolumn_nextdigit(&prPanel->rQueryCol);
+        if (prPanel->cursor.y == 2) {
+            if (prPanel->cursor.x == 0) {
+                dwordcolumn_nextdigit(&prPanel->rStartAddr);
+            } else {
+                dwordcolumn_nextdigit(&prPanel->rEndAddr);
+            }
+        }
+        if (prPanel->cursor.y == 3) {
+            dwordcolumn_nextdigit(&prPanel->rQueryCol);
+        }
     }
 
     return SEARCHPANEL_SUCCESS;
@@ -562,7 +651,16 @@ int searchpanel_dpad_up(SearchPanel* prPanel) {
     if (searchpanel_is_editing(prPanel) == 0) {
         searchpanel_cursor_up(prPanel);
     } else {
-        dwordcolumn_increment(&prPanel->rQueryCol);
+        if (prPanel->cursor.y == 2) {
+            if (prPanel->cursor.x == 0) {
+                dwordcolumn_increment(&prPanel->rStartAddr);
+            } else {
+                dwordcolumn_increment(&prPanel->rEndAddr);
+            }
+        }
+        if (prPanel->cursor.y == 3) {
+            dwordcolumn_increment(&prPanel->rQueryCol);
+        }
     }
 
     return SEARCHPANEL_SUCCESS;
@@ -587,6 +685,8 @@ int searchpanel_init(SearchPanel* prPanel, SearchEngine* prEngine) {
     prPanel->cursor.y = 0;
     prPanel->config.status_line = 33;
     dwordcolumn_init(&prPanel->rQueryCol);
+    dwordcolumn_init(&prPanel->rStartAddr);
+    dwordcolumn_init(&prPanel->rEndAddr);
 
     return SEARCHPANEL_SUCCESS;
 }

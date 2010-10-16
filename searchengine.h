@@ -38,31 +38,33 @@ extern "C" {
     }ESearchState;
 
     typedef struct _SearchQuery {
-        ESearchMode searchMode;
-        ESearchSize searchSize;
-        unsigned int value;
-        char text[SEARCHENGINE_TEXTLEN + 1];
+        ESearchMode     searchMode;
+        ESearchSize     searchSize;
+        unsigned int    value;
+        char            text[SEARCHENGINE_TEXTLEN + 1];
+        SceUInt32       startAddr;
+        SceUInt32       endAddr;
     }SearchQuery;
 
     typedef struct _SearchResult {
-        unsigned int address;
-        unsigned int value;
-        char text[SEARCHENGINE_TEXTLEN + 1];
+        unsigned int    address;
+        unsigned int    value;
+        char            text[SEARCHENGINE_TEXTLEN + 1];
     }SearchResult;
 
     typedef struct _SearchEngineConfig {
-        SceUInt32 min_position;
-        SceUInt32 max_position;
-        int iterations_per_cycle;
+        SceUInt32       min_position;
+        SceUInt32       max_position;
+        int             iterations_per_cycle;
     }SearchEngineConfig;
 
     typedef struct _SearchEngine {
-        SearchEngineConfig rConfig;
-        ESearchState rState;
-        SceUInt32 position;
-        SearchQuery rQuery;
-        SearchResult arResult[SEARCHENGINE_MAXRESULTS];
-        int result_count;
+        SearchEngineConfig  rConfig;
+        ESearchState        rState;
+        SceUInt32           position;
+        SearchQuery         rQuery;
+        SearchResult        arResult[SEARCHENGINE_MAXRESULTS];
+        int                 result_count;
     }SearchEngine;
 
     int searchengine_cancel(SearchEngine* prEngine);

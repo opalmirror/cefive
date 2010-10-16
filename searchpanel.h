@@ -51,6 +51,8 @@ typedef struct _SearchPanel {
     SearchEngine* prEngine;
     CursorPos cursor;
     DwordColumn rQueryCol;
+    DwordColumn rStartAddr;
+    DwordColumn rEndAddr;
     int editing;
     int pagepos;
 }SearchPanel;
