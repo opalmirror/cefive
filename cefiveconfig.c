@@ -58,6 +58,7 @@ ColorConfig* cefiveconfig_get_statuscolor(CEFiveConfig* prConfig) {
     if (prApp != NULL) {
         prColor = appletconfig_get_statuscolor(prApp);
     }
+    return prColor;
 }
 
 ColorConfig* cefiveconfig_get_titlecolor(CEFiveConfig* prConfig) {
@@ -66,6 +67,7 @@ ColorConfig* cefiveconfig_get_titlecolor(CEFiveConfig* prConfig) {
     if (prApp != NULL) {
         prColor = appletconfig_get_titlecolor(prApp);
     }
+    return prColor;
 }
 
 int cefiveconfig_init(CEFiveConfig* prConfig) {
