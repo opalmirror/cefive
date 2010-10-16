@@ -1,6 +1,10 @@
 #ifndef _COLORCONFIG_H
 #define _COLORCONFIG_H
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #include <pspkerneltypes.h>
 
 #define COLORCONFIG_SUCCESS     (0)
@@ -19,4 +23,8 @@ typedef struct _ColorConfig {
 int colorconfig_init(ColorConfig* prConfig);
 int colorconfig_setcolor(ColorConfig* prConfig, u32 background, u32 text);
 
+#ifdef	__cplusplus
+}
 #endif
+
+#endif /* _COLORCONFIG_H */

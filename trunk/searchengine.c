@@ -118,11 +118,22 @@ int searchengine_cycle_size(SearchEngine* prEngine) {
 }
 
 int searchengine_find_next(SearchEngine* prEngine) {
+    SearchQuery* prQuery = NULL;
+    SceUInt32 pos = 0;
     int r = SEARCHENGINE_NOT_FOUND;
     if (prEngine == NULL) {
         return SEARCHENGINE_MEMORY;
     }
-    ESearchSize rSS = prEngine->rQuery.searchSize;
+    prQuery = &prEngine->rQuery;
+    pos = prEngine->position;
+    if (pos < prQuery->startAddr) {
+        searchengine_seek(prEngine, prQuery->startAddr);
+    }
+    if (pos > prQuery->endAddr) {
+        prEngine->rState = ESS_Finished;
+        return SEARCHENGINE_SUCCESS;
+    }
+    ESearchSize rSS = prQuery->searchSize;
     switch (rSS) {
         case ESZ_Byte:
             r = find_next_byte(prEngine);
@@ -165,6 +176,8 @@ int searchengine_init(SearchEngine* prEngine) {
     prEngine->result_count = 0;
     prEngine->rQuery.searchMode = ESM_Byte;
     prEngine->rQuery.searchSize = ESZ_Dword;
+    prEngine->rQuery.startAddr = prEngine->rConfig.min_position;
+    prEngine->rQuery.endAddr = prEngine->rConfig.max_position;
     for (i = 0; i < SEARCHENGINE_MAXRESULTS; i++) {
         prResult = &(prEngine->arResult[i]);
         prResult->address = 0;
