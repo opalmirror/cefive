@@ -4,6 +4,7 @@
  *  Sir Gee of Five
  */
 
+#include <stdlib.h>
 #include <pspkerneltypes.h>
 #include "block.h"
 
