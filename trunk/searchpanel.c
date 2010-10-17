@@ -93,6 +93,9 @@ static int draw_dword_results(SearchPanel* prPanel) {
     DwordResultRow rRow;
     AddressColumn* prAddr = NULL;
     DwordColumn* prVal = NULL;
+    AppletConfig* prApCfg = NULL;
+    ColorConfig* prColor = NULL;
+    ColorConfig* prCursor = NULL;
     int iStart = 0;
     int iEnd = 0;
     int iResults = 0;
@@ -101,6 +104,7 @@ static int draw_dword_results(SearchPanel* prPanel) {
     int iTop = 0;
     int iX = 0;
     int iY = 0;
+    int iSelRes = 0;
     unsigned int vaddr;
 
     if (prPanel == NULL) {
@@ -110,6 +114,7 @@ static int draw_dword_results(SearchPanel* prPanel) {
     if (prEngine == NULL) {
         return SEARCHPANEL_NULLPTR;
     }
+    prApCfg = prPanel->prApCfg;
     iRows = prPanel->config.tablesize.height;
     iResults = prEngine->result_count;
     iStart = prPanel->pagepos;
@@ -126,7 +131,10 @@ static int draw_dword_results(SearchPanel* prPanel) {
     prVal = &rRow.rValue;
     addresscolumn_init(prAddr);
     dwordcolumn_init(prVal);
+    prColor = appletconfig_get_panelcolor(prApCfg);
+    prCursor = appletconfig_get_cursorcolor(prApCfg);
     iY = iTop;
+    iSelRes = prPanel->cursor.y;
     for (iRow = iStart; iRow < iEnd; iRow++) {
         prResult = searchengine_get_result(prEngine, iRow);
         if (prResult == NULL) {
@@ -135,10 +143,26 @@ static int draw_dword_results(SearchPanel* prPanel) {
         pspDebugScreenSetXY(iX, iY);
         vaddr = prResult->address & ~0x40000000;
         addresscolumn_setvalue(prAddr, vaddr);
+        colorconfig_setcolor(&prAddr->color, prColor->background, 
+                prColor->text);
+        if (iSelRes > 4) {
+            if ((iY - iTop) == (iSelRes - 5)) {
+                colorconfig_setcolor(&prAddr->color, prCursor->background, 
+                        prCursor->text);
+            }
+        }
         addresscolumn_redraw(prAddr);
 
         pspDebugScreenSetXY(iX + 12, iY);
         dwordcolumn_setvalue(prVal, prResult->value);
+        colorconfig_setcolor(&prVal->color, prColor->background, 
+                prColor->text);
+        if (iSelRes > 4) {
+            if ((iY - iTop) == (iSelRes - 5)) {
+                colorconfig_setcolor(&prVal->color, prCursor->background, 
+                        prCursor->text);
+            }
+        }
         dwordcolumn_redraw(prVal);
         iY++;
     }
@@ -481,14 +505,34 @@ int searchpanel_cross_button(SearchPanel* prPanel) {
 }
 
 int searchpanel_cursor_down(SearchPanel* prPanel) {
+    SearchEngine *prEngine = NULL;
     int row = 0;
+    int results = 0;
+    int pageheight = 0;
+    int vrow = 0;
+    
     if (prPanel == NULL) {
-        return SEARCHPANEL_MEMORY;
+        return SEARCHPANEL_NULLPTR;
     }
+    prEngine = prPanel->prEngine;
+    if (prEngine == NULL) {
+        return SEARCHPANEL_NULLPTR;
+    }
+    results = searchengine_get_result_count(prEngine);
+    pageheight = prPanel->config.tablesize.height;
     row = prPanel->cursor.y;
     row++;
     if (row > 4) {
-        row = 4;
+        if (results <= 0) {
+            row = 4;
+        } else {
+            vrow = row - 5;
+            if (vrow > pageheight - 1) {
+                searchpanel_scroll_down(prPanel);
+                vrow = pageheight - 1;
+                row = vrow + 5;
+            }
+        }
     }
     prPanel->cursor.y = row;
 
@@ -526,14 +570,34 @@ int searchpanel_cursor_right(SearchPanel* prPanel) {
 }
 
 int searchpanel_cursor_up(SearchPanel* prPanel) {
+    SearchEngine* prEngine = NULL;
     int row = 0;
+    int pagepos = 0;
+    int vrow = 0;
+    
     if (prPanel == NULL) {
         return SEARCHPANEL_MEMORY;
     }
+    prEngine = prPanel->prEngine;
+    if (prEngine == NULL) {
+        return SEARCHPANEL_MEMORY;
+    }
     row = prPanel->cursor.y;
+    if (row >= 5) {
+        
+    }
     row--;
     if (row < 0) {
         row = 0;
+    }
+    if (row > 3) {
+        vrow = row - 5;
+        
+        pagepos = prPanel->pagepos;
+        if (pagepos > 0 && vrow < 0) {
+            searchpanel_scroll_up(prPanel);
+            row = 5;
+        }
     }
     prPanel->cursor.y = row;
 
@@ -725,6 +789,47 @@ int searchpanel_redraw(SearchPanel* prPanel) {
     draw_results_panel(prPanel);
     draw_status_panel(prPanel);
     
+    return SEARCHPANEL_SUCCESS;
+}
+
+int searchpanel_scroll_down(SearchPanel* prPanel) {
+    SearchEngine* prEngine = NULL;
+    int py = 0;
+    int th = 0;
+    int sr = 0;
+    if (prPanel == NULL) {
+        return SEARCHPANEL_NULLPTR;
+    }
+    prEngine = prPanel->prEngine;
+    if (prEngine == NULL) {
+        return SEARCHPANEL_NULLPTR;
+    }
+    py = prPanel->pagepos;
+    th = prPanel->config.tablesize.height;
+    sr = searchengine_get_result_count(prEngine);
+    
+    py++;
+    if (py + th > sr) {
+        // Scrolling down would go beyond the end of the table.
+        py = sr - th;
+    }
+    prPanel->pagepos = py;
+    
+    return SEARCHPANEL_SUCCESS;
+}
+
+int searchpanel_scroll_up(SearchPanel* prPanel) {
+    int py = 0;
+    
+    if (prPanel == NULL) {
+        return SEARCHPANEL_NULLPTR;
+    }
+    py = prPanel->pagepos;
+    py--;
+    if (py < 0) {
+        py = 0;
+    }
+    prPanel->pagepos = py;
     return SEARCHPANEL_SUCCESS;
 }
 
