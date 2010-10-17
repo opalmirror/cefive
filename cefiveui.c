@@ -237,13 +237,15 @@ void cefiveui_buttoncallback(int curr, int last, CEFiveUi* prUi) {
     if (rSc.cross && !rLa.cross) buttonCrossDown(prUi);
     if (rLa.cross && !rSc.cross) buttonCrossUp(prUi);
     if (rSc.down && !rLa.down) dpadDownDown(prUi);
-    if (rSc.down && rLa.down) dpadDownHold(prUi);
+    if (rSc.down && rLa.down) dpadDownDown(prUi);
     if (rLa.down && !rSc.down) dpadDownUp(prUi);
     if (rSc.left && !rLa.left) dpadLeftDown(prUi);
+    if (rSc.left && rLa.left) dpadLeftDown(prUi);
     if (rLa.left && !rSc.left) dpadLeftUp(prUi);
     if (rSc.ltrigger && !rLa.ltrigger) buttonLTriggerDown(prUi);
     if (rLa.ltrigger && !rSc.ltrigger) buttonLTriggerUp(prUi);
     if (rSc.right && !rLa.right) dpadRightDown(prUi);
+    if (rSc.right && rLa.right) dpadRightDown(prUi);
     if (rLa.right && !rSc.right) dpadRightUp(prUi);
     if (rSc.rtrigger && !rLa.rtrigger) buttonRTriggerDown(prUi);
     if (rLa.rtrigger && !rSc.rtrigger) buttonRTriggerUp(prUi);
@@ -252,6 +254,7 @@ void cefiveui_buttoncallback(int curr, int last, CEFiveUi* prUi) {
     if (rSc.triangle && !rLa.triangle) buttonTriangleDown(prUi);
     if (rLa.triangle && !rSc.triangle) buttonTriangleUp(prUi);
     if (rSc.up && !rLa.up) dpadUpDown(prUi);
+    if (rSc.up && rLa.up) dpadUpDown(prUi);
     if (rLa.up && !rSc.up) dpadUpUp(prUi);
 }
 
@@ -565,6 +568,29 @@ void cefiveuiRedraw(CEFiveUi *prUi) {
         drawApplet(prUi);
     }
     prUi->drawn = 1;
+}
+
+int cefiveui_update_controls(CEFiveUi* prUi) {
+    static unsigned int last = 0;
+    static int rpt = 0;
+    SceCtrlData rCdata;
+    unsigned int curr = 0;
+    
+    if (prUi == NULL) {
+        return CEFIVEUI_NULLPTR;
+    }
+    sceCtrlPeekBufferPositive(&rCdata, 1);
+    curr = rCdata.Buttons;
+    if (curr == last && last != 0) {
+        rpt++;
+        if (rpt > 2) {
+            cefiveui_buttoncallback(curr, last, prUi);
+            rpt = 0;
+        }
+    }
+    last = curr;
+    
+    return CEFIVEUI_SUCCESS;
 }
 
 static void closeCheatEditor(CEFiveUi *prUi) {

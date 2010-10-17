@@ -16,6 +16,11 @@
 #include "searchpanel.h"
 #include "searchengine.h"
 
+#define CEFIVEUI_SUCCESS        (0)
+#define CEFIVEUI_FAILURE        (-1)
+#define CEFIVEUI_MEMORY         (-2)
+#define CEFIVEUI_NULLPTR        (-3)
+
 #define CEFIVEUI_PATH_MAX   256
 #define CEFIVEUI_SCEID_LEN  10
 
@@ -91,6 +96,8 @@ void cefiveuiInit(CEFiveUi *prUi, CheatEngine *prEngine,
  *  prUi(in/out) - Pointer to the CEFiveUi struct to display.
  */
 void cefiveuiRedraw(CEFiveUi *prUi);
+
+int cefiveui_update_controls(CEFiveUi* prUi);
 
 #endif /* _CEFIVEUI_H */
 
