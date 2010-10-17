@@ -32,5 +32,5 @@ The Address Column is a 32-bit unsigned integer expressed as Hexadecimal(base 16
 The Value Column is a 32-bit unsigned integer expressed as Hexadecimal(base 16).  The Value column contains the value at the Address specified in the Address column.  The Value is not altered in any other way than to be presented in Big-Endian format.
 
 === Code Column ===
-The Code Column is a text representation of the Value column when decoded as a MIPS32 Instruction.  The text that is shown is an assembly language interpretation of the 32-bit unsigned integer value.  The notation used to express MIPS32 assembly language is the same as the notation used in the MIPS Programmers Reference, and follow the specification as closely as possible.
+The Code Column is a text representation of the Value column when decoded as a MIPS32 Instruction.  The text that is shown is an assembly language interpretation of the 32-bit unsigned integer value.  The notation used to express MIPS32 assembly language is the same as the notation used in the MIPS Programmers Reference, and follows the specification as closely as possible.
 For instructions that are not able to be decoded as MIPS32 assembly language, the mnemonic *???* is shown instead.
