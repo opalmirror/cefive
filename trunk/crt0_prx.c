@@ -1260,33 +1260,25 @@ int mainThread() {
     //Do the loop-de-loop
     while (running) {
         if (prUi->vram == NULL) {
-        //if (krUi.vram == NULL) {
             waitForVram();
             continue;
         }
         /* Load the GameInfo struct in the UI */
         gameinfo_load(prInfo);
-        //gameinfo_load(&krUi.gameinfo);
         
         if (krRunState == CES_UIRequest) {
             showInterface();
             while (prUi->running == 1) {
-            //while (krUi.running == 1) {
+                cefiveui_update_controls(prUi);
                 cefiveuiRedraw(prUi);
-                //cefiveuiRedraw(&krUi);
-                //cefiveuiHandleInput(&krUi);
                 searchengine_run(prSearch);
-                //searchengine_run(&krSearchEngine);
                 cheatengineRefresh(prEngine);
-                //cheatengineRefresh(&krCheatEngine);
                 sceKernelDelayThread(50000);
             }
             hideInterface();
         }
         searchengine_run(prSearch);
-        //searchengine_run(&krSearchEngine);
         cheatengineRefresh(prEngine);
-        //cheatengineRefresh(&krCheatEngine);
         sceKernelDelayThread(50000);
     }
     return 0;

@@ -33,8 +33,23 @@ extern "C" {
         int             dirty;          // Whether the column needs drawing.
     }AddressColumn;
 
-    unsigned int addresscolumn_commit(AddressColumn *);
-    void addresscolumn_decrement(AddressColumn *);
+    /* addresscolumn_commit
+     *  Return the current value of the AddressColumn and set the AddressColumn
+     *  to not editing.
+     * Return Type:
+     *  unsigned int - the current value of the specified AddressColumn.
+     * Parameters:
+     *  prCol - Pointer to the AddressColumn to commit.
+     */
+    unsigned int addresscolumn_commit(AddressColumn* prCol);
+    
+    /* addresscolumn_decrement
+     *  Decrement the currently selected digit by the configured amount.
+     * Parameters:
+     *  prCol - Pointer to the AddressColumn to decrement.
+     */
+    void addresscolumn_decrement(AddressColumn* prCol);
+    
     void addresscolumn_edit(AddressColumn *, unsigned int value);
     int addresscolumn_getincrement(AddressColumn* prCol);
     void addresscolumn_increment(AddressColumn *);
