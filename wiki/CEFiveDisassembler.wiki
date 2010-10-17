@@ -23,3 +23,14 @@ The Square Button can be used in conjunction with D-Pad Up and Down to act as a 
 
 === Left Trigger Button ===
 The Left Trigger Button is used to pop up an Applet Menu allowing the user to select a different applet to invoke.  While the User is editing, the Left Trigger Button has no effect.
+
+== Display Format ==
+=== Address Column ===
+The Address Column is a 32-bit unsigned integer expressed as Hexadecimal(base 16) with the character sequence '0x' appearing at the beginning of the address.  The Address displayed is the kernel address with the user bit masked off (0x40000000).
+
+=== Value Column ===
+The Value Column is a 32-bit unsigned integer expressed as Hexadecimal(base 16).  The Value column contains the value at the Address specified in the Address column.  The Value is not altered in any other way than to be presented in Big-Endian format.
+
+=== Code Column ===
+The Code Column is a text representation of the Value column when decoded as a MIPS32 Instruction.  The text that is shown is an assembly language interpretation of the 32-bit unsigned integer value.  The notation used to express MIPS32 assembly language is the same as the notation used in the MIPS Programmers Reference, and follow the specification as closely as possible.
+For instructions that are not able to be decoded as MIPS32 assembly language, the mnemonic *???* is shown instead.
