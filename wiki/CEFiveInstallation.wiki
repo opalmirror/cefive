@@ -10,3 +10,11 @@ In the *seplugins* folder is a file called *game.txt*.  This file tells your CFW
 
 == Enable CEFive ==
 In the recovery menu of your CFW (usually activated by holding the Right Trigger while powering on) is a *Plugins* menu.  This menu allows you to select which plugins are enabled at power on.  Select the CEFive.prx plugin and make sure that it is Enabled.  Make sure that _!NitePr.prx_, _!CoderPr.prx_, _CWCheat.prx_, and/or _mkultra.prx_ are disabled.
+
+== Cheat files ==
+If you already had !NitePr or mkultra installed, you don't need to do anything, your cheats are already in the right place.
+
+Currently, CEFive is meant to be a !NitePr replacement, so the cheats are currently placed in the same directory as they are for !NitePr.
+Cheats are held in cheat files.  The cheat files themselves are plain text files with the SCE issued ID of the game as a filename.  Create a folder inside the *seplugins* folder named *nitePr*.  Place all of your cheat files in this folder.
+
+*CEFive does not work with CWCheat files.*
