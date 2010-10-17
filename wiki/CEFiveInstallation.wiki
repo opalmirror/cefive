@@ -1,3 +1,9 @@
 #summary Cheat Engine of Five Installation
 
 = Installing CEFive =
+CEFive is a Custom Firmware Plugin.  For this reason it must be installed in the *seplugins* folder on the root of your PSP memory stick.  Copy the file *CEFive.prx* to the *seplugins* folder.
+
+== game.txt ==
+In the *seplugins* folder is a file called *game.txt*.  This file tells your CFW the plugins that are installed.  It is a plain text file with lines containing the full path to plugins followed by a single digit indicating whether the plugin is enabled.  Add a line to this file.
+
+`ms0:/seplugins/CEFive.prx 0`
