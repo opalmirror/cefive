@@ -7,3 +7,6 @@ CEFive is a Custom Firmware Plugin.  For this reason it must be installed in the
 In the *seplugins* folder is a file called *game.txt*.  This file tells your CFW the plugins that are installed.  It is a plain text file with lines containing the full path to plugins followed by a single digit indicating whether the plugin is enabled.  Add a line to this file.
 
 `ms0:/seplugins/CEFive.prx 0`
+
+== Enable CEFive ==
+In the recovery menu of your CFW (usually activated by holding the Right Trigger while powering on) is a *Plugins* menu.  This menu allows you to select which plugins are enabled at power on.  Select the CEFive.prx plugin and make sure that it is Enabled.  Make sure that _NitePr.prx_, _CoderPr.prx_, _CWCheat.prx_, and/or _mkultra.prx_ are disabled.
