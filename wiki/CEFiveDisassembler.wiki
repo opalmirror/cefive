@@ -1,0 +1,4 @@
+#summary MIPS32 Disassembler for Cheat Engine of Five
+
+= Disassembler =
+The Disassembler is a real-time MIPS32 instruction decoder and disassembler for Cheat Engine of Five.  The Disassembler views current memory as MIPS32 Assembly Language.
