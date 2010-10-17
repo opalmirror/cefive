@@ -9,4 +9,4 @@ In the *seplugins* folder is a file called *game.txt*.  This file tells your CFW
 `ms0:/seplugins/CEFive.prx 0`
 
 == Enable CEFive ==
-In the recovery menu of your CFW (usually activated by holding the Right Trigger while powering on) is a *Plugins* menu.  This menu allows you to select which plugins are enabled at power on.  Select the CEFive.prx plugin and make sure that it is Enabled.  Make sure that _NitePr.prx_, _CoderPr.prx_, _CWCheat.prx_, and/or _mkultra.prx_ are disabled.
+In the recovery menu of your CFW (usually activated by holding the Right Trigger while powering on) is a *Plugins* menu.  This menu allows you to select which plugins are enabled at power on.  Select the CEFive.prx plugin and make sure that it is Enabled.  Make sure that _!NitePr.prx_, _!CoderPr.prx_, _CWCheat.prx_, and/or _mkultra.prx_ are disabled.
