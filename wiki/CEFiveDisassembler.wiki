@@ -2,3 +2,19 @@
 
 = Disassembler =
 The Disassembler is a real-time MIPS32 instruction decoder and disassembler for Cheat Engine of Five.  The Disassembler views current memory as MIPS32 Assembly Language.
+
+== Controls ==
+The Disassembler uses the following controls.
+
+=== D-Pad Up/Down ===
+The D-Pad is used to select the previous or next line in the Disassembler.  While the User is editing an Address or Value, the D-pad is used to increment or decrement the selected digit.
+
+=== D-Pad Left/Right ===
+
+=== Cross Button ===
+
+=== Circle Button ===
+
+=== Square Button ===
+
+=== Left Trigger Button ===
