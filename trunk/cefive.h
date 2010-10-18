@@ -41,26 +41,22 @@ typedef enum _ECEStartState {
 }ECEStartState;
 
 typedef struct _CEFive {
-    CEFiveConfig    config;
-    CEState         runState;
+    CEFiveConfig    rConfig;
+    CheatEngine     rCheatEngine;
+    SearchEngine    rSearchEngine;
+    CEState         rRunState;
     ECEStartState   rStart;
     SceModule*      prKernelLib;
     SceModule*      prGame;
-    void*           video_ram;
-    CEFiveUi*       prUi;
-    CheatEngine*    prEngine;
-    SearchEngine*   prSearch;
-    int             running;
-    char            game_id[CEFIVE_GAMEID_LEN + 1];
-    SceUID          rThreadId;
+    void*           prVideoRam;
+    char            sGameId[CEFIVE_GAMEID_LEN + 1];
 }CEFive;
 
-void cefive_button_callback(int curr, int last, void* arg);
+
 int cefive_init(CEFive* prCe);
-void cefiveRun(CEFive *prCe);
-int cefiveStart(CEFive *prCe);
-int cefiveStarting(CEFive* prCe);
-int cefiveStop(CEFive *prCe);
+int cefive_run(CEFive* prCe);
+int cefive_start(CEFive* prCe);
+int cefive_stop(CEFive* prCe);
 
 #endif	/* _CEFIVE_H */
 
