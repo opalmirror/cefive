@@ -16,6 +16,20 @@ AppletConfig* cefiveconfig_get_appletconfig(CEFiveConfig* prConfig) {
     return prAp;
 }
 
+int cefiveconfig_get_cheatfilename(char* sDest, CEFiveConfig* prConfig) {
+    char* sPlugins = NULL;
+    char* sCefive = NULL;
+    char* sGameId = NULL;
+    if (sDest == NULL || prConfig == NULL) {
+        return CEFIVECONFIG_NULLPTR;
+    }
+    sPlugins = prConfig->plugins_dir;
+    sCefive = prConfig->cefive_dir;
+    sGameId = prConfig->game_id;
+    sprintf(sDest, "ms0:/%s/%s/%s.txt", sPlugins, sCefive, sGameId);
+    return CEFIVECONFIG_SUCCESS;
+}
+
 ColorConfig* cefiveconfig_get_cursorcolor(CEFiveConfig* prConfig) {
     ColorConfig* prColor = NULL;
     PanelConfig* prPanel = cefiveconfig_get_panelconfig(prConfig);

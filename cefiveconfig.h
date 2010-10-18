@@ -48,6 +48,7 @@ extern "C" {
     }CEFiveConfig;
 
     AppletConfig* cefiveconfig_get_appletconfig(CEFiveConfig* prConfig);
+    int cefiveconfig_get_cheatfilename(char* sDest, CEFiveConfig* prConfig);
     ColorConfig* cefiveconfig_get_cursorcolor(CEFiveConfig* prConfig);
     ColorConfig* cefiveconfig_get_editcolor(CEFiveConfig* prConfig);
     ColorConfig* cefiveconfig_get_panelcolor(CEFiveConfig* prConfig);

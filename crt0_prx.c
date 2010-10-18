@@ -1064,6 +1064,7 @@ static void findGameId() {
     sceIoClose(fd);
     memcpy(&gameDir[22], gameId, 10);
     sprintf(krUi.game_id, "%s", gameId);
+    strcpy(krConfig.game_id, gameId);
 }
 
 static void setupInitialVram() {
@@ -1307,7 +1308,7 @@ int _start(SceSize args, void *argp) {
     //Create thread
     sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, thread_buf_start,
             MAX_THREAD, &thread_count_start);
-    thid = sceKernelCreateThread("nitePRThread", &mainThread, 0x18, 0x1000, 0,
+    thid = sceKernelCreateThread("CEFive_Thread", &mainThread, 0x18, 0x1000, 0,
             NULL);
 
     //Start thread
