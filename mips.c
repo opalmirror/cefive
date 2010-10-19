@@ -26,6 +26,12 @@ static const char *mipsFpRegNames[] = {
     "f24", "f25", "f26", "f27", "f28", "f29", "f30", "f31"
 };
 
+static const char *controlRegister[]={
+    "Index", "EntryLo0", "Context", "Wired", 
+    "BadVAddr", "EntryHi", "Status", "EPC", 
+    "Config", "WatchLO", "XContext", "$22", 
+    "Debug", "ECC", "TagLo", "ErrorEPC"};
+
 static void decodeVCOP(char* buffer, unsigned int i_inst, unsigned int i_addr);
 static char* mipsGetFormat(int fmt);
 static short mipsGetImmediate(unsigned int i_inst);
