@@ -18,9 +18,12 @@
 #define CEFIVE_FAILURE      (-1)
 #define CEFIVE_MEMORY       (-2)
 #define CEFIVE_NULLPTR      (-3)
+
 #define CEFIVE_GAMEID_LEN   (10)
 #define CEFIVE_VERSION_MAJ  0
 #define CEFIVE_VERSION_MIN  1
+
+#define CEFIVE_KERNEL_LIB   "sceKernelLibrary"
 
 typedef enum _ECEState {
     CES_Fault,
@@ -44,6 +47,7 @@ typedef struct _CEFive {
     CEFiveConfig    rConfig;
     CheatEngine     rCheatEngine;
     SearchEngine    rSearchEngine;
+    CEFiveUi        rUi;
     CEState         rRunState;
     ECEStartState   rStart;
     SceModule*      prKernelLib;
@@ -53,6 +57,10 @@ typedef struct _CEFive {
 }CEFive;
 
 
+CheatEngine* cefive_get_cheatengine(CEFive* prCe);
+CEFiveConfig* cefive_get_config(CEFive* prCe);
+SearchEngine* cefive_get_searchengine(CEFive* prCe);
+CEFiveUi* cefive_get_ui(CEFive* prCe);
 int cefive_init(CEFive* prCe);
 int cefive_run(CEFive* prCe);
 int cefive_start(CEFive* prCe);
