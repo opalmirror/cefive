@@ -4,6 +4,16 @@
 #include "colorconfig.h"
 #include "appletmenu.h"
 
+void appletmenuCircleButton(AppletMenu* prMenu) {
+    if (prMenu == NULL) {
+        return;
+    }
+    if (prMenu->visible == 0) {
+        return;
+    }
+    prMenu->visible = 0;
+}
+
 void appletmenuCrossButton(AppletMenu *prMenu) {
     if (prMenu == NULL) {
         return;
