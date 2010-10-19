@@ -18,5 +18,7 @@ While the User is editing, pressing the Circle Button will cancel the edit in pr
 === Cross Button ===
 Pressing the Cross Button in the Hex Editor will start editing the selected Address, Byte or Character.
 While the User is editing, pressing the Cross Button will commit the currently selected Byte or Character to memory and finish editing.
+=== Square Button ===
+The Square Button is used in conjunction with the D-Pad to scroll the display up and down one page at a time.  Hold the Square Button while pressing the D-Pad up or down.
 === Left Trigger Button ===
 Pressing the Left Trigger Button in the Hex Editor will pop up an Applet Menu allowing the User to select another applet to invoke.  Pressing it again without selecting another applet will cause the Applet Menu to close.
