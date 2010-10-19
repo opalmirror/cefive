@@ -27,6 +27,7 @@ typedef struct _AppletMenu {
     int visible;
 }AppletMenu;
 
+void appletmenuCircleButton(AppletMenu* prMenu);
 void appletmenuCrossButton(AppletMenu *prMenu);
 void appletmenuCursorDown(AppletMenu *prMenu);
 void appletmenuCursorUp(AppletMenu *prMenu);

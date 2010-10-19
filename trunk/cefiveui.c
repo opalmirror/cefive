@@ -54,6 +54,10 @@ static void buttonCircleUp(CEFiveUi *prUi) {
                 return;
             }
         }
+        if (prUi->appletmenu.visible == 1) {
+            appletmenuCircleButton(&prUi->appletmenu);
+            return;
+        }
         prUi->running = 0;
     }
 }
