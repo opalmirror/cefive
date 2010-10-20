@@ -8,6 +8,6 @@ Cheat Engine of Five is a complete rewrite, in stages, of NitePR Revision J.  Cu
   * [CEFiveCheatEditor Cheat Editor]
   * [CEFiveDisassembler Disassembler]
   * [CEFiveHexEditor Hex Editor]
-  * Search Panel
+  * [CEFiveSearchPanel Search Panel]
   * Game Info
   * Options
