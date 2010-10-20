@@ -21,13 +21,16 @@ extern "C" {
 #define GCHEATENGINE_NULLPTR            (-3)
 #define GCHEATENGINE_INVIDX             (-4)
     
+#define GCHEATENGINE_PATH_MAX           (256)
+    
     typedef enum _EGCEState {
         GCE_Fault, GCE_Stopped, GCE_Idle, GCE_Active, GCE_Stopping
     }EGCEState;
     
     typedef struct _GCheatEngine {
         EGCEState rState;
-        GCheatList* prCheatList;
+        GCheatList rCheatList;
+        char sCheatFile[GCHEATENGINE_PATH_MAX];
     }GCheatEngine;
     
     int gcheatengine_add_cheat(GCheatEngine* prEngine, GCheat* prCheat);
