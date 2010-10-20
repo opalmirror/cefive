@@ -1,11 +1,16 @@
 #include <stdlib.h>
+#include <pspkerneltypes.h>
 #include <psploadcore.h>
+#include <pspiofilemgr.h>
+#include <string.h>
 #include "cefiveconfig.h"
 #include "cheatengine.h"
 #include "searchengine.h"
 #include "cefiveui.h"
+#include "gameinfo.h"
 #include "cefive.h"
 
+static int load_gameid(CEFive* prCe);
 static int wait_for_kernellib(CEFive* prCe);
 
 CheatEngine* cefive_get_cheatengine(CEFive* prCe) {
@@ -22,6 +27,14 @@ CEFiveConfig* cefive_get_config(CEFive* prCe) {
         prConfig = &prCe->rConfig;
     }
     return prConfig;
+}
+
+GameInfo* cefive_get_gameinfo(CEFive* prCe) {
+    GameInfo* prInfo = NULL;
+    if (prCe != NULL) {
+        prInfo = &prCe->rGameInfo;
+    }
+    return prInfo;
 }
 
 SearchEngine* cefive_get_searchengine(CEFive* prCe) {
@@ -42,13 +55,16 @@ CEFiveUi* cefive_get_ui(CEFive* prCe) {
 
 int cefive_init(CEFive* prCe) {
     CEFiveConfig* prConfig = NULL;
+    SearchEngine* prSearch = NULL;
+    int r = 0;
     
     if (prCe == NULL) {
         return CEFIVE_NULLPTR;
     }
     prConfig = cefive_get_config(prCe);
     cefiveconfig_init(prConfig);
-    
+    prSearch = cefive_get_searchengine(prCe);
+    searchengine_init(prSearch);
     return CEFIVE_SUCCESS;
 }
 
@@ -79,6 +95,28 @@ int cefive_stop(CEFive* prCe) {
         return CEFIVE_NULLPTR;
     }
 
+    return CEFIVE_SUCCESS;
+}
+
+static int load_gameid(CEFive* prCe) {
+    GameInfo* prInfo = NULL;
+    SceUID fh = 0;
+    char sGameId[CEFIVE_GAMEID_LEN + 1];
+    
+    if (prCe == NULL) {
+        return CEFIVE_NULLPTR;
+    }
+    prInfo = cefive_get_gameinfo(prCe);
+    if (prInfo == NULL) {
+        return CEFIVE_NULLPTR;
+    }
+    while (fh <= 0) {
+        fh = sceIoOpen(CEFIVE_UMD_PATH, PSP_O_RDONLY, 0777);
+        sceKernelDelayThread(10000);
+    }
+    sceIoRead(fh, sGameId, CEFIVE_GAMEID_LEN);
+    sceIoClose(fh);
+    strcpy(prInfo->sGameId, sGameId);
     return CEFIVE_SUCCESS;
 }
 
