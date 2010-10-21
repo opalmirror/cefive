@@ -62,6 +62,30 @@ static int find_next_dword(SearchEngine* prEngine) {
     return r;
 }
 
+static int find_next_immediate(SearchEngine *prEngine) {
+    int r = SEARCHENGINE_NOT_FOUND;
+    SceUInt32 *puiVal = NULL;
+    SceUInt32 qVal = 0;
+    SceUInt32 position = 0;
+    SceShort16 insval = 0;
+    SceShort16 qimval = 0;
+    
+    if (prEngine == NULL) {
+        return SEARCHENGINE_MEMORY;
+    }
+    position = searchengine_tell(prEngine);
+    qVal = prEngine->rQuery.value;
+    qimval = (SceShort16)(qVal & 0xFFFF);
+    puiVal = (SceUInt32*)position;
+    insval = (SceShort16)(*puiVal & 0xFFFF);
+    if (qimval == insval) {
+        searchengine_add_result(prEngine, puiVal, *puiVal);
+        r = SEARCHENGINE_SUCCESS;
+    }
+    r = searchengine_seek(prEngine, position + 4);
+    return r;
+}
+
 int searchengine_add_result(SearchEngine* prEngine, unsigned int address,
         unsigned int value) {
     if (prEngine == NULL) {
@@ -134,16 +158,22 @@ int searchengine_find_next(SearchEngine* prEngine) {
         return SEARCHENGINE_SUCCESS;
     }
     ESearchSize rSS = prQuery->searchSize;
-    switch (rSS) {
-        case ESZ_Byte:
-            r = find_next_byte(prEngine);
-            break;
-        case ESZ_Dword:
-            r = find_next_dword(prEngine);
-            break;
-        case ESZ_Word:
-            r = find_next_word(prEngine);
-            break;
+    ESearchMode rSM = prQuery->searchMode;
+    if (rSM == ESM_Byte) {
+        switch (rSS) {
+            case ESZ_Byte:
+                r = find_next_byte(prEngine);
+                break;
+            case ESZ_Dword:
+                r = find_next_dword(prEngine);
+                break;
+            case ESZ_Word:
+                r = find_next_word(prEngine);
+                break;
+        }
+    }
+    if (rSM == ESM_Immediate) {
+        r = find_next_immediate(prEngine);
     }
     if (r == SEARCHENGINE_BAD_ADDR) {
         prEngine->rState = ESS_Finished;
