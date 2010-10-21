@@ -26,7 +26,7 @@ static const char *mipsFpRegNames[] = {
     "f24", "f25", "f26", "f27", "f28", "f29", "f30", "f31"
 };
 
-static const char *controlRegister[]={
+static const char *mipsControlRegister[]={
     "Index", "EntryLo0", "Context", "Wired", 
     "BadVAddr", "EntryHi", "Status", "EPC", 
     "Config", "WatchLO", "XContext", "$22", 
@@ -67,6 +67,8 @@ static void mipsTypeFdFsFtRs(char *, const char *, int, int, int, int);
 static void mipsTypeFdFsRt(char *, const char *, int, int, int);
 static void mipsTypeFsIndexBase(char *buffer, const char *mnem, int iFs, int iIndex, int iBase);
 static void mipsTypeRtOffsetBase(char *, const char *, int, short, int);
+static void mipsTypeRtRdSel(char* buffer, const char* mnem, 
+        int i_rt, int i_rd, int i_sel);
 static void mipsTypeRtRsPosSize(char *, const char *, int, int, int, int);
 static void mipsTypeVrd(char* buffer, const char* mnem, int iRd);
 static void mipsTypeVrdA(char* buffer, const char* mnem, int iRd, int iA);
@@ -1748,7 +1750,8 @@ static void mipsInMFC0(char *buffer, unsigned int i_inst) {
     if (sel == 0) {
         mipsType2(buffer, mnem, rt, rd);
     } else {
-        mipsType7(buffer, mnem, rt, rd, sel);
+        //mipsType7(buffer, mnem, rt, rd, sel);
+        mipsTypeRtRdSel(buffer, mnem, rt, rd, sel);
     }
 }
 
@@ -2059,7 +2062,8 @@ static void mipsInMTC0(char *buffer, unsigned int i_inst) {
     if (sel == 0) {
         mipsType2(buffer, mnem, rt, rd);
     } else {
-        mipsType7(buffer, mnem, rt, rd, sel);
+        //mipsType7(buffer, mnem, rt, rd, sel);
+        mipsTypeRtRdSel(buffer, mnem, rt, rd, sel);
     }
 }
 
@@ -4159,6 +4163,18 @@ static void mipsTypeRtOffsetBase(char *buffer, const char *mnem, int i_rt, short
     const char *base = mipsRegisterArray[i_base];
     const char *rt = mipsRegisterArray[i_rt];
     sprintf(buffer, "%-8s $%s, 0x%X($%s)", mnem, rt, offset, base);
+}
+
+/* mipsTypeRtRdSel
+ *  Render a Type 'rt, rd, sel' instruction.
+ *  [MNEM] rt, rd, sel
+ */
+static void mipsTypeRtRdSel(char* buffer, const char* mnem, 
+        int i_rt, int i_rd, int i_sel) {
+    const char *rt = mipsRegisterArray[i_rt];
+    const char *rd = mipsRegisterArray[i_rd];
+    const char *sel = mipsControlRegister[i_sel];
+    sprintf(buffer, "%-8s $%s, $%s, $%s", mnem, rt, rd, sel);
 }
 
 /* mipsTypeRtRsPosSize
