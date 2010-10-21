@@ -765,6 +765,55 @@ int searchpanel_is_editing(SearchPanel* prPanel) {
     return is;
 }
 
+int searchpanel_page_down(SearchPanel* prPanel) {
+    SearchEngine* prEngine = NULL;
+    int pgpos = 0;
+    int tbht = 0;
+    int resct = 0;
+    int newpos = 0;
+    
+    if (prPanel == NULL) {
+        return SEARCHPANEL_NULLPTR;
+    }
+    prEngine = prPanel->prEngine;
+    if (prEngine == NULL) {
+        return SEARCHPANEL_NULLPTR;
+    }
+    pgpos = prPanel->pagepos;
+    tbht = prPanel->config.tablesize.height;
+    resct = searchengine_get_result_count(prEngine);
+    newpos = pgpos + tbht;
+    if (newpos > resct) {
+        // Don't allow it to page down too far.
+        newpos = resct - tbht;
+    }
+    prPanel->pagepos = newpos;
+    return SEARCHPANEL_SUCCESS;
+}
+
+int searchpanel_page_up(SearchPanel* prPanel) {
+    SearchEngine* prEngine = NULL;
+    int pgpos = 0;
+    int tbht = 0;
+    int newpos = 0;
+    
+    if (prPanel == NULL) {
+        return SEARCHPANEL_NULLPTR;
+    }
+    prEngine = prPanel->prEngine;
+    if (prEngine == NULL) {
+        return SEARCHPANEL_NULLPTR;
+    }
+    pgpos = prPanel->pagepos;
+    tbht = prPanel->config.tablesize.height;
+    newpos = pgpos - tbht;
+    if (newpos < 0) {
+        newpos = 0;
+    }
+    prPanel->pagepos = newpos;
+    return SEARCHPANEL_SUCCESS;
+}
+
 int searchpanel_redraw(SearchPanel* prPanel) {
     AppletConfig* prApCfg = NULL;
     ColorConfig* prColor = NULL;
