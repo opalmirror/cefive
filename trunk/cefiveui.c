@@ -635,7 +635,7 @@ static void dpadDownDown(CEFiveUi *prUi) {
                 break;
             case 4:
                 if (prUi->buttons.square == 1) {
-                    searchpanel_dpad_down(&prUi->searchpanel);
+                    searchpanel_page_down(&prUi->searchpanel);
                 } else {
                     searchpanel_dpad_down(&prUi->searchpanel);
                 }
