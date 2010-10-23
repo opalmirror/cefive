@@ -435,7 +435,7 @@ static int reset(SearchPanel* prPanel) {
         return SEARCHPANEL_FAILURE;
     }
     searchengine_reset(prEngine);
-    return SEARCHPANEL_SUCCESS;
+    return searchpanel_reset(prPanel);
 }
 
 int searchpanel_cross_button(SearchPanel* prPanel) {
@@ -838,6 +838,33 @@ int searchpanel_redraw(SearchPanel* prPanel) {
     draw_results_panel(prPanel);
     draw_status_panel(prPanel);
     
+    return SEARCHPANEL_SUCCESS;
+}
+
+int searchpanel_reset(SearchPanel* prPanel) {
+    AppletConfig* prCfg = NULL;
+    ColorConfig* prColor = NULL;
+    int x = 0;
+    int y = 0;
+    int rows = 0;
+    int row = 0;
+    
+    if (prPanel == NULL) {
+        return SEARCHPANEL_NULLPTR;
+    }
+    prCfg = prPanel->prApCfg;
+    prColor = appletconfig_get_panelcolor(prCfg);
+    x = prPanel->config.tabletop.x;
+    y = prPanel->config.tabletop.y;
+    rows = prPanel->config.tablesize.height;
+    pspDebugScreenSetBackColor(prColor->background);
+    pspDebugScreenSetTextColor(prColor->text);
+    pspDebugScreenSetXY(x, y - 1);
+    pspDebugScreenKprintf("%-67s", "Search Results: 0");
+    for (row = 0; row < rows; row++) {
+        pspDebugScreenSetXY(x, y + row);
+        pspDebugScreenKprintf("%-67s", "");
+    }
     return SEARCHPANEL_SUCCESS;
 }
 
