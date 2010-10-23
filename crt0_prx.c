@@ -675,6 +675,10 @@ void buttonCallback(int curr, int last, void *arg) {
     /* If the UI is already showing, delegate to the ui. */
     if (krUi.running == 1) {
         CEFiveUi* prUi = &krUi;
+        if (cvd && cvu && (!lvd || !lvu)) {
+            prUi->drawn = 0;
+            krRunState = CES_UIRequest;
+        }
         cefiveui_buttoncallback(curr, last, prUi);
         return;
     }
@@ -1270,6 +1274,13 @@ int mainThread() {
         if (krRunState == CES_UIRequest) {
             showInterface();
             while (prUi->running == 1) {
+                if (prUi->vram == NULL) {
+                    prUi->running = 0;
+                    continue;
+                }
+                if (krRunState == CES_UIRequest) {
+                    showInterface();
+                }
                 cefiveui_update_controls(prUi);
                 cefiveuiRedraw(prUi);
                 searchengine_run(prSearch);
