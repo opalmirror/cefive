@@ -74,6 +74,7 @@ int searchpanel_is_editing(SearchPanel* prPanel);
 int searchpanel_page_down(SearchPanel* prPanel);
 int searchpanel_page_up(SearchPanel* prPanel);
 int searchpanel_redraw(SearchPanel* prPanel);
+int searchpanel_reset(SearchPanel* prPanel);
 int searchpanel_scroll_down(SearchPanel* prPanel);
 int searchpanel_scroll_up(SearchPanel* prPanel);
 int searchpanel_set_editing(SearchPanel* prPanel, int editing);

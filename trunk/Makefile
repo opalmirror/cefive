@@ -48,6 +48,9 @@ LDFLAGS = -nostdlib  -nodefaultlibs -g
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
 
+mips.o: mips.c mips.h
+	$(CC) $(CFLAGS) -c mips.c
+
 block.o: block.c block.h
 	$(CC) $(CFLAGS) -c block.c
 
