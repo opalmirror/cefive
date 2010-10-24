@@ -1,3 +1,8 @@
+/* cefiveui.h
+ *  The User Interface for Cheat Engine of Five
+ * Author: Sir Gee of Five
+ * 
+ */
 #ifndef _CEFIVEUI_H
 #define _CEFIVEUI_H
 
@@ -15,6 +20,7 @@
 #include "cefiveconfig.h"
 #include "searchpanel.h"
 #include "searchengine.h"
+#include "geelog.h"
 
 #define CEFIVEUI_SUCCESS        (0)
 #define CEFIVEUI_FAILURE        (-1)
@@ -44,6 +50,7 @@ typedef struct _CEFiveUiConfig {
 typedef struct _CEFiveUi {
     CEFiveUiConfig  config;
     CEFiveConfig*   prCEConfig;
+    GeeLog*         prLog;
     SearchEngine*   prSearchEngine;
     CheatEngine*    prEngine;
     CheatPanel      cheatpanel;

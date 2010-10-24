@@ -6,6 +6,7 @@
 
 #include <pspkerneltypes.h>
 #include <pspdebug.h>
+#include <stdio.h>
 #include "disassembler.h"
 #include "mips.h"
 #include "dwordeditor.h"
@@ -558,10 +559,12 @@ static void drawTableRow(Disassembler *prPanel, int iRow) {
 static void drawValueColumn(Disassembler *prPanel, int iRow) {
     AppletConfig* prApCfg = NULL;
     ColorConfig* prColor = NULL;
+    GeeLog* prLog = NULL;
 
     if (prPanel == NULL) {
         return;
     }
+    prLog = prPanel->prLog;
     prApCfg = &prPanel->prApCfg;
     DwordColumn *prValue = &(prPanel->rRow.rValue);
     SceUInt32 *pVal = (SceUInt32 *)(prPanel->offset + (iRow * 4));
@@ -575,6 +578,7 @@ static void drawValueColumn(Disassembler *prPanel, int iRow) {
     }
     colorconfig_setcolor(&prValue->color, prColor->background, prColor->text);
     if (*pVal >= base && *pVal < base + msz) {
+        geelog_log(prLog, LOG_DEBUG, "drawValueColumn: Value is a pointer.");
         prValue->color.text = prPanel->config.pointer_color.text;
     }
     dwordcolumn_redraw(prValue);

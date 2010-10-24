@@ -1,3 +1,8 @@
+/* disassembler.h
+ *  The Disassembler Applet for Cheat Engine of Five
+ * Author: Sir Gee of Five
+ * 
+ */
 #ifndef _DISASSEMBLER_H_
 #define _DISASSEMBLER_H_
 
@@ -11,6 +16,7 @@
 #include "textcolumn.h"
 #include "gameinfo.h"
 #include "appletconfig.h"
+#include "geelog.h"
 
 #define DISASSEMBLER_SUCCESS    (0)
 #define DISASSEMBLER_FAILURE    (-1)
@@ -45,6 +51,7 @@ typedef struct _DisassemberConfig {
 typedef struct _Disassembler {
     DisassemblerConfig config;
     AppletConfig* prApCfg;
+    GeeLog* prLog;
     SceUInt32 offset;
     SceUInt32 poffset;
     CursorPos cursor;
