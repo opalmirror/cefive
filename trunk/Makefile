@@ -26,7 +26,6 @@ OBJS =  block.o \
 	cefiveconfig.o \
 	geelog.o \
 	crt0_prx.o \
-	exports.o \
 	module.o
 
 # Define to build this as a prx (instead of a static elf)
@@ -36,6 +35,7 @@ PRX_EXPORTS=exports.exp
 
 USE_KERNEL_LIBS = 1
 USE_KERNEL_LIBC = 1
+#USE_PSPSDK_LIBC = 1
 
 INCDIR = 
 CFLAGS = -O2 -G0 -w -msingle-float -g
@@ -43,8 +43,8 @@ CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 
 LIBDIR =
-LIBS = -lpspchnnlsv -lpsputility -lpspdebug -lpspge_driver -lpspwlan -lpspumd
-LDFLAGS = -nostdlib  -nodefaultlibs -g
+LIBS = -lpspdebug -lpspge_driver
+LDFLAGS = -nostartfiles -mno-crt0 -g
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
@@ -105,6 +105,9 @@ cheatpanel.o: cheatengine.o colorconfig.o cheat.o block.o cheatpanel.c cheatpane
 
 geelog.o: geelog.c geelog.h
 	$(CC) $(CFLAGS) -c geelog.c
+	
+disassembler.o: mips.o dwordeditor.o addresscolumn.o dwordcolumn.o textcolumn.o colorconfig.o appletconfig.o disassembler.c disassembler.h
+	$(CC) $(CFLAGS) -c disassembler.c
 	
 crt_prx.o: cheat.o block.o cheatengine.o cefiveui.o cefiveconfig.o searchengine.o geelog.o crt_prx.c crt_prx.h
 	$(CC) $(CFLAGS) -c crt_prx.o

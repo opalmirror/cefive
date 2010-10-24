@@ -1,6 +1,6 @@
 //Crt0_prx
 //Includes
-#define _PSP_FW_VERSION 150
+//#define _PSP_FW_VERSION 150
 #include <pspkernel.h>
 #include <pspkerneltypes.h>
 #include <pspmoduleinfo.h>
@@ -180,8 +180,8 @@ unsigned char cfg[] = { 'C', 'F', 'G', 0x88, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,
 
 
 //Functions
-int module_start(SceSize args, void *argp) __attribute__((alias("_start")));
-int module_stop(SceSize args, void *argp) __attribute__((alias("_stop")));
+//int module_start(SceSize args, void *argp) __attribute__((alias("_start")));
+//int module_stop(SceSize args, void *argp) __attribute__((alias("_stop")));
 static void computeCheats();
 static void freshenCheats();
 static void gamePause(SceUID thid);
@@ -1239,6 +1239,7 @@ static void start() {
     /* Initialize the UI */
     krUi.prCEConfig = &krConfig;
     cefiveuiInit(&krUi, &krCheatEngine, &krSearchEngine);
+    krUi.prLog = &krLog;
     krRunState = CES_Starting;
     krStartState = CESS_WaitKernelLib;
 
@@ -1336,7 +1337,7 @@ int mainThread() {
     return 0;
 }
 
-int _start(SceSize args, void *argp) {
+int module_start(SceSize args, void *argp) {
     //Load the CFG
     if (cfg[4]) {
         SceModule *mod;
@@ -1369,7 +1370,7 @@ int _start(SceSize args, void *argp) {
     return 0;
 }
 
-int _stop(SceSize args, void *argp) {
+int module_stop(SceSize args, void *argp) {
     running = 0;
     sceKernelTerminateThread(thid);
     return 0;

@@ -454,6 +454,7 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     disassemblerInit(&prUi->disassembler);
     Disassembler *prDasm = &prUi->disassembler;
     prDasm->prApCfg = prAppCfg;
+    prDasm->prLog = prUi->prLog;
     prDasm->config.code_color.background = prUi->config.color.background;
     prDasm->config.code_color.text = prUi->config.color.text;
     prDasm->config.address_color.background = (u32)0xFFA0A0A0;

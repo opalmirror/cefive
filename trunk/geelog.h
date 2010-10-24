@@ -35,6 +35,7 @@ extern "C" {
 
     int geelog_init(GeeLog* prLog, ELogLevel rLevel, const char* sFile);
     int geelog_log(GeeLog* prLog, ELogLevel rLevel, const char* sMsg);
+    int geelog_logf(GeeLog* prLog, ELogLevel rLevel, const char* sFmt, ...);
     int geelog_start(GeeLog* prLog);
     int geelog_stop(GeeLog* prLog);
 
