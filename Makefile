@@ -24,6 +24,7 @@ OBJS =  block.o \
 	cefiveui.o \
 	colorconfig.o \
 	cefiveconfig.o \
+	geelog.o \
 	crt0_prx.o \
 	exports.o \
 	module.o
@@ -101,3 +102,9 @@ cheatengine.o: cefiveconfig.o cheat.o block.o cheatengine.c cheatengine.h
 
 cheatpanel.o: cheatengine.o colorconfig.o cheat.o block.o cheatpanel.c cheatpanel.h
 	$(CC) $(CFLAGS) -c cheatpanel.c
+
+geelog.o: geelog.c geelog.h
+	$(CC) $(CFLAGS) -c geelog.c
+	
+crt_prx.o: cheat.o block.o cheatengine.o cefiveui.o cefiveconfig.o searchengine.o geelog.o crt_prx.c crt_prx.h
+	$(CC) $(CFLAGS) -c crt_prx.o

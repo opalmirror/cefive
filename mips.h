@@ -1,3 +1,9 @@
+/* mips.h
+ *  MIPS32 Instruction Decoding
+ * Author: Sir Gee of Five
+ * 
+ */
+
 #ifndef _MIPS_H_
 #define _MIPS_H_
 
