@@ -1,4 +1,5 @@
 #include <pspkerneltypes.h>
+#include <pspiofilemgr.h>
 #include <stdlib.h>
 #include <string.h>
 #include "appletconfig.h"
@@ -7,6 +8,24 @@
 #include "dimension.h"
 #include "cursorpos.h"
 #include "cefiveconfig.h"
+
+int cefiveconfig_copy(CEFiveConfig* prDest, CEFiveConfig* prSrc) {
+    int r = 0;
+    if (prDest == NULL || prSrc == NULL) {
+        return CEFIVECONFIG_NULLPTR;
+    }
+    strcpy(prDest->plugins_dir, prSrc->plugins_dir);
+    strcpy(prDest->cefive_dir, prSrc->cefive_dir);
+    strcpy(prDest->screenshot_path, prSrc->screenshot_path);
+    strcpy(prDest->cheatfile_path, prSrc->cheatfile_path);
+    strcpy(prDest->game_id, prSrc->game_id);
+    prDest->pause_during_ui = prSrc->pause_during_ui;
+    r = appletconfig_copy(&prDest->rAppletConfig, &prSrc->rAppletConfig);
+    if (r != APPLETCONFIG_SUCCESS) {
+        return CEFIVECONFIG_FAILURE;
+    }
+    return CEFIVECONFIG_SUCCESS;
+}
 
 AppletConfig* cefiveconfig_get_appletconfig(CEFiveConfig* prConfig) {
     AppletConfig* prAp = NULL;
@@ -90,6 +109,7 @@ int cefiveconfig_init(CEFiveConfig* prConfig) {
     ColorConfig* prColor = NULL;
     Dimension* prSize = NULL;
     CursorPos* prPos = NULL;
+    int r = 0;
 
     if (prConfig == NULL) {
         return CEFIVECONFIG_NULLPTR;
@@ -101,6 +121,10 @@ int cefiveconfig_init(CEFiveConfig* prConfig) {
     memset(prConfig->screenshot_path, 0, CEFIVE_PATH_MAX);
     prConfig->pause_during_ui = 0;
     prApp = &prConfig->rAppletConfig;
+    r = appletconfig_init(prApp);
+    if (r != APPLETCONFIG_SUCCESS) {
+        return CEFIVECONFIG_FAILURE;
+    }
     prPanel = &prApp->rPanel;
     prColor = &prPanel->rColor;
     colorconfig_setcolor(prColor, CEFIVE_DEF_BG, CEFIVE_DEF_TEXT);
@@ -119,5 +143,83 @@ int cefiveconfig_init(CEFiveConfig* prConfig) {
     prColor = &prApp->rTitlebar;
     colorconfig_setcolor(prColor, CEFIVE_TITLE_BG, CEFIVE_TITLE_TEXT);
 
+    return CEFIVECONFIG_SUCCESS;
+}
+
+int cefiveconfig_load(CEFiveConfig* prConfig, const char* sFilename) {
+    SceUID fd = -1;
+    int r = 0;
+    
+    if (prConfig == NULL || sFilename == NULL) {
+        return CEFIVECONFIG_NULLPTR;
+    }
+    fd = sceIoOpen(sFilename, PSP_O_RDONLY, 0664);
+    if (fd < 0) {
+        return CEFIVECONFIG_IOERROR;
+    }
+    r = cefiveconfig_read(prConfig, fd);
+    if (r != CEFIVECONFIG_SUCCESS) {
+        sceIoClose(fd);
+        return CEFIVECONFIG_FAILURE;
+    }
+    sceIoClose(fd);
+    return CEFIVECONFIG_SUCCESS;
+}
+
+int cefiveconfig_read(CEFiveConfig* prConfig, SceUID fd) {
+    int r = 0;
+    if (prConfig == NULL) {
+        return CEFIVECONFIG_NULLPTR;
+    }
+    if (fd < 0) {
+        return CEFIVECONFIG_IOERROR;
+    }
+    r = sceIoRead(fd, &prConfig->pause_during_ui, sizeof(int));
+    if (r != sizeof(int)) {
+        return CEFIVECONFIG_IOERROR;
+    }
+    r = appletconfig_read(&prConfig->rAppletConfig, fd);
+    if (r != APPLETCONFIG_SUCCESS) {
+        return CEFIVECONFIG_FAILURE;
+    }
+    return CEFIVECONFIG_SUCCESS;
+}
+
+int cefiveconfig_save(CEFiveConfig* prConfig, const char* sFilename) {
+    SceUID fd = -1;
+    int r = 0;
+    
+    if (prConfig == NULL || sFilename == NULL) {
+        return CEFIVECONFIG_NULLPTR;
+    }
+    fd = sceIoOpen(sFilename, PSP_O_WRONLY|PSP_O_CREAT, 0664);
+    if (fd < 0) {
+        return CEFIVECONFIG_IOERROR;
+    }
+    r = cefiveconfig_write(prConfig, fd);
+    if (r != CEFIVECONFIG_SUCCESS) {
+        sceIoClose(fd);
+        return CEFIVECONFIG_FAILURE;
+    }
+    sceIoClose(fd);
+    return CEFIVECONFIG_SUCCESS;
+}
+
+int cefiveconfig_write(CEFiveConfig* prConfig, SceUID fd) {
+    int r = 0;
+    if (prConfig == NULL) {
+        return CEFIVECONFIG_NULLPTR;
+    }
+    if (fd < 0) {
+        return CEFIVECONFIG_IOERROR;
+    }
+    r = sceIoWrite(fd, &prConfig->pause_during_ui, sizeof(int));
+    if (r != sizeof(int)) {
+        return CEFIVECONFIG_IOERROR;
+    }
+    r = appletconfig_write(&prConfig->rAppletConfig, fd);
+    if (r != APPLETCONFIG_SUCCESS) {
+        return CEFIVECONFIG_FAILURE;
+    }
     return CEFIVECONFIG_SUCCESS;
 }

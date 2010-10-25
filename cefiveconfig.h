@@ -21,6 +21,7 @@ extern "C" {
     #define CEFIVECONFIG_FAILURE    (-1)
     #define CEFIVECONFIG_MEMORY     (-2)
     #define CEFIVECONFIG_NULLPTR    (-3)
+    #define CEFIVECONFIG_IOERROR    (-4)
 
     #define CEFIVE_DIR_MAX      (64)
     #define CEFIVE_GAMEID_LEN   (10)
@@ -47,6 +48,7 @@ extern "C" {
         AppletConfig rAppletConfig;
     }CEFiveConfig;
 
+    int cefiveconfig_copy(CEFiveConfig* prDest, CEFiveConfig* prSrc);
     AppletConfig* cefiveconfig_get_appletconfig(CEFiveConfig* prConfig);
     int cefiveconfig_get_cheatfilename(char* sDest, CEFiveConfig* prConfig);
     ColorConfig* cefiveconfig_get_cursorcolor(CEFiveConfig* prConfig);
@@ -56,6 +58,10 @@ extern "C" {
     ColorConfig* cefiveconfig_get_statuscolor(CEFiveConfig* prConfig);
     ColorConfig* cefiveconfig_get_titlecolor(CEFiveConfig* prConfig);
     int cefiveconfig_init(CEFiveConfig* prConfig);
+    int cefiveconfig_load(CEFiveConfig* prConfig, const char* sFilename);
+    int cefiveconfig_read(CEFiveConfig* prConfig, SceUID fd);
+    int cefiveconfig_save(CEFiveConfig* prConfig, const char* sFilename);
+    int cefiveconfig_write(CEFiveConfig* prConfig, SceUID fd);
 
 #ifdef	__cplusplus
 }

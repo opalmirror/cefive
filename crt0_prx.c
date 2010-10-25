@@ -1158,6 +1158,8 @@ static void showInterface() {
 }
 
 static void hideInterface() {
+    CEFiveConfig* prConfig = &krConfig;
+    
     pspDebugScreenSetBackColor((u32)0x00000000);
     pspDebugScreenClear();
     //Return the standard VRAM
@@ -1166,9 +1168,10 @@ static void hideInterface() {
     //Allow the game to receive input
     sceCtrlSetButtonMasks(0x10000, 0); // Unset HOME key
     sceCtrlSetButtonMasks(0xFFFF, 0); // Unset mask
+    
+    /* Try to save the current CEFiveConfig. */
+    cefiveconfig_save(prConfig, "ms0:/seplugins/CEFive.cdf");
     krRunState = CES_Running;
-    // TODO: Get rid of this once it is no longer being used.
-    menuDrawn = 0;
     gameResume(thid);
 }
 

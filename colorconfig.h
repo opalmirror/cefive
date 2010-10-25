@@ -1,3 +1,9 @@
+/* colorconfig.h
+ *  ColorConfiguration for Cheat Engine of Five.
+ * Author: Sir Gee of Five
+ * 
+ */
+
 #ifndef _COLORCONFIG_H
 #define _COLORCONFIG_H
 
@@ -20,8 +26,39 @@ typedef struct _ColorConfig {
     u32 text;
 } ColorConfig;
 
+int colorconfig_copy(ColorConfig* prDest, ColorConfig* prSrc);
+
+/** Initialize a ColorConfig struct.
+ * 
+ * @param prConfig pointer to the ColorConfig struct to initialize.
+ * @return 0 on success, negative value on failure.
+ */
 int colorconfig_init(ColorConfig* prConfig);
+
+/** Read a ColorConfig struct from an open file descriptor.
+ *  
+ * @param prConfig pointer to the ColorConfig struct to populate.
+ * @param fd SceUID file descriptor.
+ * @return 0 on success, negative values on failure.
+ */
+int colorconfig_read(ColorConfig* prConfig, SceUID fd);
+
+/** Assign the values of a ColorConfig struct.
+ * 
+ * @param prConfig pointer to the destination ColorConfig struct.
+ * @param background u32 value containing the background color.
+ * @param text u32 value containing the text color.
+ * @return 0 on success, negative values on failure.
+ */
 int colorconfig_setcolor(ColorConfig* prConfig, u32 background, u32 text);
+
+/** Write a ColorConfig struct to an open file descriptor.
+ * 
+ * @param prConfig pointer to the ColorConfig struct to write.
+ * @param fd SceUID an open file descriptor.
+ * @return 0 on success, negative values on failure.
+ */
+int colorconfig_write(ColorConfig* prConfig, SceUID fd);
 
 #ifdef	__cplusplus
 }
