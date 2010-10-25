@@ -1221,6 +1221,7 @@ static void waitForVram() {
 
 static void start() {
     GeeLog* prLog = &krLog;
+    int r = 0;
     
     geelog_log(prLog, LOG_DEBUG, "start: Initializing CheatEngine.");
     /* Initialize the CheatEngine */
@@ -1229,7 +1230,16 @@ static void start() {
 
     geelog_log(prLog, LOG_DEBUG, "start: Initializing CEFiveConfig.");
     cefiveconfig_init(&krConfig);
-    krConfig.pause_during_ui = 0;
+    
+    /* Attempt to load the current configuration. */
+    geelog_log(prLog, LOG_DEBUG, "start: Loading configuration.");
+    r = cefiveconfig_load(&krConfig, "ms0:/seplugins/CEFive.cdf");
+    if (r != CEFIVECONFIG_SUCCESS) {
+        geelog_log(prLog, LOG_ERROR, "start: Error loading configuration.");
+    } else {
+        geelog_log(prLog, LOG_INFO, "start: Loaded configuration.");
+    }
+    //krConfig.pause_during_ui = 0;
     sprintf(krConfig.plugins_dir, "seplugins");
     sprintf(krConfig.cefive_dir, "nitePR");
 
