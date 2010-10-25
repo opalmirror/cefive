@@ -2,6 +2,8 @@ TARGET = CEFive
 OBJS =  block.o \
 	cheat.o \
 	mips.o \
+	cursorpos.o \
+	dimension.o \
 	addresscolumn.o \
 	asciicolumn.o \
 	bytecolumn.o \
@@ -52,6 +54,12 @@ include $(PSPSDK)/lib/build.mak
 mips.o: mips.c mips.h
 	$(CC) $(CFLAGS) -c mips.c
 
+cursorpos.o: cursorpos.c cursorpos.h
+	$(CC) $(CFLAGS) -c cursorpos.c
+
+dimension.o: dimension.c dimension.h
+	$(CC) $(CFLAGS) -c dimension.c
+
 block.o: block.c block.h
 	$(CC) $(CFLAGS) -c block.c
 
@@ -61,7 +69,7 @@ cheat.o: cheat.c cheat.h
 colorconfig.o: colorconfig.c colorconfig.h
 	$(CC) $(CFLAGS) -c colorconfig.c
 
-panelconfig.o: colorconfig.o panelconfig.c panelconfig.h cursorpos.h dimension.h
+panelconfig.o: colorconfig.o cursorpos.o dimension.o panelconfig.c panelconfig.h
 	$(CC) $(CFLAGS) -c panelconfig.c
 
 appletconfig.o: panelconfig.o colorconfig.o appletconfig.c appletconfig.h
@@ -91,7 +99,7 @@ dwordeditor.o: colorconfig.o dwordeditor.c dwordeditor.h
 appletmenu.o: colorconfig.o appletmenu.c appletmenu.h
 	$(CC) $(CFLAGS) -c appletmenu.c
 
-cefiveconfig.o: colorconfig.o cefiveconfig.c cefiveconfig.h
+cefiveconfig.o: appletconfig.o cefiveconfig.c cefiveconfig.h
 	$(CC) $(CFLAGS) -c cefiveconfig.c
 
 cheateditor.o: colorconfig.o dwordeditor.o cheatengine.o cheat.o block.o cheateditor.c cheateditor.h
