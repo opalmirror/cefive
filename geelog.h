@@ -33,7 +33,27 @@ extern "C" {
         SceUID rFd;
     }GeeLog;
 
+    /* geelog_init
+     *   Initializes the GeeLog logging facility.  Should be called before
+     *   any logging functions are called.
+     * Parameters:
+     *   prLog   Pointer to a GeeLog struct to act as the handle.
+     *   rLevel  The default log level (One of ELogLevel enum).  Only messages
+     *           with a log level below or at this level will be logged.
+     *   sFile   The filename to use for the log file.
+     *
+     */
     int geelog_init(GeeLog* prLog, ELogLevel rLevel, const char* sFile);
+    
+    /* geelog_log
+     *  Add a log statement to the current log file.
+     * Parameters:
+     *  prLog   Pointer to a GeeLog struct initialized with geelog_init.
+     *  rLevel  The log level (one of ELogLevel enum) to act as the log level
+     *          of the message.  If rLevel is above the current log level, the
+     *          message will not be logged.
+     *  sMsg    A string containing the message to write to the log file.
+     */
     int geelog_log(GeeLog* prLog, ELogLevel rLevel, const char* sMsg);
     int geelog_logf(GeeLog* prLog, ELogLevel rLevel, const char* sFmt, ...);
     int geelog_start(GeeLog* prLog);
