@@ -55,7 +55,10 @@ extern "C" {
      *  sMsg    A string containing the message to write to the log file.
      */
     int geelog_log(GeeLog* prLog, ELogLevel rLevel, const char* sMsg);
-    int geelog_logf(GeeLog* prLog, ELogLevel rLevel, const char* sFmt, ...);
+    
+    /* CURRENTLY DISABLED */
+    /*int geelog_logf(GeeLog* prLog, ELogLevel rLevel, const char* sFmt, ...);*/
+    
     int geelog_start(GeeLog* prLog);
     int geelog_stop(GeeLog* prLog);
 

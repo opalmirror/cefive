@@ -8,6 +8,10 @@
 #ifndef _CEFIVE_H
 #define	_CEFIVE_H
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+    
 #include <psploadcore.h>
 #include "cefiveui.h"
 #include "cheatengine.h"
@@ -76,6 +80,10 @@ int cefive_init(CEFive* prCe);
 int cefive_run(CEFive* prCe);
 int cefive_start(CEFive* prCe);
 int cefive_stop(CEFive* prCe);
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif	/* _CEFIVE_H */
 
