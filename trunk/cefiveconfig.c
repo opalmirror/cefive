@@ -9,6 +9,17 @@
 #include "cursorpos.h"
 #include "cefiveconfig.h"
 
+/* Copy the specified CEFiveConfig struct to a destination CEFiveConfig struct.
+ * 
+ * Parameters:
+ *   prDest     Pointer to a CEFiveConfig struct to act as the destination.
+ *   prSrc      Pointer to a CEFiveConfig struct to act as the source.
+ * 
+ * Returns:
+ *   CEFIVECONFIG_NULLPTR is returned if either parameter is NULL.
+ *   CEFIVECONFIG_FAILURE is returned if the structure failed to copy.
+ *   CEFIVECONFIG_SUCCESS is returned if the structure was copied.
+ */
 int cefiveconfig_copy(CEFiveConfig* prDest, CEFiveConfig* prSrc) {
     int r = 0;
     if (prDest == NULL || prSrc == NULL) {
@@ -27,6 +38,15 @@ int cefiveconfig_copy(CEFiveConfig* prDest, CEFiveConfig* prSrc) {
     return CEFIVECONFIG_SUCCESS;
 }
 
+/* Return a pointer to the member AppletConfig struct from a specified
+ * CEFiveConfig struct.
+ * 
+ * Parameters:
+ *   prConfig   Pointer to a CEFiveConfig struct holding cefive settings.
+ * 
+ * Returns:
+ *   A pointer to an AppletConfig struct.
+ */
 AppletConfig* cefiveconfig_get_appletconfig(CEFiveConfig* prConfig) {
     AppletConfig* prAp = NULL;
     if (prConfig != NULL) {
@@ -35,11 +55,23 @@ AppletConfig* cefiveconfig_get_appletconfig(CEFiveConfig* prConfig) {
     return prAp;
 }
 
+/* Copy the full path to the current cheat file into the specified destination
+ * string.
+ * 
+ * Parameters:
+ *   sDest      A char pointer to act as the destination.  The path will be
+ *              copied into this string.
+ *   prConfig   Pointer to a CEFiveConfig struct holding cefive settings.
+ * 
+ * Returns:
+ *   CEFIVECONFIG_NULLPTR if the specified CEFiveConfig pointer is NULL.
+ *   CEFIVECONFIG_SUCCESS if the path was copied to the destination.
+ */
 int cefiveconfig_get_cheatfilename(char* sDest, CEFiveConfig* prConfig) {
     char* sPlugins = NULL;
     char* sCefive = NULL;
     char* sGameId = NULL;
-    if (sDest == NULL || prConfig == NULL) {
+    if (prConfig == NULL) {
         return CEFIVECONFIG_NULLPTR;
     }
     sPlugins = prConfig->plugins_dir;
@@ -76,6 +108,15 @@ ColorConfig* cefiveconfig_get_panelcolor(CEFiveConfig* prConfig) {
     return prColor;
 }
 
+/* Return a pointer to the member PanelConfig struct containing Panel
+ * Configuration settings from the specified CEFiveConfig struct.
+ * 
+ * Parameters:
+ *   prConfig   Pointer to a CEFiveConfig struct containing cefive settings.
+ * 
+ * Returns:
+ *   Pointer to a PanelConfig struct.
+ */
 PanelConfig* cefiveconfig_get_panelconfig(CEFiveConfig* prConfig) {
     PanelConfig* prPanel = NULL;
     AppletConfig* prApp = cefiveconfig_get_appletconfig(prConfig);

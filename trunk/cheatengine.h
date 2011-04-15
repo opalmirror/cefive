@@ -1,5 +1,14 @@
+/* cheatengine.h
+ *   Header file for the cefive Cheat Engine.
+ * Author: Sir Gee of Five
+ */
+
 #ifndef _CHEATENGINE_H_
 #define _CHEATENGINE_H_
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
 #include <pspkerneltypes.h>
 #include "cheat.h"
@@ -47,5 +56,9 @@ int cheatengineResetUShort16Block(Block* prBlock);
 int cheatengineSetCheatConstant(CheatEngine* prEng, int index);
 int cheatengineSetCheatInactive(CheatEngine* prEng, int index);
 int cheatengineSetCheatSelected(CheatEngine* prEng, int index);
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif

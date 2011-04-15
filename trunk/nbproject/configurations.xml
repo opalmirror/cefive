@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df name="cefive" root=".">
+      <in>addresscolumn.c</in>
+      <in>addresscolumn.h</in>
+      <in>appletconfig.c</in>
+      <in>appletconfig.h</in>
+      <in>appletmenu.c</in>
+      <in>appletmenu.h</in>
+      <in>asciicolumn.c</in>
+      <in>asciicolumn.h</in>
+      <in>block.c</in>
+      <in>block.h</in>
+      <in>blocklist.c</in>
+      <in>blocklist.h</in>
+      <in>buttonstate.h</in>
+      <in>bytecolumn.c</in>
+      <in>bytecolumn.h</in>
+      <in>cefive.c</in>
+      <in>cefive.h</in>
+      <in>cefiveconfig.c</in>
+      <in>cefiveconfig.h</in>
+      <in>cefiveui.c</in>
+      <in>cefiveui.h</in>
+      <in>cheat.c</in>
+      <in>cheat.h</in>
+      <in>cheateditor.c</in>
+      <in>cheateditor.h</in>
+      <in>cheatengine.c</in>
+      <in>cheatengine.h</in>
+      <in>cheatpanel.c</in>
+      <in>cheatpanel.h</in>
+      <in>colorconfig.c</in>
+      <in>colorconfig.h</in>
+      <in>crt0_prx.c</in>
+      <in>crt0_prx.h</in>
+      <in>cursorpos.c</in>
+      <in>cursorpos.h</in>
+      <in>dimension.c</in>
+      <in>dimension.h</in>
+      <in>disassembler.c</in>
+      <in>disassembler.h</in>
+      <in>dwordcolumn.c</in>
+      <in>dwordcolumn.h</in>
+      <in>dwordeditor.c</in>
+      <in>dwordeditor.h</in>
+      <in>exports.c</in>
+      <in>float.h</in>
+      <in>gameinfo.c</in>
+      <in>gameinfo.h</in>
+      <in>gcheat.c</in>
+      <in>gcheat.h</in>
+      <in>gcheatengine.h</in>
+      <in>gcheatlist.c</in>
+      <in>gcheatlist.h</in>
+      <in>gclipboard.h</in>
+      <in>geelog.c</in>
+      <in>geelog.h</in>
+      <in>hexeditor.c</in>
+      <in>hexeditor.h</in>
+      <in>mips.c</in>
+      <in>mips.h</in>
+      <in>module.c</in>
+      <in>module.h</in>
+      <in>optionspanel.c</in>
+      <in>optionspanel.h</in>
+      <in>panelconfig.c</in>
+      <in>panelconfig.h</in>
+      <in>savedata.h</in>
+      <in>screenshot.h</in>
+      <in>searchengine.c</in>
+      <in>searchengine.h</in>
+      <in>searchpanel.c</in>
+      <in>searchpanel.h</in>
+      <in>segmentmap.h</in>
+      <in>segmentpanel.h</in>
+      <in>textcolumn.c</in>
+      <in>textcolumn.h</in>
+      <in>togglecolumn.c</in>
+      <in>togglecolumn.h</in>
+      <in>watchpanel.h</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>PSPSDK|GNU</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+          <cTool>
+            <incDir>
+              <pElem>.</pElem>
+            </incDir>
+          </cTool>
+        </makeTool>
+      </makefileType>
+      <item path="addresscolumn.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="appletconfig.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="appletmenu.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="asciicolumn.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="block.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="blocklist.c" ex="true" tool="0" flavor="0">
+      </item>
+      <item path="blocklist.h" ex="true" tool="3" flavor="0">
+      </item>
+      <item path="bytecolumn.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="cefive.c" ex="true" tool="0" flavor="0">
+      </item>
+      <item path="cefiveconfig.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="cefiveui.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="cheat.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="cheateditor.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="cheatengine.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="cheatpanel.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="colorconfig.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="crt0_prx.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="cursorpos.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="dimension.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="disassembler.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="dwordcolumn.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="dwordeditor.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="exports.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="gameinfo.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="gcheat.c" ex="true" tool="0" flavor="0">
+      </item>
+      <item path="gcheat.h" ex="true" tool="3" flavor="0">
+      </item>
+      <item path="gcheatengine.h" ex="true" tool="3" flavor="0">
+      </item>
+      <item path="gcheatlist.c" ex="true" tool="0" flavor="0">
+      </item>
+      <item path="gcheatlist.h" ex="true" tool="3" flavor="0">
+      </item>
+      <item path="gclipboard.h" ex="true" tool="3" flavor="0">
+      </item>
+      <item path="geelog.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="hexeditor.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="mips.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="module.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="optionspanel.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="panelconfig.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="searchengine.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="searchpanel.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="segmentmap.h" ex="true" tool="3" flavor="0">
+      </item>
+      <item path="segmentpanel.h" ex="true" tool="3" flavor="0">
+      </item>
+      <item path="textcolumn.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="togglecolumn.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_PSP_FW_VERSION=150</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="watchpanel.h" ex="true" tool="3" flavor="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

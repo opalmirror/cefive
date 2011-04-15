@@ -48,7 +48,19 @@ extern "C" {
         AppletConfig rAppletConfig;
     }CEFiveConfig;
 
+    /* Copy the specified CEFiveConfig struct to a destination CEFiveConfig struct.
+     * 
+     * Parameters:
+     *   prDest     Pointer to a CEFiveConfig struct to act as the destination.
+     *   prSrc      Pointer to a CEFiveConfig struct to act as the source.
+     * 
+     * Returns:
+     *   CEFIVECONFIG_NULLPTR is returned if either parameter is NULL.
+     *   CEFIVECONFIG_FAILURE is returned if the structure failed to copy.
+     *   CEFIVECONFIG_SUCCESS is returned if the structure was copied.
+     */
     int cefiveconfig_copy(CEFiveConfig* prDest, CEFiveConfig* prSrc);
+
     AppletConfig* cefiveconfig_get_appletconfig(CEFiveConfig* prConfig);
     int cefiveconfig_get_cheatfilename(char* sDest, CEFiveConfig* prConfig);
     ColorConfig* cefiveconfig_get_cursorcolor(CEFiveConfig* prConfig);
