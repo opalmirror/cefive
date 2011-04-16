@@ -548,6 +548,12 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     prInfo->module_count = 0;
 }
 
+
+/* Redraw the cefive User Interface screen.
+ * 
+ * Parameters:
+ *   prUi       Pointer to a CEFiveUi struct containing the User Interface.
+ */
 void cefiveuiRedraw(CEFiveUi *prUi) {
     CEFiveConfig* prCfg = NULL;
     ColorConfig* prColor = NULL;
@@ -575,6 +581,16 @@ void cefiveuiRedraw(CEFiveUi *prUi) {
     prUi->drawn = 1;
 }
 
+/* Update the current controller data, calling the button callback function
+ * manually to simulate a key repeat.
+ * 
+ * Parameters:
+ *   prUi       Pointer to a CEFiveUi struct containing the User Interface.
+ * 
+ * Returns:
+ *   CEFIVEUI_NULLPTR is returned if the CEFiveUi pointer is NULL.
+ *   CEFIVEUI_SUCCESS is returned on success.
+ */
 int cefiveui_update_controls(CEFiveUi* prUi) {
     static unsigned int last = 0;
     static int rpt = 0;
