@@ -1137,41 +1137,63 @@ static void handleScreenshot() {
     }
 }
 
+/* Pause the game if configured to do so, stop the game from receiving button
+ * input, then swap the vram for the debug frame buffer, and initialize the 
+ * screen.
+ */
 static void showInterface() {
+    GeeLog* prLog = &krLog;
     CEFiveUi* prUi = &krUi;
     CEFiveConfig* prConfig = &krConfig;
 
     if (prConfig->pause_during_ui == 1) {
+        geelog_log(prLog, LOG_DEBUG, "showInterface: Pausing Game.");
         gamePause(thid);
     }
+    
+    geelog_log(prLog, LOG_DEBUG, "showInterface: Blocking input from Game.");
     //Stop the game from receiving input (USER mode input block)
     sceCtrlSetButtonMasks(0xFFFF, 1); // Mask lower 16bits
     sceCtrlSetButtonMasks(0x10000, 2); // Always return HOME key
 
+    geelog_log(prLog, LOG_DEBUG, "showInterface: Initializing frame buffer.");
     //Setup a custom VRAM
     sceDisplaySetFrameBufferInternal(0, prUi->vram, 512, 0, 1);
     pspDebugScreenInitEx(prUi->vram, 0, 0);
     pspDebugScreenSetMaxX(69);
     pspDebugScreenSetMaxY(34);
     prUi->running = 1;
+    geelog_log(prLog, LOG_DEBUG, 
+            "showInterface: Setting Run State to UI Showing.");
     krRunState = CES_UIShowing;
 }
 
+
+/* Hide the Cheat Engine of Five interface, return to the game screen, return
+ * input to the game, attempt to save the configuration.
+ */
 static void hideInterface() {
+    GeeLog* prLog = &krLog;
     CEFiveConfig* prConfig = &krConfig;
     
+    geelog_log(prLog, LOG_DEBUG, "hideInterface: Clearing Interface.");
     pspDebugScreenSetBackColor((u32)0x00000000);
     pspDebugScreenClear();
+    
+    geelog_log(prLog, LOG_DEBUG, "hideInterface: Returning frame buffer.");
     //Return the standard VRAM
     sceDisplaySetFrameBufferInternal(0, 0, 512, 0, 1);
 
+    geelog_log(prLog, LOG_DEBUG, "hideInterface: Clearing input mask.");
     //Allow the game to receive input
     sceCtrlSetButtonMasks(0x10000, 0); // Unset HOME key
     sceCtrlSetButtonMasks(0xFFFF, 0); // Unset mask
     
+    geelog_log(prLog, LOG_DEBUG, "hideInterface: Saving configuration.");
     /* Try to save the current CEFiveConfig. */
     cefiveconfig_save(prConfig, "ms0:/seplugins/CEFive.cdf");
     krRunState = CES_Running;
+    geelog_log(prLog, LOG_DEBUG, "hideInterface: Resuming Game.");
     gameResume(thid);
 }
 
@@ -1293,6 +1315,8 @@ static void start() {
     geelog_log(prLog, LOG_DEBUG, "start: started.");
 }
 
+/* Main thread of cefive.
+ */
 int mainThread() {
     CEFiveUi* prUi = &krUi;
     SearchEngine* prSearch = &krSearchEngine;
@@ -1325,10 +1349,14 @@ int mainThread() {
             showInterface();
             while (prUi->running == 1) {
                 if (prUi->vram == NULL) {
+                    geelog_log(prLog, LOG_DEBUG, 
+                         "mainThread: Invalid VRAM Pointer, shutting down UI.");
                     prUi->running = 0;
                     continue;
                 }
                 if (krRunState == CES_UIRequest) {
+                    geelog_log(prLog, LOG_DEBUG,
+                            "mainThread: UI Requested, Showing Interface.");
                     showInterface();
                 }
                 cefiveui_update_controls(prUi);
