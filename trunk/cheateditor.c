@@ -1,5 +1,5 @@
 /* cheateditor.c
- *   Cheat Editor for NitePr G5
+ *   Cheat Editor for Cheat Engine of Five
  * Author:
  *   Sir Gee of Five
  */
@@ -15,6 +15,21 @@
 #include "cefiveconfig.h"
 #include "colorconfig.h"
 
+static void drawBlankRow(CheatEditor *);
+static void drawBlockRow(CheatEditor *, Block *);
+static void drawBlockTable(CheatEditor *, Cheat *);
+static void drawCursorRow(CheatEditor *);
+static Block* getSelectedBlock(CheatEditor *);
+static Cheat* getSelectedCheat(CheatEditor *);
+static int getSelectedIndex(CheatEditor *);
+
+
+/* Called when the Cross Button is pressed within the Cheat Editor.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the CheatEditor
+ *              panel.
+ */
 void cheateditorCrossButton(CheatEditor *prPanel) {
     Block *prBlock = NULL;
     if (prPanel == NULL) {
@@ -48,6 +63,13 @@ void cheateditorCrossButton(CheatEditor *prPanel) {
     prPanel->dirty = 1;
 }
 
+
+/* Move the cursor down one row if possible within the Cheat Editor.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the CheatEditor
+ *              panel.
+ */
 void cheateditorCursorDown(CheatEditor *prPanel) {
     Cheat *prCheat;
     int y = 0;
@@ -68,6 +90,13 @@ void cheateditorCursorDown(CheatEditor *prPanel) {
     prPanel->dirty = 1;
 }
 
+
+/* Move the cursor left one column if possible within the Cheat Editor.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the CheatEditor
+ *              panel.
+ */
 void cheateditorCursorLeft(CheatEditor *prPanel) {
     int x = 0;
     if (prPanel == NULL) {
@@ -81,6 +110,13 @@ void cheateditorCursorLeft(CheatEditor *prPanel) {
     prPanel->dirty = 1;
 }
 
+
+/* Move the cursor right one column if possible within the Cheat Editor.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the CheatEditor
+ *              panel.
+ */
 void cheateditorCursorRight(CheatEditor *prPanel) {
     int x = 0;
     if (prPanel == NULL) {
@@ -94,6 +130,13 @@ void cheateditorCursorRight(CheatEditor *prPanel) {
     prPanel->dirty = 1;
 }
 
+
+/* Move the cursor up one row if possible within the Cheat Editor.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the CheatEditor
+ *              panel.
+ */
 void cheateditorCursorUp(CheatEditor *prPanel) {
     int y = 0;
     if (prPanel == NULL) {
@@ -109,6 +152,13 @@ void cheateditorCursorUp(CheatEditor *prPanel) {
     prPanel->dirty = 1;
 }
 
+
+/* Called when the D-Pad Down is pressed.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the CheatEditor
+ *              panel.
+ */
 void cheateditorDpadDown(CheatEditor *prPanel) {
     if (prPanel == NULL) {
         return;
@@ -126,6 +176,13 @@ void cheateditorDpadDown(CheatEditor *prPanel) {
     prPanel->dirty = 1;
 }
 
+
+/* Called when the D-Pad Left is pressed.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the CheatEditor
+ *              panel.
+ */
 void cheateditorDpadLeft(CheatEditor *prPanel) {
     if (prPanel == NULL) {
         return;
@@ -143,6 +200,13 @@ void cheateditorDpadLeft(CheatEditor *prPanel) {
     prPanel->dirty = 1;
 }
 
+
+/* Called when the D-Pad Right is pressed.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the CheatEditor
+ *              panel.
+ */
 void cheateditorDpadRight(CheatEditor *prPanel) {
     if (prPanel == NULL) {
         return;
@@ -160,6 +224,13 @@ void cheateditorDpadRight(CheatEditor *prPanel) {
     prPanel->dirty = 1;
 }
 
+
+/* Called when the D-Pad Up is pressed.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the CheatEditor
+ *              panel.
+ */
 void cheateditorDpadUp(CheatEditor *prPanel) {
     if (prPanel == NULL) {
         return;
@@ -177,6 +248,15 @@ void cheateditorDpadUp(CheatEditor *prPanel) {
     prPanel->dirty = 1;
 }
 
+
+/* Initialize a Cheat Editor, assigning the specified Cheat array, and the
+ * specified Block array.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct to initialize.
+ *   parCheat   Pointer to the first element of a Cheat array.
+ *   parBlock   Pointer to the first element of a Block array.
+ */
 void cheateditorInit(CheatEditor *prPanel, Cheat *parCheat, 
         Block *parBlock) {
     if (prPanel == NULL) {
@@ -203,6 +283,13 @@ void cheateditorInit(CheatEditor *prPanel, Cheat *parCheat,
     prPanel->dirty = 1;
 }
 
+
+/* Redraw a Cheat Editor Panel.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the Cheat Editor
+ *              Panel to redraw.
+ */
 void cheateditorRedraw(CheatEditor *prPanel) {
     CEFiveConfig* prCfg = NULL;
     ColorConfig* prColor = NULL;
@@ -230,6 +317,13 @@ void cheateditorRedraw(CheatEditor *prPanel) {
     prPanel->dirty = 0;
 }
 
+
+/* Scroll the specified Cheat Editor Panel down by one row if possible.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the Cheat Editor
+ *              Panel to scroll.
+ */
 void cheateditorScrollDown(CheatEditor *prPanel) {
     Cheat *prCheat = NULL;
     if (prPanel == NULL) {
@@ -248,6 +342,13 @@ void cheateditorScrollDown(CheatEditor *prPanel) {
     prPanel->table_y++;
 }
 
+
+/* Scroll the specified Cheat Editor Panel up by one row if possible.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the Cheat Editor
+ *              Panel to scroll.
+ */
 void cheateditorScrollUp(CheatEditor *prPanel) {
     if (prPanel == NULL) {
         return;
@@ -258,6 +359,14 @@ void cheateditorScrollUp(CheatEditor *prPanel) {
     prPanel->table_y--;
 }
 
+
+/* Select the specified Cheat within a CheatEditor.
+ * 
+ * Parameters:
+ *   prPanel    Pointer to a CheatEditor struct containing the Cheat Editor
+ *              Panel to select from.
+ *   index      Integer index specifying which cheat (0-based) to select.
+ */
 void cheateditorSelectCheat(CheatEditor *prPanel, int index) {
     if (prPanel == NULL) {
         return;
