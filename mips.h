@@ -9,6 +9,10 @@
 
 #include <pspkerneltypes.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+    
 #define S 0
 #define T 1
 #define D 2
@@ -74,6 +78,9 @@ static void mipsInALNVPS(char *, unsigned int);
 static void mipsInAND(char *, unsigned int);
 static void mipsInANDI(char *, unsigned int);
 
+#ifdef	__cplusplus
+}
+#endif
 
 #endif
 // vi:cin:et:ts=4 sw=4
