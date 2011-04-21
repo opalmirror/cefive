@@ -1162,6 +1162,7 @@ static void showInterface() {
     pspDebugScreenInitEx(prUi->vram, 0, 0);
     pspDebugScreenSetMaxX(69);
     pspDebugScreenSetMaxY(34);
+    pspDebugScreenClearLineDisable();
     prUi->running = 1;
     geelog_log(prLog, LOG_DEBUG, 
             "showInterface: Setting Run State to UI Showing.");
