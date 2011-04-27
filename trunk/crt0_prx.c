@@ -664,6 +664,7 @@ static void drawTracker() {
 }
 
 void buttonCallback(int curr, int last, void *arg) {
+    GeeLog *prLog = &krLog;
     int cvd = (curr & PSP_CTRL_VOLDOWN);
     int cvu = (curr & PSP_CTRL_VOLUP);
     int cno = (curr & PSP_CTRL_NOTE);
@@ -672,6 +673,8 @@ void buttonCallback(int curr, int last, void *arg) {
     int lno = (last & PSP_CTRL_NOTE);
 
     if (krUi.vram == NULL) {
+        geelog_log(prLog, LOG_WARN, 
+                "buttonCallback: Current VRAM pointer is NULL.");
         return;
     }
 
@@ -679,6 +682,8 @@ void buttonCallback(int curr, int last, void *arg) {
     if (krUi.running == 1) {
         CEFiveUi* prUi = &krUi;
         if (cvd && cvu && (!lvd || !lvu)) {
+            geelog_log(prLog, LOG_DEBUG, 
+                    "buttonCallback: User Interface Requested while visible.");
             prUi->drawn = 0;
             krRunState = CES_UIRequest;
         }
@@ -688,6 +693,8 @@ void buttonCallback(int curr, int last, void *arg) {
 
     /* If the Volume Up and Volume Down keys are being held */
     if (cvd && cvu && (!lvd || !lvu)) {
+        geelog_log(prLog, LOG_DEBUG,
+                "buttonCallback: User Interface Requested.");
         krUi.drawn = 0;
         krRunState = CES_UIRequest;
     }
@@ -696,8 +703,11 @@ void buttonCallback(int curr, int last, void *arg) {
     if (cno && !lno) {
         cheatStatus = !cheatStatus;
         if (krCheatEngine.trigger_active == 0) {
+            geelog_log(prLog, LOG_DEBUG, "buttonCallback: Activating Cheats.");
             cheatengineActivateCheats(&krCheatEngine);
         } else {
+            geelog_log(prLog, LOG_DEBUG, 
+                    "buttonCallback: Deactivating Cheats.");
             cheatengineDeactivateCheats(&krCheatEngine);
         }
         sceKernelDelayThread(500000);
@@ -905,6 +915,8 @@ static void loadCheats() {
             else if (readbuf[0] == '#') //Read in the cheat name
             {
                 if (prEngine->cheat_count >= CHEATENGINE_CHEAT_MAX) {
+                    geelog_log(log, LOG_WARN, 
+                            "loadCheats: Too many cheats for the engine.");
                     break;
                 }
                 prCheat = &(prEngine->cheatlist[prEngine->cheat_count]);
@@ -960,10 +972,16 @@ static void clearSearchHistory() {
 }
 
 static void waitForKernelLibrary() {
+    GeeLog *prLog = &krLog;
+    geelog_log(prLog, LOG_DEBUG, "waitForKernelLibrary: Pausing.");
     //Wait for the kernel to boot
     sceKernelDelayThread(100000);
+    geelog_log(prLog, LOG_DEBUG, 
+            "waitForKernelLibrary: Looking for sceKernelLibrary.");
     while (!sceKernelFindModuleByName("sceKernelLibrary"))
         sceKernelDelayThread(100000);
+    geelog_log(prLog, LOG_DEBUG, 
+            "waitForKernelLibrary: sceKernelLibrary Located, pausing.");
     sceKernelDelayThread(100000);
 }
 
@@ -1250,6 +1268,7 @@ static void start() {
     /* Initialize the CheatEngine */
     krCheatEngine.blocklist = block;
     krCheatEngine.cheatlist = cheat;
+    cheatengineSetLogger(&krCheatEngine, prLog);
 
     geelog_log(prLog, LOG_DEBUG, "start: Initializing CEFiveConfig.");
     cefiveconfig_init(&krConfig);
@@ -1325,7 +1344,7 @@ int mainThread() {
     GameInfo* prInfo = &prUi->gameinfo;
     GeeLog* prLog = &krLog;
 
-    geelog_init(prLog, LOG_ERROR, "ms0:/seplugins/CEFive.log");
+    geelog_init(prLog, LOG_DEBUG, "ms0:/seplugins/CEFive.log");
     geelog_start(prLog);
     
     running = 1;
