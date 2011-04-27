@@ -59,6 +59,7 @@
       <in>geelog.h</in>
       <in>hexeditor.c</in>
       <in>hexeditor.h</in>
+      <in>importpanel.h</in>
       <in>mips.c</in>
       <in>mips.h</in>
       <in>module.c</in>
