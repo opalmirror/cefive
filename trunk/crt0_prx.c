@@ -1218,7 +1218,7 @@ static void hideInterface() {
 
 /** Draw the Loaded Screen
 *
-* @param mode u8 specifying the color mode assigned in waitForVram()
+* @param mode u8 specifying the color mode assigned in waitForVram().
 */
 
 static void drawLoadedScreen(u8 mode) {
