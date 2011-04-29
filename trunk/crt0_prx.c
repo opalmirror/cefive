@@ -1216,13 +1216,16 @@ static void hideInterface() {
     gameResume(thid);
 }
 
-/* param mode -> specified by <static void waitForVram()> 
- * to print info line in correct size */
+/** Draw the Loaded Screen
+*
+* @param mode u8 specifying the color mode assigned in waitForVram()
+*/
+
 static void drawLoadedScreen(u8 mode) {
     u32 text = (u32)0x00000000;
     static int r = 0;
     static int d = 1;
-
+    
     pspDebugScreenSetColorMode(mode);
     pspDebugScreenSetXY(0, 0);
     r += 1 * d;
@@ -1249,7 +1252,7 @@ static void waitForVram() {
     /* variable to hold the pixelFormat of default frame buffer */
     unsigned int a_pixelFormat2 = 0;
     
-    /* revieve the pixel format of the default frame buffer we setted up to print the info line */
+    /* retrieve the pixel format of the default frame buffer we setted up to print the info line */
     sceDisplayGetFrameBuf(&a_address, &a_bufferWidth, &a_pixelFormat2, &a_sync);
 
     sceDisplayGetFrameBufferInternal(0, &a_address, &a_bufferWidth,
