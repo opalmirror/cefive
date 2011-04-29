@@ -1216,15 +1216,13 @@ static void hideInterface() {
     gameResume(thid);
 }
 
-static void drawLoadedScreen() {
-    int mode = 0;
-    int width = 0;
-    int height = 0;
+/* param mode -> specified by <static void waitForVram()> 
+ * to print info line in correct size */
+static void drawLoadedScreen(u8 mode) {
     u32 text = (u32)0x00000000;
     static int r = 0;
     static int d = 1;
 
-    sceDisplayGetMode(&mode, &width, &height);
     pspDebugScreenSetColorMode(mode);
     pspDebugScreenSetXY(0, 0);
     r += 1 * d;
@@ -1247,15 +1245,27 @@ static void waitForVram() {
     unsigned int a_bufferWidth = 0;
     unsigned int a_pixelFormat = 0;
     unsigned int a_sync;
+    
+    /* variable to hold the pixelFormat of default frame buffer */
+    unsigned int a_pixelFormat2 = 0;
+    
+    /* revieve the pixel format of the default frame buffer we setted up to print the info line */
+    sceDisplayGetFrameBuf(&a_address, &a_bufferWidth, &a_pixelFormat2, &a_sync);
 
     sceDisplayGetFrameBufferInternal(0, &a_address, &a_bufferWidth,
             &a_pixelFormat, PSP_DISPLAY_SETBUF_IMMEDIATE);
+       
 
     if (a_address) {
         krUi.vram = (void*) (0xA0000000 | a_address);
-        krStartState = CESS_Finished;
-    } else {
-        drawLoadedScreen();
+        krStartState = CESS_Finished;     
+    }
+        /* apply the correct color mode so the info line will be printed in correct size */
+        else if(a_pixelFormat2 > 2) {
+            drawLoadedScreen(3);
+        }
+    else {
+            drawLoadedScreen(0);
     }
     sceDisplayWaitVblank();
 }
