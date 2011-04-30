@@ -301,23 +301,27 @@ int gameinfoRedraw(GameInfo *prInfo) {
             pspDebugScreenKprintf("Segment %d: 0x%08X (0x%08X)\n",
                     i, prMod->segmentaddr[i], prMod->segmentsize[i]);
         }
+        pspDebugScreenKprintf(".text ends at 0x%08X.\n", prInfo->textEnd);
+        pspDebugScreenKprintf("Library Entry Count: %d, Stub Count: %d\n",
+                prInfo->libEntryCount, prInfo->libStubCount);
+        SceLibraryEntryTable* prEnt = prInfo->prLibTable;
+        pspDebugScreenKprintf(
+                "Exported Library Version: %d.%d, Attributes: 0x%04X\n",
+                prEnt->version[0], prEnt->version[1], prEnt->attribute);
+        pspDebugScreenKprintf(
+                "Exported Variables: %d, Functions: %d, Entry Table: 0x%08X\n",
+                prEnt->vstubcount, prEnt->stubcount, prEnt->entrytable);
+        pspDebugScreenKprintf("Import 0 Address: 0x%08X\n", 
+                prInfo->aprStubTable[0]);
+        pspDebugScreenKprintf("Import 1 Address: 0x%08X\n", 
+                prInfo->aprStubTable[1]);
+        pspDebugScreenKprintf("Import 2 Address: 0x%08X\n", 
+                prInfo->aprStubTable[2]);
+        pspDebugScreenKprintf("Import 3 Address: 0x%08X\n", 
+                prInfo->aprStubTable[3]);
     } else {
         pspDebugScreenKprintf("Could not find SceModule pointer.\n");
     }
-    pspDebugScreenKprintf(".text ends at 0x%08X.\n", prInfo->textEnd);
-    pspDebugScreenKprintf("Library Entry Count: %d, Stub Count: %d\n",
-            prInfo->libEntryCount, prInfo->libStubCount);
-    SceLibraryEntryTable* prEnt = prInfo->prLibTable;
-    pspDebugScreenKprintf(
-            "Exported Library Version: %d.%d, Attributes: 0x%04X\n",
-            prEnt->version[0], prEnt->version[1], prEnt->attribute);
-    pspDebugScreenKprintf(
-            "Exported Variables: %d, Functions: %d, Entry Table: 0x%08X\n",
-            prEnt->vstubcount, prEnt->stubcount, prEnt->entrytable);
-    pspDebugScreenKprintf("Import 0 Address: 0x%08X\n", prInfo->aprStubTable[0]);
-    pspDebugScreenKprintf("Import 1 Address: 0x%08X\n", prInfo->aprStubTable[1]);
-    pspDebugScreenKprintf("Import 2 Address: 0x%08X\n", prInfo->aprStubTable[2]);
-    pspDebugScreenKprintf("Import 3 Address: 0x%08X\n", prInfo->aprStubTable[3]);
     return GAMEINFO_SUCCESS;
 }
 
