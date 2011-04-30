@@ -15,35 +15,60 @@
 #include "appletconfig.h"
 
 typedef struct _CheatPanelConfig {
+    /** Normal Color Settings */
     ColorConfig color;
+    /** Cursor Column Color Settings */
     ColorConfig cursorcolor;
+    /** Cursor Row Color Settings */
     ColorConfig cursorrowcolor;
+    /** Selected Cheat Color Settings */
     ColorConfig selectedcolor;
+    /** Constant Cheat Color Settings */
     ColorConfig constantcolor;
+    /** The number of rows in the Cheat Table. */
     int table_height;
+    /** The starting row of the Cheat Table. */
     int top_row;
-} CheatPanelConfig;
+} 
+/** Cheat Panel Configuration Settings */
+CheatPanelConfig;
 
 typedef struct _CheatPanel {
+    /** Cheat Panel Configuration settings. */
     CheatPanelConfig config;
+    /** Pointer to the Cheat Engine. */
     CheatEngine* prEngine;
+    /** Cheat Panel Applet Configuration settings. */
     AppletConfig* prApCfg;
+    /** Cheat Panel Cursor Position. */
     CursorPos cursor;
+    /** Starting row of the current Page. */
     int page_position;
-} CheatPanel;
+} 
+/** Cheat Panel Applet struct */
+CheatPanel;
 
-void cheatpanelCircleButton(CheatPanel *);
-void cheatpanelCrossButton(CheatPanel *);
-void cheatpanelDpadDown(CheatPanel *);
-void cheatpanelDpadLeft(CheatPanel *);
-void cheatpanelDpadRight(CheatPanel *);
-void cheatpanelDpadUp(CheatPanel *);
-int cheatpanelGetSelectedIndex(CheatPanel *);
-void cheatpanelInit(CheatPanel *, CheatEngine*);
-void cheatpanelRedraw(CheatPanel *);
-void cheatpanelScrollDown(CheatPanel *);
-void cheatpanelScrollUp(CheatPanel *);
-void cheatpanelSquareButton(CheatPanel *);
-void cheatpanelTriangleButton(CheatPanel *);
+/** Called when the Circle button is released in the Cheat Panel Applet.
+ * 
+ * @param prPanel Pointer to a CheatPanel struct representing the Cheat Panel.
+ */
+void cheatpanelCircleButton(CheatPanel* prPanel);
+
+/** Called when the Cross button is released in the Cheat Panel Applet.
+ * 
+ * @param prPanel Pointer to a CheatPanel struct representing the Cheat Panel.
+ */
+void cheatpanelCrossButton(CheatPanel* prPanel);
+void cheatpanelDpadDown(CheatPanel* prPanel);
+void cheatpanelDpadLeft(CheatPanel* prPanel);
+void cheatpanelDpadRight(CheatPanel* prPanel);
+void cheatpanelDpadUp(CheatPanel* prPanel);
+int cheatpanelGetSelectedIndex(CheatPanel* prPanel);
+void cheatpanelInit(CheatPanel* prPanel, CheatEngine* prEngine);
+void cheatpanelRedraw(CheatPanel* prPanel);
+void cheatpanelScrollDown(CheatPanel* prPanel);
+void cheatpanelScrollUp(CheatPanel* prPanel);
+void cheatpanelSquareButton(CheatPanel* prPanel);
+void cheatpanelTriangleButton(CheatPanel* prPanel);
 
 #endif /* _CHEATPANEL_H */
