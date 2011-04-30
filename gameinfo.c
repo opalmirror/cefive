@@ -4,8 +4,207 @@
 #include <stdio.h>
 #include "colorconfig.h"
 #include "appletconfig.h"
+#include "cursorpos.h"
+#include "geelog.h"
 #include "gameinfo.h"
 
+/** Return a pointer to the ColorConfig struct that belongs to the specified
+ * GameInfoConfig.
+ * 
+ * @param prCfg Pointer to a GameInfoConfig struct.
+ * @return Pointer to the ColorConfig struct or NULL.
+ */
+ColorConfig* gameinfoconfig_get_colorconfig(GameInfoConfig* prCfg) {
+    ColorConfig* prColor = NULL;
+    if (prCfg != NULL) {
+        prColor = &prCfg->color;
+    }
+    return prColor;
+}
+
+/** Return a pointer to the CursorPos struct that belongs to the specified
+ * GameInfoConfig.
+ * 
+ * @param prCfg Pointer to a GameInfoConfig struct.
+ * @return Pointer to the CursorPos struct or NULL.
+ */
+CursorPos* gameinfoconfig_get_cursorpos(GameInfoConfig* prCfg) {
+    CursorPos* prPos = NULL;
+    if (prCfg != NULL) {
+        prPos = &prCfg->position;
+    }
+    return prPos;
+}
+
+/** Initialize the specified GameInfoConfig struct.
+ * 
+ * @param prCfg Pointer to the GameInfoConfig struct to initialize.
+ * @return GAMEINFO_NULLPTR is returned if the parameter prCfg is NULL.
+ * GAMEINFO_FAILURE is returned if the GameInfoConfig struct could not be
+ * initialized.  GAMEINFO_SUCCESS is returned if the GameInfoConfig struct
+ * is initialized.
+ */
+int gameinfoconfig_init(GameInfoConfig* prCfg) {
+    ColorConfig *prCc = NULL;
+    CursorPos *prCp = NULL;
+    int r = 0;
+    if (prCfg == NULL) {
+        return GAMEINFO_NULLPTR;
+    }
+    prCc = &prCfg->color;
+    prCp = &prCfg->position;
+    r = colorconfig_init(prCc);
+    if (r != COLORCONFIG_SUCCESS) {
+        return GAMEINFO_FAILURE;
+    }
+    r = cursorpos_init(prCp);
+    if (r != CURSORPOS_SUCCESS) {
+        return GAMEINFO_FAILURE;
+    }
+    return GAMEINFO_SUCCESS;
+}
+
+/** Assign a ColorConfig to the specified GameInfoConfig.
+ * 
+ * @param prCfg Pointer to the GameInfoConfig struct to assign to.
+ * @param prColor Pointer to the ColorConfig struct to assign.
+ * @return GAMEINFO_NULLPTR is returned if either parameter is NULL.  
+ * GAMEINFO_FAILURE is returned if the ColorConfig could not be assigned.
+ * GAMEINFO_SUCCESS is returned if the ColorConfig is assigned.
+ */
+int gameinfoconfig_set_colorconfig(GameInfoConfig* prCfg, ColorConfig* prColor)
+{
+    ColorConfig* prDest = NULL;
+    int r = 0;
+    if (prCfg == NULL || prColor == NULL) {
+        return GAMEINFO_NULLPTR;
+    }
+    prDest = gameinfoconfig_get_colorconfig(prCfg);
+    if (prDest == NULL) {
+        return GAMEINFO_FAILURE;
+    }
+    r = colorconfig_copy(prDest, prColor);
+    if (r != COLORCONFIG_SUCCESS) {
+        return GAMEINFO_FAILURE;
+    }
+    return GAMEINFO_SUCCESS;
+}
+
+/** Assign the current cursor position of a specified GameInfoConfig by
+ * providing an x and y coordinate.
+ * 
+ * @param prCfg Pointer to the GameInfoConfig struct to assign.
+ * @param x int containing the x coordinate to assign.
+ * @param y int containing the y coordinate to assign.
+ * @return GAMEINFO_NULLPTR is returned if the parameter prCfg is NULL.
+ * GAMEINFO_FAILURE is returned if the position could not be assigned.
+ * GAMEINFO_SUCCESS is returned if the position is assigned.
+ */
+int gameinfoconfig_set_cursor(GameInfoConfig* prCfg, int x, int y) {
+    CursorPos* prPos = NULL;
+    if (prCfg == NULL) {
+        return GAMEINFO_NULLPTR;
+    }
+    prPos = gameinfoconfig_get_cursorpos(prCfg);
+    if (prPos == NULL) {
+        return GAMEINFO_FAILURE;
+    }
+    prPos->x = x;
+    prPos->y = y;
+    return GAMEINFO_SUCCESS;
+}
+
+/** Assign a CursorPos to the specified GameInfoConfig
+ * 
+ * @param prCfg Pointer to the GameInfoConfig struct to assign to.
+ * @param prPos Pointer to the CursorPos struct to assign.
+ * @return GAMEINFO_NULLPTR is returned if either parameter is NULL.
+ * GAMEINFO_FAILURE is returned if the CursorPos could not be assigned.
+ * GAMEINFO_SUCCESS is returned if the CursorPos is assigned.
+ */
+int gameinfoconfig_set_cursorpos(GameInfoConfig* prCfg, CursorPos* prPos) {
+    CursorPos* prDest = NULL;
+    int r = 0;
+    
+    if (prCfg == NULL || prPos == NULL) {
+        return GAMEINFO_NULLPTR;
+    }
+    prDest = gameinfoconfig_get_cursorpos(prCfg);
+    if (prDest == NULL) {
+        return GAMEINFO_FAILURE;
+    }
+    r = cursorpos_copy(prDest, prPos);
+    if (r != CURSORPOS_SUCCESS) {
+        return GAMEINFO_FAILURE;
+    }
+    return GAMEINFO_SUCCESS;
+}
+
+/** Return a pointer to the member GameInfoConfig struct of a specified GameInfo
+ * struct.
+ * 
+ * @param prInfo Pointer to a GameInfo struct representing the Game Info.
+ * @return A pointer to a GameInfoConfig struct or NULL.
+ */
+GameInfoConfig* gameinfo_get_config(GameInfo* prInfo) {
+    GameInfoConfig* prCfg = NULL;
+    if (prInfo != NULL) {
+        prCfg = &prInfo->config;
+    }
+    return prCfg;
+}
+
+/** Initialize a GameInfo struct.
+ * 
+ * @param prInfo Pointer to the GameInfo struct to initialize.
+ * @return GAMEINFO_NULLPTR is returned if parameter prInfo is NULL.
+ * GAMEINFO_FAILURE is returned if the GameInfo struct could not be initialized.
+ * GAMEINFO_SUCCESS is returned if the GameInfo struct is initialized.
+ */
+int gameinfo_init(GameInfo *prInfo) {
+    GameInfoConfig* prCfg = NULL;
+    int i = 0;
+    int r = 0;
+    if (prInfo == NULL) {
+        return GAMEINFO_NULLPTR;
+    }
+    gameinfo_log(prInfo, LOG_DEBUG, 
+            "gameinfo_init: Initializing Library Arrays.");
+    for (i = 0; i < GAMEINFO_MAXSTUBCT; i++) {
+        prInfo->aprStubTable[i] = NULL;
+        prInfo->arUID[i] = 0;
+    }
+    prCfg = &prInfo->config;
+    gameinfo_log(prInfo, LOG_DEBUG, 
+            "gameinfo_init: Initializing GameInfoConfig member.");
+    r = gameinfoconfig_init(prCfg);
+    if (r != GAMEINFO_SUCCESS) {
+        gameinfo_log(prInfo, LOG_WARN, 
+                "gameinfo_init: Failed to initialize GameInfoConfig member.");
+        return GAMEINFO_FAILURE;
+    }
+    gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_init: Setting counts to 0.");
+    prInfo->libEntryCount = 0;
+    prInfo->libStubCount = 0;
+    prInfo->loaded = 0;
+    prInfo->module_count = 0;
+    gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_init: Setting pointers to NULL.");
+    prInfo->prApCfg = NULL;
+    prInfo->prLibTable = NULL;
+    prInfo->prModule = NULL;
+    prInfo->sGameId = NULL;
+    prInfo->textEnd = NULL;
+    gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_init: GameInfo initialized.");
+    return GAMEINFO_SUCCESS;
+}
+
+/** Populate a GameInfo struct with values loaded from the current running
+ * sceModule.
+ * 
+ * @param prInfo Pointer to a GameInfo struct representing the Game Info.
+ * @return GAMEINFO_NULLPTR is returned if the parameter prInfo is NULL.
+ * GAMEINFO_SUCCESS is returned if the GameInfo struct is populated.
+ */
 int gameinfo_load(GameInfo *prInfo) {
     SceModule* prModule = NULL;
     SceLibraryEntryTable* prEntTable = NULL;
@@ -16,43 +215,108 @@ int gameinfo_load(GameInfo *prInfo) {
     unsigned int tablesz = 0;
     unsigned int tablep = 0;
     int i = 0;
+    char sMsg[256];
 
     if (prInfo == NULL) {
-        return GAMEINFO_MEMORY;
+        return GAMEINFO_NULLPTR;
     }
     if (prInfo->loaded == 1) {
+        gameinfo_log(prInfo, LOG_DEBUG, 
+                "gameinfo_load: GameInfo already loaded.");
         return;
     }
 
     prInfo->textEnd = 0x09FFFFFF;
+    gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_load: Locating Game Module.");
     prModule = sceKernelFindModuleByAddress(0x08804000);
     if (prModule != NULL) {
+        gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_load: Game Module located.");
         prInfo->prModule = prModule;
+        gameinfo_log(prInfo, LOG_DEBUG, 
+                "gameinfo_load: Locating Library Export Table.");
         prEntTable = (SceLibraryEntryTable*)prModule->ent_top;
         if (prEntTable != NULL) {
+            sprintf(sMsg, "%s: Located Library Export Table at 0x%08X.",
+                    "gameinfo_load", prEntTable);
+            gameinfo_log(prInfo, LOG_DEBUG, sMsg);
             prInfo->prLibTable = prEntTable;
             prInfo->libEntryCount = prModule->ent_size / sizeof(SceLibraryEntryTable);
+            sprintf(sMsg, "%s: %d Libraries Exported",
+                    "gameinfo_load", prInfo->libEntryCount);
+            gameinfo_log(prInfo, LOG_DEBUG, sMsg);
+        } else {
+            gameinfo_log(prInfo, LOG_WARN, 
+                    "gameinfo_load: Failed to locate Library Export Table.");
         }
+        gameinfo_log(prInfo, LOG_DEBUG, 
+                "gameinfo_load: Locating Library Import Table.");
         prStubTable = (SceLibraryStubTable*)prModule->stub_top;
         if (prStubTable != NULL) {
+            sprintf(sMsg, "%s: Located Import Table at 0x%08X.",
+                    "gameinfo_load", prStubTable);
+            gameinfo_log(prInfo, LOG_DEBUG, sMsg);
             tablesz = prModule->stub_size;
+            sprintf(sMsg, "%s: Import Table is %d bytes.",
+                    "gameinfo_load", tablesz);
+            gameinfo_log(prInfo, LOG_DEBUG, sMsg);
             while (tablep < tablesz) {
                 prCur = (SceLibraryStubTable*)(prModule->stub_top + tablep);
                 stubsz = prCur->len * 4;
                 prInfo->aprStubTable[stubct] = prCur;
                 stubct++;
                 tablep += stubsz;
+                sprintf(sMsg, "%s: Added Stub %d at 0x%08X.",
+                        "gameinfo_load", stubct, prCur);
+                gameinfo_log(prInfo, LOG_DEBUG, sMsg);
             }
             prInfo->libStubCount = stubct;
+        } else {
+            gameinfo_log(prInfo, LOG_WARN, 
+                    "gameinfo_load: Unable to locate Library Import Table.");
         }
+        gameinfo_log(prInfo, LOG_DEBUG, 
+                "gameinfo_load: Locating end of .text segment.");
         for (i = 0; i < prInfo->libStubCount; i++) {
             prCur = prInfo->aprStubTable[i];
             if (prCur->stubtable < prInfo->textEnd) {
                 prInfo->textEnd = prCur->stubtable;
             }
         }
+        sprintf(sMsg, "%s: .text ends at 0x%08X.", 
+                "gameinfo_load", prInfo->textEnd);
+        gameinfo_log(prInfo, LOG_DEBUG, sMsg);
+    } else {
+        gameinfo_log(prInfo, LOG_WARN, 
+                "gameinfo_load: Could not locate Game Module.");
     }
     prInfo->loaded = 1;
+    gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_load: Game Info Loaded.");
+    return GAMEINFO_SUCCESS;
+}
+
+/** Add a log statement to the configured GeeLog of a GameInfo.
+ * 
+ * @param prInfo Pointer to a GameInfo struct representing the Game Info.
+ * @param rLevel ELogLevel value specifying the Log Level of the Message.
+ * @param sMsg const char pointer to the message to add.
+ * @return GAMEINFO_NULLPTR is returned if the prInfo parameter is NULL.
+ * GAMEINFO_FAILURE is returned if the statement could not be added.
+ * GAMEINFO_SUCCESS is returned if the statement is added.
+ */
+int gameinfo_log(GameInfo* prInfo, ELogLevel rLevel, const char* sMsg) {
+    GeeLog* prLog = NULL;
+    int r = 0;
+    if (prInfo == NULL) {
+        return GAMEINFO_NULLPTR;
+    }
+    prLog = prInfo->prLog;
+    if (prLog == NULL) {
+        return GAMEINFO_FAILURE;
+    }
+    r = geelog_log(prLog, rLevel, sMsg);
+    if (r != GEELOG_SUCCESS) {
+        return GAMEINFO_FAILURE;
+    }
     return GAMEINFO_SUCCESS;
 }
 
@@ -129,5 +393,55 @@ int gameinfoRedraw(GameInfo *prInfo) {
     pspDebugScreenKprintf("Import 1 Address: 0x%08X\n", prInfo->aprStubTable[1]);
     pspDebugScreenKprintf("Import 2 Address: 0x%08X\n", prInfo->aprStubTable[2]);
     pspDebugScreenKprintf("Import 3 Address: 0x%08X\n", prInfo->aprStubTable[3]);
+    return GAMEINFO_SUCCESS;
+}
+
+/** Assign an AppletConfig to the specified GameInfo.
+ * 
+ * @param prInfo Pointer to a GameInfo struct representing the Game Info.
+ * @param prCfg Pointer to an AppletConfig struct to assign.
+ * @return GAMEINFO_MEMORY is returned if prInfo is NULL.  GAMEINFO_SUCCESS is
+ * returned if the AppletConfig is assigned.
+ */
+int gameinfo_set_appletconfig(GameInfo* prInfo, AppletConfig* prCfg) {
+    if (prInfo == NULL) {
+        return GAMEINFO_MEMORY;
+    }
+    prInfo->prApCfg = prCfg;
+    return GAMEINFO_SUCCESS;
+}
+
+int gameinfo_set_colorconfig(GameInfo* prInfo, ColorConfig* prColor) {
+    GameInfoConfig *prConfig = NULL;
+    if (prInfo == NULL || prColor == NULL) {
+        return GAMEINFO_NULLPTR;
+    }
+    prConfig = gameinfo_get_config(prInfo);
+    return gameinfoconfig_set_colorconfig(prConfig, prColor);
+}
+
+int gameinfo_set_cursor(GameInfo* prInfo, int x, int y) {
+    GameInfoConfig* prConfig = NULL;
+    if (prInfo == NULL) {
+        return GAMEINFO_NULLPTR;
+    }
+    prConfig = gameinfo_get_config(prInfo);
+    return gameinfoconfig_set_cursor(prConfig, x, y);
+}
+
+int gameinfo_set_cursorpos(GameInfo* prInfo, CursorPos* prPos) {
+    GameInfoConfig* prConfig = NULL;
+    if (prInfo == NULL || prPos == NULL) {
+        return GAMEINFO_NULLPTR;
+    }
+    prConfig = gameinfo_get_config(prInfo);
+    return gameinfoconfig_set_cursorpos(prConfig, prPos);
+}
+
+int gameinfo_set_logger(GameInfo* prInfo, GeeLog* prLog) {
+    if (prInfo == NULL) {
+        return GAMEINFO_NULLPTR;
+    }
+    prInfo->prLog = prLog;
     return GAMEINFO_SUCCESS;
 }

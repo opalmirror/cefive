@@ -141,6 +141,8 @@ static void buttonLTriggerUp(CEFiveUi *prUi) {
     if (prUi != NULL) {
         prUi->buttons.ltrigger = 0;
         if (prUi->appletmenu.visible == 1) {
+            cefiveui_log(prUi, LOG_DEBUG, 
+                    "cefiveui buttonLTriggerUp: Hiding Applet Menu.");
             prUi->appletmenu.visible = 0;
             prUi->drawn = 0;
             return;
@@ -148,6 +150,8 @@ static void buttonLTriggerUp(CEFiveUi *prUi) {
         if (prUi->appletmenu.visible == 0) {
             /* Don't pop the applet menu while the Cheat Editor is showing. */
             if (prUi->applet != 1) {
+                cefiveui_log(prUi, LOG_DEBUG,
+                        "cefiveui buttonLTriggerUp: Showing Applet Menu.");
                 prUi->appletmenu.visible = 1;
                 return;
             }
@@ -432,6 +436,7 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     prUi->splash_viewed = 0;
     prUi->prSearchEngine = prSearch;
 
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing CheatPanel.");
     CheatPanel* prCp = &prUi->cheatpanel;
     cheatpanelInit(prCp, prEngine);
     prCp->prApCfg = &prConfig->rAppletConfig;
@@ -443,6 +448,7 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     prUi->cheatpanel.cursor.y = 0;
     prUi->cheatpanel.page_position = 0;
 
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing CheatEditor.");
     CheatEditor *prEd = &prUi->cheateditor;
     cheateditorInit(prEd, prEngine->cheatlist, prEngine->blocklist);
     prEd->prCeConfig = prConfig;
@@ -451,6 +457,7 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     prEd->table_height = 30;
     prEd->top_row = toprow;
     
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing Disassembler.");
     disassemblerInit(&prUi->disassembler);
     Disassembler *prDasm = &prUi->disassembler;
     prDasm->prApCfg = prAppCfg;
@@ -478,11 +485,13 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     prDasm->value_editor.edit_color = prUi->config.editcursor.text;
     prDasm->value_editor.text_color = prUi->config.cursor.text;
 
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing AppletMenu.");
     AppletMenu *prMenu = &prUi->appletmenu;
     prMenu->prApCfg = prAppCfg;
     prMenu->config.top.y = 1;
     prMenu->cursor.y = 0;
 
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing HexEditor.");
     HexEditor *prHex = &prUi->hexeditor;
     prHex->prApCfg = prAppCfg;
     hexeditorInit(prHex);
@@ -514,6 +523,7 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     prHex->address_editor.text_color = prUi->config.cursor.text;
     prHex->address_editor.edit_color = prUi->config.editcursor.text;
 
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing SearchPanel.");
     SearchPanel* prSp = &(prUi->searchpanel);
     prSp->prApCfg = prAppCfg;
     searchpanel_init(prSp, prUi->prSearchEngine);
@@ -525,6 +535,7 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     prSp->config.top.x = 0;
     prSp->config.top.y = 1;
 
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing OptionsPanel.");
     OptionsPanel* prOp = &prUi->optionspanel;
     optionspanel_init(prOp, prUi->prCEConfig);
     prOp->config.color.background = prUi->config.color.background;
@@ -538,14 +549,19 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     prOp->cursor.x = 0;
     prOp->cursor.y = 0;
 
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing GameInfo.");
     GameInfo* prInfo = &prUi->gameinfo;
-    prInfo->prApCfg = prAppCfg;
-    prInfo->config.color.background = prUi->config.color.background;
-    prInfo->config.color.text = prUi->config.color.text;
-    prInfo->config.position.x = 0;
-    prInfo->config.position.y = 1;
-    prInfo->loaded = 0;
-    prInfo->module_count = 0;
+    prColor = &prUi->config.color;
+    prInfo->prLog = prUi->prLog;
+    gameinfo_init(prInfo);
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Assigning AppletConfig.");
+    gameinfo_set_appletconfig(prInfo, prAppCfg);
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Assigning ColorConfig.");
+    gameinfo_set_colorconfig(prInfo, prColor);
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Assigning Cursor Position.");
+    gameinfo_set_cursor(prInfo, 0, 1);
+    
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: UI Initialized.");
 }
 
 
@@ -579,6 +595,27 @@ void cefiveuiRedraw(CEFiveUi *prUi) {
         drawApplet(prUi);
     }
     prUi->drawn = 1;
+}
+
+int cefiveui_log(CEFiveUi* prUi, ELogLevel level, const char* sMsg) {
+    GeeLog* prLog = NULL;
+    if (prUi == NULL) {
+        return CEFIVEUI_NULLPTR;
+    }
+    prLog = prUi->prLog;
+    if (prLog == NULL) {
+        return CEFIVEUI_FAILURE;
+    }
+    geelog_log(prLog, level, sMsg);
+    return CEFIVEUI_SUCCESS;
+}
+
+int cefiveui_set_logger(CEFiveUi* prUi, GeeLog *prLog) {
+    if (prUi == NULL) {
+        return CEFIVEUI_NULLPTR;
+    }
+    prUi->prLog = prLog;
+    return CEFIVEUI_SUCCESS;
 }
 
 /* Update the current controller data, calling the button callback function
@@ -618,6 +655,7 @@ static void closeCheatEditor(CEFiveUi *prUi) {
     if (prUi == NULL) {
         return;
     }
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveui closeCheatEditor: Closing Editor.");
     prUi->applet = 0;
     prUi->drawn = 0;
 }

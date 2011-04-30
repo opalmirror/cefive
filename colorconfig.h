@@ -7,11 +7,11 @@
 #ifndef _COLORCONFIG_H
 #define _COLORCONFIG_H
 
+#include <pspkerneltypes.h>
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-#include <pspkerneltypes.h>
 
 #define COLORCONFIG_SUCCESS     (0)
 #define COLORCONFIG_FAILURE     (-1)
@@ -22,10 +22,17 @@ extern "C" {
 #define COLORCONFIG_TEXT        ((u32)0xFFFFFFFF)
 
 typedef struct _ColorConfig {
-    u32 background;
-    u32 text;
+    u32 background; /** Background Text Color */
+    u32 text; /** Foreground Text Color */
 } ColorConfig;
 
+/** Copy a ColorConfig struct.
+ * 
+ * @param prDest Pointer to the ColorConfig struct to act as destination.
+ * @param prSrc Pointer to the ColorConfig struct to act as source.
+ * @return COLORCONFIG_NULLPTR is returned if either parameter is NULL.
+ * COLORCONFIG_SUCCESS is returned if the ColorConfig struct is copied.
+ */
 int colorconfig_copy(ColorConfig* prDest, ColorConfig* prSrc);
 
 /** Initialize a ColorConfig struct.
