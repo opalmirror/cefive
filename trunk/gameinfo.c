@@ -8,12 +8,6 @@
 #include "geelog.h"
 #include "gameinfo.h"
 
-/** Return a pointer to the ColorConfig struct that belongs to the specified
- * GameInfoConfig.
- * 
- * @param prCfg Pointer to a GameInfoConfig struct.
- * @return Pointer to the ColorConfig struct or NULL.
- */
 ColorConfig* gameinfoconfig_get_colorconfig(GameInfoConfig* prCfg) {
     ColorConfig* prColor = NULL;
     if (prCfg != NULL) {
@@ -22,12 +16,6 @@ ColorConfig* gameinfoconfig_get_colorconfig(GameInfoConfig* prCfg) {
     return prColor;
 }
 
-/** Return a pointer to the CursorPos struct that belongs to the specified
- * GameInfoConfig.
- * 
- * @param prCfg Pointer to a GameInfoConfig struct.
- * @return Pointer to the CursorPos struct or NULL.
- */
 CursorPos* gameinfoconfig_get_cursorpos(GameInfoConfig* prCfg) {
     CursorPos* prPos = NULL;
     if (prCfg != NULL) {
@@ -36,14 +24,6 @@ CursorPos* gameinfoconfig_get_cursorpos(GameInfoConfig* prCfg) {
     return prPos;
 }
 
-/** Initialize the specified GameInfoConfig struct.
- * 
- * @param prCfg Pointer to the GameInfoConfig struct to initialize.
- * @return GAMEINFO_NULLPTR is returned if the parameter prCfg is NULL.
- * GAMEINFO_FAILURE is returned if the GameInfoConfig struct could not be
- * initialized.  GAMEINFO_SUCCESS is returned if the GameInfoConfig struct
- * is initialized.
- */
 int gameinfoconfig_init(GameInfoConfig* prCfg) {
     ColorConfig *prCc = NULL;
     CursorPos *prCp = NULL;
@@ -64,14 +44,6 @@ int gameinfoconfig_init(GameInfoConfig* prCfg) {
     return GAMEINFO_SUCCESS;
 }
 
-/** Assign a ColorConfig to the specified GameInfoConfig.
- * 
- * @param prCfg Pointer to the GameInfoConfig struct to assign to.
- * @param prColor Pointer to the ColorConfig struct to assign.
- * @return GAMEINFO_NULLPTR is returned if either parameter is NULL.  
- * GAMEINFO_FAILURE is returned if the ColorConfig could not be assigned.
- * GAMEINFO_SUCCESS is returned if the ColorConfig is assigned.
- */
 int gameinfoconfig_set_colorconfig(GameInfoConfig* prCfg, ColorConfig* prColor)
 {
     ColorConfig* prDest = NULL;
@@ -90,16 +62,6 @@ int gameinfoconfig_set_colorconfig(GameInfoConfig* prCfg, ColorConfig* prColor)
     return GAMEINFO_SUCCESS;
 }
 
-/** Assign the current cursor position of a specified GameInfoConfig by
- * providing an x and y coordinate.
- * 
- * @param prCfg Pointer to the GameInfoConfig struct to assign.
- * @param x int containing the x coordinate to assign.
- * @param y int containing the y coordinate to assign.
- * @return GAMEINFO_NULLPTR is returned if the parameter prCfg is NULL.
- * GAMEINFO_FAILURE is returned if the position could not be assigned.
- * GAMEINFO_SUCCESS is returned if the position is assigned.
- */
 int gameinfoconfig_set_cursor(GameInfoConfig* prCfg, int x, int y) {
     CursorPos* prPos = NULL;
     if (prCfg == NULL) {
@@ -114,14 +76,6 @@ int gameinfoconfig_set_cursor(GameInfoConfig* prCfg, int x, int y) {
     return GAMEINFO_SUCCESS;
 }
 
-/** Assign a CursorPos to the specified GameInfoConfig
- * 
- * @param prCfg Pointer to the GameInfoConfig struct to assign to.
- * @param prPos Pointer to the CursorPos struct to assign.
- * @return GAMEINFO_NULLPTR is returned if either parameter is NULL.
- * GAMEINFO_FAILURE is returned if the CursorPos could not be assigned.
- * GAMEINFO_SUCCESS is returned if the CursorPos is assigned.
- */
 int gameinfoconfig_set_cursorpos(GameInfoConfig* prCfg, CursorPos* prPos) {
     CursorPos* prDest = NULL;
     int r = 0;
@@ -140,12 +94,6 @@ int gameinfoconfig_set_cursorpos(GameInfoConfig* prCfg, CursorPos* prPos) {
     return GAMEINFO_SUCCESS;
 }
 
-/** Return a pointer to the member GameInfoConfig struct of a specified GameInfo
- * struct.
- * 
- * @param prInfo Pointer to a GameInfo struct representing the Game Info.
- * @return A pointer to a GameInfoConfig struct or NULL.
- */
 GameInfoConfig* gameinfo_get_config(GameInfo* prInfo) {
     GameInfoConfig* prCfg = NULL;
     if (prInfo != NULL) {
@@ -154,13 +102,6 @@ GameInfoConfig* gameinfo_get_config(GameInfo* prInfo) {
     return prCfg;
 }
 
-/** Initialize a GameInfo struct.
- * 
- * @param prInfo Pointer to the GameInfo struct to initialize.
- * @return GAMEINFO_NULLPTR is returned if parameter prInfo is NULL.
- * GAMEINFO_FAILURE is returned if the GameInfo struct could not be initialized.
- * GAMEINFO_SUCCESS is returned if the GameInfo struct is initialized.
- */
 int gameinfo_init(GameInfo *prInfo) {
     GameInfoConfig* prCfg = NULL;
     int i = 0;
@@ -198,13 +139,6 @@ int gameinfo_init(GameInfo *prInfo) {
     return GAMEINFO_SUCCESS;
 }
 
-/** Populate a GameInfo struct with values loaded from the current running
- * sceModule.
- * 
- * @param prInfo Pointer to a GameInfo struct representing the Game Info.
- * @return GAMEINFO_NULLPTR is returned if the parameter prInfo is NULL.
- * GAMEINFO_SUCCESS is returned if the GameInfo struct is populated.
- */
 int gameinfo_load(GameInfo *prInfo) {
     SceModule* prModule = NULL;
     SceLibraryEntryTable* prEntTable = NULL;
@@ -294,15 +228,6 @@ int gameinfo_load(GameInfo *prInfo) {
     return GAMEINFO_SUCCESS;
 }
 
-/** Add a log statement to the configured GeeLog of a GameInfo.
- * 
- * @param prInfo Pointer to a GameInfo struct representing the Game Info.
- * @param rLevel ELogLevel value specifying the Log Level of the Message.
- * @param sMsg const char pointer to the message to add.
- * @return GAMEINFO_NULLPTR is returned if the prInfo parameter is NULL.
- * GAMEINFO_FAILURE is returned if the statement could not be added.
- * GAMEINFO_SUCCESS is returned if the statement is added.
- */
 int gameinfo_log(GameInfo* prInfo, ELogLevel rLevel, const char* sMsg) {
     GeeLog* prLog = NULL;
     int r = 0;
@@ -324,7 +249,7 @@ int gameinfoRedraw(GameInfo *prInfo) {
     AppletConfig* prCfg = NULL;
     ColorConfig* prColor = NULL;
     if (prInfo == NULL) {
-        return GAMEINFO_MEMORY;
+        return GAMEINFO_NULLPTR;
     }
     prCfg = prInfo->prApCfg;
     if (prInfo->loaded == 0) {
@@ -396,13 +321,6 @@ int gameinfoRedraw(GameInfo *prInfo) {
     return GAMEINFO_SUCCESS;
 }
 
-/** Assign an AppletConfig to the specified GameInfo.
- * 
- * @param prInfo Pointer to a GameInfo struct representing the Game Info.
- * @param prCfg Pointer to an AppletConfig struct to assign.
- * @return GAMEINFO_MEMORY is returned if prInfo is NULL.  GAMEINFO_SUCCESS is
- * returned if the AppletConfig is assigned.
- */
 int gameinfo_set_appletconfig(GameInfo* prInfo, AppletConfig* prCfg) {
     if (prInfo == NULL) {
         return GAMEINFO_MEMORY;
