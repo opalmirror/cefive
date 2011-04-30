@@ -27,24 +27,39 @@ extern "C" {
 
 #define GAMEINFO_MAXSTUBCT  64
 
+/** Configuration settings for the Game Info applet. */
 typedef struct _GameInfoConfig {
-    ColorConfig color;
-    CursorPos position;
+    ColorConfig color; /** ColorConfig struct containing color settings. */
+    CursorPos position; /** CursorPos struct containing the cursor position. */
 }GameInfoConfig;
 
 typedef struct _GameInfo {
+    /** Pointer to a GeeLog struct acting as the Logger. */
     GeeLog* prLog;
+    /** Pointer to a GameInfoConfig struct containing the configuration. */
     GameInfoConfig config;
+    /** Pointer to a AppletConfig struct containing Applet configuration. */
     AppletConfig* prApCfg;
+    /** The number of loaded modules. */
     int module_count;
+    /** Whether a GameInfo has been loaded. */
     int loaded;
+    /** An array of SceUID values representing the UIDs of the import stubs. */
     SceUID arUID[GAMEINFO_MAXSTUBCT];
+    /** A Pointer to the SceModule struct representing the GameModule */
     SceModule* prModule;
+    /** Pointer to the SceLibraryEntryTable struct for the Game. */
     SceLibraryEntryTable* prLibTable;
+    /** Array of SceLibraryStubTable pointers representing imported Library 
+     * stubs. */
     SceLibraryStubTable* aprStubTable[GAMEINFO_MAXSTUBCT];
+    /** The number of entries in the export table. */
     int libEntryCount;
+    /** The number of entries in the import table. */
     int libStubCount;
+    /** Pointer to the end address of the .text segment. */
     void* textEnd;
+    /** Pointer to the Game Id of the Game. */
     char* sGameId;
 }GameInfo;
 
@@ -132,12 +147,72 @@ int gameinfo_init(GameInfo* prInfo);
  */
 int gameinfo_load(GameInfo* prInfo);
 
+/** Add a log statement to the configured GeeLog of a GameInfo.
+ * 
+ * @param prInfo Pointer to a GameInfo struct representing the Game Info.
+ * @param rLevel ELogLevel value specifying the Log Level of the Message.
+ * @param sMsg const char pointer to the message to add.
+ * @return GAMEINFO_NULLPTR is returned if the prInfo parameter is NULL.
+ * GAMEINFO_FAILURE is returned if the statement could not be added.
+ * GAMEINFO_SUCCESS is returned if the statement is added.
+ */
 int gameinfo_log(GameInfo* prInfo, ELogLevel rLevel, const char* sMsg);
+
+/** Redraw the Game Info interface screen.
+ * 
+ * @param prInfo Pointer to a GameInfo struct representing the Game Info.
+ * @return GAMEINFO_NULLPTR is returned if the prInfo parameter is NULL.
+ * GAMEINFO_FAILURE is returned if the Game Info screen could not be redrawn.
+ * GAMEINFO_SUCCESS is returned if the Game Info screen is redrawn.
+ */
 int gameinfoRedraw(GameInfo* prInfo);
+
+/** Assign an AppletConfig to the specified GameInfo.
+ * 
+ * @param prInfo Pointer to a GameInfo struct representing the Game Info.
+ * @param prCfg Pointer to an AppletConfig struct to assign.
+ * @return GAMEINFO_NULLPTR is returned if prInfo is NULL.  GAMEINFO_SUCCESS is
+ * returned if the AppletConfig is assigned.
+ */
 int gameinfo_set_appletconfig(GameInfo* prInfo, AppletConfig* prCfg);
+
+/** Assign a ColorConfig to the specified GameInfo.
+ * 
+ * @param prInfo Pointer to a GameInfo struct representing the Game Info.
+ * @param prColor Pointer to the ColorConfig struct to assign.
+ * @return GAMEINFO_NULLPTR is returned if either parameter is NULL.
+ * GAMEINFO_SUCCESS is returned if the ColorConfig is assigned.
+ */
 int gameinfo_set_colorconfig(GameInfo* prInfo, ColorConfig* prColor);
+
+/** Assign the cursor position of a Game Info by specifying the x and y
+ * coordinates.
+ * 
+ * @param prInfo Pointer to a GameInfo struct representing the Game Info.
+ * @param x int containing the cursor column to assign.
+ * @param y int containing the cursor row to assign.
+ * @return GAMEINFO_NULLPTR is returned if the prInfo parameter is NULL.
+ * GAMEINFO_SUCCESS is returned if the cursor position is assigned.
+ */
 int gameinfo_set_cursor(GameInfo* prInfo, int x, int y);
+
+/** Assign a CursorPos to the specified GameInfo.
+ * 
+ * @param prInfo Pointer to a GameInfo struct representing the Game Info.
+ * @param prPos Pointer to the CursorPos struct to assign.
+ * @return GAMEINFO_NULLPTR is returned if either parameter is NULL.
+ * GAMEINFO_SUCCESS is returned if the CursorPos is assigned.
+ */
 int gameinfo_set_cursorpos(GameInfo* prInfo, CursorPos* prPos);
+
+/** Assign a GeeLog to the specified GameInfo.  A GeeLog is assigned to 
+ * facilitate trace logging to a text file.
+ * 
+ * @param prInfo Pointer to a GameInfo struct representing the Game Info.
+ * @param prLog Pointer to the GeeLog struct to assign.
+ * @return GAMEINFO_NULLPTR is returned if the prInfo parameter is NULL.
+ * GAMEINFO_SUCCESS is returned if the GeeLog is assigned.
+ */
 int gameinfo_set_logger(GameInfo* prInfo, GeeLog *prLog);
 
 #ifdef	__cplusplus
