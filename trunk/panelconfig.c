@@ -35,15 +35,6 @@ int panelconfig_copy(PanelConfig* prDest, PanelConfig* prSrc) {
     return PANELCONFIG_SUCCESS;
 }
 
-/* Return a pointer to the member ColorConfig struct that contains the color
- * configuration for the Cursor Color.
- * 
- * Parameters:
- *   prCfg      Pointer to a PanelConfig struct holding the Panel Configuration.
- * 
- * Returns:
- *   Pointer to a ColorConfig struct.
- */
 ColorConfig* panelconfig_get_cursorcolor(PanelConfig* prCfg) {
     ColorConfig* prColor = NULL;
     if (prCfg != NULL) {
