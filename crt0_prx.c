@@ -1,3 +1,9 @@
+/* Cheat Engine of Five
+ * Authors:
+ * Sir Gee of Five
+ * PSP_Lord
+ */
+
 //Crt0_prx
 //Includes
 //#define _PSP_FW_VERSION 150
@@ -1361,7 +1367,7 @@ int mainThread() {
     GameInfo* prInfo = &prUi->gameinfo;
     GeeLog* prLog = &krLog;
 
-    geelog_init(prLog, LOG_ERROR, "ms0:/seplugins/CEFive.log");
+    geelog_init(prLog, LOG_DEBUG, "ms0:/seplugins/CEFive.log");
     geelog_start(prLog);
     
     running = 1;
