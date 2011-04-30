@@ -104,6 +104,10 @@ void cefiveuiInit(CEFiveUi *prUi, CheatEngine *prEngine,
  */
 void cefiveuiRedraw(CEFiveUi *prUi);
 
+int cefiveui_log(CEFiveUi* prUi, ELogLevel level, const char* sMsg);
+
+int cefiveui_set_logger(CEFiveUi* prUi, GeeLog *prLog);
+
 int cefiveui_update_controls(CEFiveUi* prUi);
 
 #endif /* _CEFIVEUI_H */

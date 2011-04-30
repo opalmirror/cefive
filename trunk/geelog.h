@@ -31,6 +31,7 @@ extern "C" {
         char sLogFile[GEELOG_PATH_MAX];
         ELogLevel rLevel;
         SceUID rFd;
+        int initialized;
     }GeeLog;
 
     /* geelog_init

@@ -10,9 +10,13 @@ int geelog_init(GeeLog* prLog, ELogLevel rLevel, const char* sFile) {
     if (prLog == NULL) {
         return GEELOG_NULLPTR;
     }
+    if (prLog->initialized == 1) {
+        return GEELOG_SUCCESS;
+    }
     prLog->rFd = -1;
     prLog->rLevel = rLevel;
     strncpy(prLog->sLogFile, sFile, GEELOG_PATH_MAX);
+    prLog->initialized = 1;
     return GEELOG_SUCCESS;
 }
 

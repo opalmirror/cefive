@@ -1218,9 +1218,8 @@ static void hideInterface() {
 
 /** Draw the Loaded Screen
 *
-* @param mode u8 specifying the color mode assigned in waitForVram().
+* @param mode u8 specifying the color mode assigned in waitForVram()
 */
-
 static void drawLoadedScreen(u8 mode) {
     u32 text = (u32)0x00000000;
     static int r = 0;
@@ -1242,6 +1241,10 @@ static void drawLoadedScreen(u8 mode) {
     pspDebugScreenPuts("Cheat Engine of Five -- Press HOME Twice");
 }
 
+/** Wait for Video RAM to be available.  Display a message over the default
+ * active FrameBuffer prompting the user to press the HOME button twice.
+ * 
+ */
 static void waitForVram() {
     //Has the HOME button been pressed?
     unsigned int a_address = 0;
@@ -1305,9 +1308,10 @@ static void start() {
 
     geelog_log(prLog, LOG_DEBUG, "start: Initializing UI.");
     /* Initialize the UI */
-    krUi.prCEConfig = &krConfig;
-    cefiveuiInit(&krUi, &krCheatEngine, &krSearchEngine);
-    krUi.prLog = &krLog;
+    CEFiveUi* prUi = &krUi;
+    prUi->prLog = prLog;
+    prUi->prCEConfig = &krConfig;
+    cefiveuiInit(prUi, &krCheatEngine, &krSearchEngine);
     krRunState = CES_Starting;
     krStartState = CESS_WaitKernelLib;
 
