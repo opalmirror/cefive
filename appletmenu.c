@@ -4,15 +4,9 @@
 #include "colorconfig.h"
 #include "appletmenu.h"
 
-void appletmenuCircleButton(AppletMenu* prMenu) {
-    if (prMenu == NULL) {
-        return;
-    }
-    if (prMenu->visible == 0) {
-        return;
-    }
-    prMenu->visible = 0;
-}
+ void appletmenuCircleButton(AppletMenu* prMenu) {
+     
+} 
 
 void appletmenuCrossButton(AppletMenu *prMenu) {
     if (prMenu == NULL) {
@@ -24,25 +18,27 @@ void appletmenuCrossButton(AppletMenu *prMenu) {
     prMenu->visible = 0;
 }
 
+/* handles down scrolling in applet menu */
 void appletmenuCursorDown(AppletMenu *prMenu) {
     int y;
     if (prMenu != NULL) {
         y = prMenu->cursor.y;
         y++;
         if (y > 5) {
-            y = 5;
+            y = 0;
         }
         prMenu->cursor.y = y;
     }
 }
 
+/* handles up scrolling in applet menu */
 void appletmenuCursorUp(AppletMenu *prMenu) {
     int y;
     if (prMenu != NULL) {
         y = prMenu->cursor.y;
         y--;
         if (y < 0) {
-            y = 0;
+            y = 5;
         }
         prMenu->cursor.y = y;
     }
