@@ -306,7 +306,7 @@ void disassemblerRedraw(Disassembler *prPanel) {
         return;
     }
     prApCfg = prPanel->prApCfg;
-    prColor = &prApCfg->rPanel.rColor;
+    prColor = appletconfig_get_panelcolor(prApCfg);
 
     if (prPanel->dirty == 1) {
         pspDebugScreenSetBackColor(prColor->background);
@@ -434,6 +434,7 @@ static void drawAddressColumn(Disassembler *prPanel, int iRow) {
     AppletConfig* prApCfg = NULL;
     ColorConfig* prColor = NULL;
     ColorConfig* prCursor = NULL;
+    ColorConfig* prDest = NULL;
 
     if (prPanel == NULL) {
         return;
@@ -445,12 +446,11 @@ static void drawAddressColumn(Disassembler *prPanel, int iRow) {
     AddressColumn* prAddr = &(prPanel->rRow.rAddress);
     addresscolumn_setvalue(prAddr, vaddr);
     prColor = &prPanel->config.address_color;
-    prCursor = &prApCfg->rPanel.rCursor;
-    prAddr->color.background = prColor->background;
-    prAddr->color.text = prColor->text;
+    prCursor = appletconfig_get_cursorcolor(prApCfg);
+    prDest = addresscolumn_get_displaycolor(prAddr);
+    colorconfig_copy(prDest, prColor);
     if (iRow == prPanel->cursor.y) {
-        prAddr->color.background = prCursor->background;
-        prAddr->color.text = prCursor->text;
+        colorconfig_copy(prDest, prCursor);
     }
     addresscolumn_redraw(prAddr);
 }
@@ -473,7 +473,7 @@ static void drawAssemblyColumn(Disassembler *prPanel, int iRow) {
     sprintf(disp, "%-43s", buf);
     u32 bg = prPanel->config.code_color.background;
     u32 fg = prPanel->config.code_color.text;
-    prCursor = &prApCfg->rPanel.rCursor;
+    prCursor = appletconfig_get_cursorcolor(prApCfg);
     if (iRow == prPanel->cursor.y) {
         bg = prCursor->background;
         fg = prCursor->text;
@@ -484,6 +484,7 @@ static void drawAssemblyColumn(Disassembler *prPanel, int iRow) {
 }
 
 static void drawCursor(Disassembler *prPanel) {
+    DwordEditor* prEditor = NULL;
     int iRow = 0;
     int iCol = 0;
     int tt = 0;
@@ -499,18 +500,20 @@ static void drawCursor(Disassembler *prPanel) {
     SceUInt32 *pVal = (SceUInt32 *)(prPanel->offset + (iRow * 4));
     tt = prPanel->config.tablepos.y;
     if (iCol == 0) {
+        prEditor = &prPanel->address_editor;
         pspDebugScreenSetXY(0, tt + iRow);
         if (prPanel->editing == 0) {
-            prPanel->address_editor.value = vaddr;
+            prEditor->value = vaddr;
         }
-        dwordeditorRedraw(&prPanel->address_editor);
+        dwordeditorRedraw(prEditor);
     }
     if (iCol == 1) {
+        prEditor = &prPanel->value_editor;
         pspDebugScreenSetXY(11, tt + iRow);
         if (prPanel->editing == 0) {
-            prPanel->value_editor.value = *pVal;
+            prEditor->value = *pVal;
         }
-        dwordeditorRedraw(&prPanel->value_editor);
+        dwordeditorRedraw(prEditor);
     }
     prPanel->cursordirty = 0;
 }

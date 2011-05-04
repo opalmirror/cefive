@@ -37,6 +37,12 @@
       <in>crt0_prx.h</in>
       <in>cursorpos.c</in>
       <in>cursorpos.h</in>
+      <in>dasmconfig.c</in>
+      <in>dasmconfig.h</in>
+      <in>dasmrow.c</in>
+      <in>dasmrow.h</in>
+      <in>dasmtable.c</in>
+      <in>dasmtable.h</in>
       <in>dimension.c</in>
       <in>dimension.h</in>
       <in>disassembler.c</in>
@@ -55,6 +61,8 @@
       <in>gcheatlist.c</in>
       <in>gcheatlist.h</in>
       <in>gclipboard.h</in>
+      <in>gdasm.c</in>
+      <in>gdasm.h</in>
       <in>geelog.c</in>
       <in>geelog.h</in>
       <in>hexeditor.c</in>
