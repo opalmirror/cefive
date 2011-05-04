@@ -54,10 +54,11 @@ static void buttonCircleUp(CEFiveUi *prUi) {
                 return;
             }
         }
-        if (prUi->appletmenu.visible == 1) {
+      if (prUi->appletmenu.visible == 1) {
             appletmenuCircleButton(&prUi->appletmenu);
             return;
-        }
+        } 
+        prUi->drawn = 0;
         prUi->running = 0;
     }
 }
@@ -137,9 +138,11 @@ static void buttonLTriggerDown(CEFiveUi *prUi) {
     }
 }
 
+/* print/close the applet menu */
 static void buttonLTriggerUp(CEFiveUi *prUi) {
     if (prUi != NULL) {
         prUi->buttons.ltrigger = 0;
+        /* close the applet menu */
         if (prUi->appletmenu.visible == 1) {
             cefiveui_log(prUi, LOG_DEBUG, 
                     "cefiveui buttonLTriggerUp: Hiding Applet Menu.");
@@ -147,6 +150,7 @@ static void buttonLTriggerUp(CEFiveUi *prUi) {
             prUi->drawn = 0;
             return;
         }
+        /* draw the applet menu */
         if (prUi->appletmenu.visible == 0) {
             /* Don't pop the applet menu while the Cheat Editor is showing. */
             if (prUi->applet != 1) {
@@ -862,6 +866,9 @@ static void drawApplet(CEFiveUi *prUi) {
             disassemblerRedraw(&prUi->disassembler);
             break;
         case 3:
+            if (prUi->drawn == 0) {
+                prUi->hexeditor.dirty = 1;
+            }
             hexeditorRedraw(&prUi->hexeditor);
             break;
         case 4:
