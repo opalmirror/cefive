@@ -690,8 +690,6 @@ void buttonCallback(int curr, int last, void *arg) {
         if (cvd && cvu && (!lvd || !lvu)) {
             geelog_log(prLog, LOG_DEBUG, 
                     "buttonCallback: User Interface Requested while visible.");
-            prUi->drawn = 0;
-            krRunState = CES_UIRequest;
         }
         cefiveui_buttoncallback(curr, last, prUi);
         return;
