@@ -8,6 +8,7 @@ OBJS =  block.o \
 	asciicolumn.o \
 	bytecolumn.o \
 	textcolumn.o \
+	dasmrow.o \
 	togglecolumn.o \
 	dwordcolumn.o \
 	dwordeditor.o \
@@ -89,6 +90,9 @@ dwordcolumn.o: colorconfig.o dwordcolumn.c dwordcolumn.h
 
 textcolumn.o: colorconfig.o textcolumn.c textcolumn.h
 	$(CC) $(CFLAGS) -c textcolumn.c
+
+dasmrow.o: addresscolumn.o dwordcolumn.o textcolumn.o dasmrow.c dasmrow.h
+	$(CC) $(CFLAGS) -c dasmrow.c
 
 togglecolumn.o: colorconfig.o togglecolumn.c togglecolumn.h
 	$(CC) $(CFLAGS) -c togglecolumn.c

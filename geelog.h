@@ -8,11 +8,11 @@
 #ifndef _GEELOG_H
 #define	_GEELOG_H
 
+#include <psptypes.h>
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-    #include <pspkerneltypes.h>
 
     #define GEELOG_SUCCESS      (0)
     #define GEELOG_FAILURE      (-1)

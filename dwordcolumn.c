@@ -1,104 +1,168 @@
 #include <pspkerneltypes.h>
 #include <pspdebug.h>
+#include "colorconfig.h"
 #include "dwordcolumn.h"
 
 unsigned int dwordcolumn_commit(DwordColumn *prCol) {
     unsigned int value = 0;
     if (prCol != NULL) {
         value = prCol->value;
-        prCol->inedit = 0;
+        dwordcolumn_set_editing(prCol, 0);
     }
     return value;
 }
 
-void dwordcolumn_decrement(DwordColumn* prCol) {
+int dwordcolumn_decrement(DwordColumn* prCol) {
+    unsigned int incr = 0;
     if (prCol == NULL) {
-        return;
+        return DWORDCOLUMN_NULLPTR;
     }
     unsigned int value = prCol->value;
-    int digit = prCol->digit;
-    int incr = prCol->increments[digit];
+    incr = dwordcolumn_get_increment(prCol);
     value -= incr;
     if (value < prCol->min) {
         value = prCol->min;
     }
-    prCol->value = value;
+    dwordcolumn_setvalue(prCol, value);
+    return DWORDCOLUMN_SUCCESS;
 }
 
-void dwordcolumn_edit(DwordColumn* prCol, unsigned int value) {
+int dwordcolumn_edit(DwordColumn* prCol, unsigned int value) {
     if (prCol == NULL) {
-        return;
+        return DWORDCOLUMN_NULLPTR;
     }
-    prCol->value = value;
-    prCol->inedit = 1;
-    prCol->digit = 0;
+    dwordcolumn_setvalue(prCol, value);
+    dwordcolumn_set_editing(prCol, 1);
+    dwordcolumn_set_digit(prCol, 0);
+    return DWORDCOLUMN_SUCCESS;
 }
 
-void dwordcolumn_increment(DwordColumn* prCol) {
+ColorConfig* dwordcolumn_get_digitcolor(DwordColumn* prCol) {
+    ColorConfig* prColor = NULL;
+    if (prCol != NULL) {
+        prColor = &prCol->editdigit;
+    }
+    return prColor;
+}
+
+ColorConfig* dwordcolumn_get_displaycolor(DwordColumn *prCol) {
+    ColorConfig* prColor = NULL;
+    if (prCol != NULL) {
+        prColor = &prCol->color;
+    }
+    return prColor;
+}
+
+ColorConfig* dwordcolumn_get_editcolor(DwordColumn *prCol) {
+    ColorConfig* prColor = NULL;
+    if (prCol != NULL) {
+        prColor = &prCol->edit;
+    }
+    return prColor;
+}
+
+unsigned int dwordcolumn_get_increment(DwordColumn *prCol) {
+    unsigned int incr = 0;
+    int digit = 0;
+    if (prCol != NULL) {
+        digit = prCol->digit;
+        incr = prCol->increments[digit];
+    }
+    return incr;
+}
+
+int dwordcolumn_increment(DwordColumn* prCol) {
+    unsigned int incr = 0;
     if (prCol == NULL) {
-        return;
+        return DWORDCOLUMN_NULLPTR;
     }
     unsigned int value = prCol->value;
-    int digit = prCol->digit;
-    int incr = prCol->increments[digit];
+    incr = dwordcolumn_get_increment(prCol);
     value += incr;
     if (value > prCol->max) {
         value = prCol->max;
     }
-    prCol->value = value;
+    dwordcolumn_setvalue(prCol, value);
+    return DWORDCOLUMN_SUCCESS;
 }
 
-void dwordcolumn_init(DwordColumn* prCol) {
+int dwordcolumn_init(DwordColumn* prCol) {
+    ColorConfig* prColor = NULL;
     if (prCol == NULL) {
-        return;
+        return DWORDCOLUMN_NULLPTR;
     }
-    prCol->color.background = (u32)0xFF000000;
-    prCol->color.text = (u32)0xFFFFFFFF;
-    prCol->edit.background = (u32)0xFFFFFFFF;
-    prCol->edit.text = (u32)0xFF000000;
-    prCol->editdigit.background = (u32)0xFF000000;
-    prCol->editdigit.text = (u32)0xFFFFFFFF;
-    prCol->digit = 0;
-    prCol->increments[0] = 0x10000000;
-    prCol->increments[1] = 0x01000000;
-    prCol->increments[2] = 0x00100000;
-    prCol->increments[3] = 0x00010000;
-    prCol->increments[4] = 0x00001000;
-    prCol->increments[5] = 0x00000100;
-    prCol->increments[6] = 0x00000010;
-    prCol->increments[7] = 0x00000001;
-    prCol->inedit = 0;
-    prCol->max = 0xFFFFFFFF;
-    prCol->min = 0x00000000;
-    prCol->prefix = 1;
-    prCol->value = prCol->min;
+    prColor = dwordcolumn_get_displaycolor(prCol);
+    colorconfig_setcolor(prColor, (u32)0xFF000000, (u32)0xFFFFFFFF);
+    prColor = dwordcolumn_get_editcolor(prCol);
+    colorconfig_setcolor(prColor, (u32)0xFFFFFFFF, (u32)0xFF000000);
+    prColor = dwordcolumn_get_digitcolor(prCol);
+    colorconfig_setcolor(prColor, (u32)0xFF000000, (u32)0xFFFFFFFF);
+    dwordcolumn_set_digit(prCol, 0);
+    dwordcolumn_set_increment(prCol, 0, 0x10000000);
+    dwordcolumn_set_increment(prCol, 1, 0x01000000);
+    dwordcolumn_set_increment(prCol, 2, 0x00100000);
+    dwordcolumn_set_increment(prCol, 3, 0x00010000);
+    dwordcolumn_set_increment(prCol, 4, 0x00001000);
+    dwordcolumn_set_increment(prCol, 5, 0x00000100);
+    dwordcolumn_set_increment(prCol, 6, 0x00000010);
+    dwordcolumn_set_increment(prCol, 7, 0x00000001);
+    dwordcolumn_set_editing(prCol, 0);
+    dwordcolumn_set_max(prCol, 0xFFFFFFFF);
+    dwordcolumn_set_min(prCol, 0x00000000);
+    dwordcolumn_set_prefixed(prCol, 1);
+    dwordcolumn_setvalue(prCol, prCol->min);
+    return DWORDCOLUMN_SUCCESS;
 }
 
-void dwordcolumn_nextdigit(DwordColumn* prCol) {
+int dwordcolumn_invalidate(DwordColumn* prCol) {
     if (prCol == NULL) {
-        return;
+        return DWORDCOLUMN_NULLPTR;
+    }
+    prCol->dirty = 1;
+    return DWORDCOLUMN_SUCCESS;
+}
+
+int dwordcolumn_is_editing(DwordColumn* prCol) {
+    if (prCol == NULL) {
+        return DWORDCOLUMN_NULLPTR;
+    }
+    return (prCol->inedit != 0);
+}
+
+int dwordcolumn_is_prefixed(DwordColumn* prCol) {
+    if (prCol == NULL) {
+        return DWORDCOLUMN_NULLPTR;
+    }
+    return (prCol->prefix != 0);
+}
+
+int dwordcolumn_nextdigit(DwordColumn* prCol) {
+    if (prCol == NULL) {
+        return DWORDCOLUMN_NULLPTR;
     }
     int digit = prCol->digit;
     digit++;
     if (digit > 7) {
         digit = 7;
     }
-    prCol->digit = digit;
+    dwordcolumn_set_digit(prCol, digit);
+    return DWORDCOLUMN_SUCCESS;
 }
 
-void dwordcolumn_prevdigit(DwordColumn* prCol) {
+int dwordcolumn_prevdigit(DwordColumn* prCol) {
     if (prCol == NULL) {
-        return;
+        return DWORDCOLUMN_NULLPTR;
     }
     int digit = prCol->digit;
     digit--;
     if (digit < 0) {
         digit = 0;
     }
-    prCol->digit = digit;
+    dwordcolumn_set_digit(prCol, digit);
+    return DWORDCOLUMN_SUCCESS;
 }
 
-void dwordcolumn_redraw(DwordColumn* prCol) {
+int dwordcolumn_redraw(DwordColumn* prCol) {
     char buf[11];
     int i = 0;
     int pc = 0;
@@ -107,7 +171,10 @@ void dwordcolumn_redraw(DwordColumn* prCol) {
     u32 fg = 0;
 
     if (prCol == NULL) {
-        return;
+        return DWORDCOLUMN_NULLPTR;
+    }
+    if (prCol->dirty == 0) {
+        return DWORDCOLUMN_SUCCESS;
     }
     if (prCol->prefix == 1) {
         sprintf(buf, "0x%08X", prCol->value);
@@ -115,13 +182,14 @@ void dwordcolumn_redraw(DwordColumn* prCol) {
     } else {
         sprintf(buf, "%08X", prCol->value);
     }
-    if (prCol->inedit == 0) {
+    if (!dwordcolumn_is_editing(prCol)) {
         pspDebugScreenSetBackColor(prCol->color.background);
         pspDebugScreenSetTextColor(prCol->color.text);
         pspDebugScreenPuts(buf);
-        return;
+        prCol->dirty = 0;
+        return DWORDCOLUMN_SUCCESS;
     }
-    if (prCol->prefix == 1) {
+    if (dwordcolumn_is_prefixed(prCol)) {
         pspDebugScreenSetBackColor(prCol->edit.background);
         pspDebugScreenSetTextColor(prCol->edit.text);
         pspDebugScreenPuts("0x");
@@ -138,12 +206,78 @@ void dwordcolumn_redraw(DwordColumn* prCol) {
         pspDebugScreenSetTextColor(fg);
         pspDebugScreenKprintf("%c", buf[di]);
     }
+    prCol->dirty = 0;
+    return DWORDCOLUMN_SUCCESS;
+}
+
+int dwordcolumn_set_digit(DwordColumn* prCol, int digit) {
+    if (prCol == NULL) {
+        return DWORDCOLUMN_NULLPTR;
+    }
+    if ((digit < 0) || (digit > 7)) {
+        return DWORDCOLUMN_FAILURE;
+    }
+    prCol->digit = digit;
+    dwordcolumn_invalidate(prCol);
+    return DWORDCOLUMN_SUCCESS;
+}
+
+int dwordcolumn_set_editing(DwordColumn* prCol, int editing) {
+    if (prCol == NULL) {
+        return DWORDCOLUMN_NULLPTR;
+    }
+    prCol->inedit = (editing != 0);
+    dwordcolumn_invalidate(prCol);
+    return DWORDCOLUMN_SUCCESS;
+}
+
+int dwordcolumn_set_increment(DwordColumn* prCol, int digit,
+            unsigned int amount) {
+    if (prCol == NULL) {
+        return DWORDCOLUMN_NULLPTR;
+    }
+    if ((digit < 0) || (digit > 7)) {
+        return DWORDCOLUMN_FAILURE;
+    }
+    prCol->increments[digit] = amount;
+    return DWORDCOLUMN_SUCCESS;
+}
+
+int dwordcolumn_set_max(DwordColumn* prCol, unsigned int max) {
+    if (prCol == NULL) {
+        return DWORDCOLUMN_NULLPTR;
+    }
+    prCol->max = max & 0xFFFFFFFF;
+    return DWORDCOLUMN_SUCCESS;
+}
+
+int dwordcolumn_set_min(DwordColumn* prCol, unsigned int min) {
+    if (prCol == NULL) {
+        return DWORDCOLUMN_NULLPTR;
+    }
+    prCol->min = min & 0xFFFFFFFF;
+    return DWORDCOLUMN_SUCCESS;
+}
+
+int dwordcolumn_set_prefixed(DwordColumn* prCol, int prefixed) {
+    if (prCol == NULL) {
+        return DWORDCOLUMN_NULLPTR;
+    }
+    prCol->prefix = (prefixed != 0);
+    dwordcolumn_invalidate(prCol);
+    return DWORDCOLUMN_SUCCESS;
 }
 
 int dwordcolumn_setvalue(DwordColumn* prCol, unsigned int value) {
     if (prCol == NULL) {
         return DWORDCOLUMN_NULLPTR;
     }
-    prCol->value = value;
+    if ((value < prCol->min) || (value > prCol->max)) {
+        return DWORDCOLUMN_FAILURE;
+    }
+    if (value != prCol->value) {
+        prCol->value = value;
+        dwordcolumn_invalidate(prCol);
+    }
     return DWORDCOLUMN_SUCCESS;
 }
