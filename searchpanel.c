@@ -234,10 +234,10 @@ static int draw_query_panel(SearchPanel* prPanel) {
             sSize = "Byte (8-bits)";
             break;
         case ESZ_Dword:
-            sSize = "Doubleword (32-bits or 4 bytes)";
+            sSize = "Word (32-bits or 4 bytes)";
             break;
         case ESZ_Word:
-            sSize = "Word (16-bits or 2 bytes)";
+            sSize = "Half-Word (16-bits or 2 bytes)";
             break;
     }
     if (row == 1) {
