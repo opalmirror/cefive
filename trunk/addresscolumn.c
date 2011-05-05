@@ -71,12 +71,32 @@ ColorConfig* addresscolumn_get_editcolor(AddressColumn* prCol) {
     return prCfg;
 }
 
+SceUInt32 addresscolumn_get_address(AddressColumn* prCol) {
+    SceUInt32 address = 0;
+    if (prCol != NULL) {
+        address = prCol->value & 0xFFFFFFFF;
+    }
+    return address;
+}
+
 int addresscolumn_getincrement(AddressColumn* prCol) {
     int incr = 0;
     if (prCol != NULL) {
         incr = prCol->increments[prCol->digit];
     }
     return incr;
+}
+
+SceUInt32 addresscolumn_get_vaddr(AddressColumn* prCol) {
+    SceUInt32 vaddr = 0;
+    SceUInt32 addr = 0;
+    SceUInt32 dmask = 0;
+    if (prCol != 0) {
+        addr = addresscolumn_get_address(prCol);
+        dmask = addresscolumn_get_displaymask(prCol);
+        vaddr = addr & dmask;
+    }
+    return vaddr;
 }
 
 int addresscolumn_increment(AddressColumn* prCol) {
@@ -113,11 +133,12 @@ int addresscolumn_init(AddressColumn* prCol) {
     addresscolumn_setincrement(prCol, 4, 0x00001000);
     addresscolumn_setincrement(prCol, 5, 0x00000100);
     addresscolumn_setincrement(prCol, 6, 0x00000010);
-    addresscolumn_setincrement(prCol, 7, 0x00000001);
+    addresscolumn_setincrement(prCol, 7, 0x00000004);
     addresscolumn_setediting(prCol, 0);
     addresscolumn_setmax(prCol, 0x09FFFFFF);
     addresscolumn_setmin(prCol, 0x00000000);
     addresscolumn_setprefixed(prCol, 1);
+    addresscolumn_set_displaymask(prCol, 0xBFFFFFFF);
     addresscolumn_setvalue(prCol, prCol->min);
     addresscolumn_invalidate(prCol);
     return ADDRESSCOLUMN_SUCCESS;

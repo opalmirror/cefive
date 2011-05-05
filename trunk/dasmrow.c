@@ -3,6 +3,7 @@
 #include "addresscolumn.h"
 #include "dwordcolumn.h"
 #include "textcolumn.h"
+#include "mips.h"
 
 SceUInt32 dasmrow_get_address(DasmRow* prRow) {
     AddressColumn* prCol = NULL;
@@ -44,6 +45,18 @@ SceUInt32 dasmrow_get_displaymask(DasmRow* prRow) {
     }
     mask = addresscolumn_get_displaymask(prCol);
     return mask;
+}
+
+SceUInt32 dasmrow_get_vaddr(DasmRow* prRow) {
+    AddressColumn* prCol = NULL;
+    SceUInt32 vaddr = 0;
+    if (prRow != NULL) {
+        prCol = dasmrow_get_addresscolumn(prRow);
+        if (prCol != NULL) {
+            vaddr = addresscolumn_get_vaddr(prCol);
+        }
+    }
+    return vaddr;
 }
 
 SceUInt32 dasmrow_get_value(DasmRow* prRow) {
@@ -234,5 +247,38 @@ int dasmrow_set_value(DasmRow* prRow, SceUInt32 value) {
         return DASMROW_FAILURE;
     }
     
+    return DASMROW_SUCCESS;
+}
+
+int dasmrow_update(DasmRow* prRow) {
+    if (prRow == NULL) {
+        return DASMROW_NULLPTR;
+    }
+    SceUInt32 uiAddress = 0;
+    SceUInt32 uiVaddr = 0;
+    SceUInt32* puiValue = NULL;
+    int r = 0;
+    char sBuf[81];
+    
+    /* Get the Kernel Address from the Row. */
+    uiAddress = dasmrow_get_address(prRow);
+    /* Get the Virtual Address from the Row. */
+    uiVaddr = dasmrow_get_vaddr(prRow);
+    if (uiAddress != 0) {
+        /* Get the value of the indicated address. */
+        puiValue = (SceUInt32 *)uiAddress;
+        /* Set the value of the Row. */
+        r = dasmrow_set_value(prRow, *puiValue);
+        if (r != DASMROW_SUCCESS) {
+            return DASMROW_FAILURE;
+        }
+        /* Decode the value as a MIPS Instruction. */
+        mipsDecode(sBuf, *puiValue, uiVaddr);
+        /* Assign the Assembly Language to the Row. */
+        r = dasmrow_set_assembly(prRow, sBuf);
+        if (r != DASMROW_SUCCESS) {
+            return DASMROW_FAILURE;
+        }
+    }
     return DASMROW_SUCCESS;
 }

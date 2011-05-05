@@ -88,6 +88,14 @@ extern "C" {
      */
     int addresscolumn_edit(AddressColumn* prCol, unsigned int value);
     
+    /** Return the address of an Address Column.
+     * 
+     * @param prCol Pointer to an AddressColumn struct representing the
+     * Address Column.
+     * @return SceUInt32 containing the address or 0 is returned.
+     */
+    SceUInt32 addresscolumn_get_address(AddressColumn* prCol);
+    
     /** Return the increment amount for the currently selected digit.
      * 
      * @param prCol Pointer to an AddressColumn struct representing the
@@ -132,6 +140,15 @@ extern "C" {
      * @return A pointer to a ColorConfig struct or NULL is returned.
      */
     ColorConfig* addresscolumn_get_editcolor(AddressColumn* prCol);
+    
+    /** Return the virtual address of an Address Column.  The virtual address
+     * is the address of the column with the display mask applied.
+     * 
+     * @param prCol Pointer to an AddressColumn struct representing the
+     * Address Column.
+     * @return SceUInt32 containing the virtual address or 0 is returned.
+     */
+    SceUInt32 addresscolumn_get_vaddr(AddressColumn* prCol);
     
     /** Increment the currently selected digit in an Address Column by the
      * configured amount.
