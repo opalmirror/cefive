@@ -78,6 +78,14 @@ extern "C" {
      */
     SceUInt32 dasmrow_get_displaymask(DasmRow* prRow);
     
+    /** Return the virtual address of a Disassembler Row.
+     * 
+     * @param prRow Pointer to a DasmRow struct representing the Disassembler
+     * Row.
+     * @return SceUInt32 containing the virtual address or 0 is returned.
+     */
+    SceUInt32 dasmrow_get_vaddr(DasmRow* prRow);
+    
     /** Return a 32-bit unsigned integer containing the current Value of a
      * Disassembler Row.
      * 
@@ -156,6 +164,16 @@ extern "C" {
      * @return 0 indicates success, less than 0 indicates failure.
      */
     int dasmrow_set_value(DasmRow* prRow, SceUInt32 value);
+    
+    /** Update a Disassembler Row by reading the current value of memory at
+     * the address indicated in the Address Column and update the contents
+     * of the Assembly Row to match the dissasembled instruction.
+     * 
+     * @param prRow Pointer to a DasmRow struct representing the Disassembler
+     * Row.
+     * @return 0 indicates success, less than 0 indicates failure;
+     */
+    int dasmrow_update(DasmRow* prRow);
     
 #ifdef	__cplusplus
 }

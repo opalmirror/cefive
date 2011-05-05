@@ -100,6 +100,16 @@ extern "C" {
      */
     int dasmtable_init(DasmTable* prTable);
 
+    /** Position a Disassembler Table to where the first row of the table
+     * is the specified address.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the 
+     * Disassembler Table.
+     * @param address SceUInt32 containing the address to seek.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int dasmtable_seek(DasmTable* prTable, SceUInt32 address);
+    
     /** Assign the cursor position of a Disassembler Table.
      * 
      * @param prTable Pointer to a DasmTable struct representing the
@@ -119,6 +129,15 @@ extern "C" {
      */
     int dasmtable_set_rows(DasmTable* prTable, int rows);
 
+    /** Return a 32-bit unsigned integer containing the address of the first
+     * row of a Disassembler Table.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @return SceUInt32 containing the page address or 0 is returned.
+     */
+    SceUInt32 dasmtable_tell(DasmTable* prTable);
+    
     /** Refresh the individual cells of a Disassembler Table rereading the
      * values from memory.
      * 
