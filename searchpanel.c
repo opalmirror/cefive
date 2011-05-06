@@ -437,7 +437,7 @@ static int reset(SearchPanel* prPanel) {
     searchengine_reset(prEngine);
     return searchpanel_reset(prPanel);
 }
-/* reposition of the cursor when pressing Circle Button while scrolling through search results */
+/* set cursor back to "Query" by pressing Circle button when scrolling through search results */
 int searchpanel_circle_button(SearchPanel* prPanel) {
     if (prPanel == NULL) {
         return SEARCHPANEL_MEMORY;

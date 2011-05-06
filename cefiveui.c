@@ -54,7 +54,7 @@ static void buttonCircleUp(CEFiveUi *prUi) {
                 return;
             }
         }
-        /* reposition the cursor when scrolling though search results */
+        
         if (prUi->applet == 4) {
             if (searchpanel_circle_button(&prUi->searchpanel) == SEARCHPANEL_SUCCESS) {
                 return;
@@ -105,7 +105,7 @@ static void buttonCrossUp(CEFiveUi *prUi) {
                         prUi->drawn = 0;
                         break;
                     case 4:
-                        prUi->applet = 5; /* Game applet*/
+                        prUi->applet = 5; /* Game info applet*/
                         prUi->drawn = 0;
                         break;
                     case 5:
