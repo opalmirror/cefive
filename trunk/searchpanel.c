@@ -437,7 +437,21 @@ static int reset(SearchPanel* prPanel) {
     searchengine_reset(prEngine);
     return searchpanel_reset(prPanel);
 }
+/* reposition of the cursor when pressing Circle Button while scrolling through search results */
+int searchpanel_circle_button(SearchPanel* prPanel) {
+    if (prPanel == NULL) {
+        return SEARCHPANEL_MEMORY;
+    }
+    if (prPanel->cursor.y > 4) {
+        prPanel->cursor.x = 0;
+        prPanel->cursor.y = 3;
+        return SEARCHPANEL_SUCCESS;
+    }
+    
+    return SEARCHPANEL_FAILURE;
+}
 
+/* Handles the X Button Input in Search Panel */
 int searchpanel_cross_button(SearchPanel* prPanel) {
     int x = 0;
     int y = 0;
@@ -450,14 +464,17 @@ int searchpanel_cross_button(SearchPanel* prPanel) {
     x = prPanel->cursor.x;
     y = prPanel->cursor.y;
 
+    /* Switch the "Mode" */
     if (y == 0) {
         searchpanel_cycle_searchmode(prPanel);
         return SEARCHPANEL_SUCCESS;
     }
+    /* Switch the "Size" */
     if (y == 1) {
         searchpanel_cycle_searchsize(prPanel);
         return SEARCHPANEL_SUCCESS;
     }
+    /* Switch the "Range" */
     if (y == 2) {
         if (searchpanel_is_editing(prPanel) == 0) {
             if (x == 0) {
@@ -481,6 +498,7 @@ int searchpanel_cross_button(SearchPanel* prPanel) {
             searchpanel_set_editing(prPanel, 0);
         }
     }
+    /* Change the "Query" */
     if (y == 3) {
         if (searchpanel_is_editing(prPanel) == 0) {
             dwordcolumn_edit(&prPanel->rQueryCol, prPanel->rQueryCol.value);
@@ -492,10 +510,12 @@ int searchpanel_cross_button(SearchPanel* prPanel) {
             searchpanel_set_editing(prPanel, 0);
         }
     }
+    /* start the searching */
     if (y == 4) {
         if (x == 0) {
             search(prPanel);
         }
+        /* reset previous search results */
         if (x == 1) {
             reset(prPanel);
         }
