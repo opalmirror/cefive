@@ -54,7 +54,14 @@ static void buttonCircleUp(CEFiveUi *prUi) {
                 return;
             }
         }
-      if (prUi->appletmenu.visible == 1) {
+        /* reposition the cursor when scrolling though search results */
+        if (prUi->applet == 4) {
+            if (searchpanel_circle_button(&prUi->searchpanel) == SEARCHPANEL_SUCCESS) {
+                return;
+            }        
+        }
+        
+        if (prUi->appletmenu.visible == 1) {
             appletmenuCircleButton(&prUi->appletmenu);
             return;
         } 
@@ -84,25 +91,25 @@ static void buttonCrossUp(CEFiveUi *prUi) {
                         prUi->drawn = 0;
                         break;
                     case 1:
-                        prUi->applet = 2;
+                        prUi->applet = 2; /* Disassembler applet */
                         prUi->drawn = 0;
                         prUi->disassembler.dirty = 1;
                         break;
                     case 2:
-                        prUi->applet = 3;
+                        prUi->applet = 3; /* Hexeditor applet */
                         prUi->drawn = 0;
                         prUi->hexeditor.dirty = 1;
                         break;
                     case 3:
-                        prUi->applet = 4;
+                        prUi->applet = 4; /* Search Panel applet */
                         prUi->drawn = 0;
                         break;
                     case 4:
-                        prUi->applet = 5;
+                        prUi->applet = 5; /* Game applet*/
                         prUi->drawn = 0;
                         break;
                     case 5:
-                        prUi->applet = 6;
+                        prUi->applet = 6; /* Options applet*/
                         prUi->drawn = 0;
                         break;
                 }
