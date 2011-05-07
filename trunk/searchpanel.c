@@ -437,7 +437,7 @@ static int reset(SearchPanel* prPanel) {
     searchengine_reset(prEngine);
     return searchpanel_reset(prPanel);
 }
-/* set cursor back to "Query" by pressing Circle button when scrolling through search results */
+
 int searchpanel_circle_button(SearchPanel* prPanel) {
     if (prPanel == NULL) {
         return SEARCHPANEL_MEMORY;
@@ -451,7 +451,6 @@ int searchpanel_circle_button(SearchPanel* prPanel) {
     return SEARCHPANEL_FAILURE;
 }
 
-/* Handles the X Button Input in Search Panel */
 int searchpanel_cross_button(SearchPanel* prPanel) {
     int x = 0;
     int y = 0;

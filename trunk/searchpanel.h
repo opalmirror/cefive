@@ -1,6 +1,6 @@
 /* 
  * File:   searchpanel.h
- * Author: Sir Gee of Five
+ * Authors: Sir Gee of Five, PSP_Lord
  *
  * Created on September 22, 2010, 11:04 AM
  */
@@ -57,7 +57,17 @@ typedef struct _SearchPanel {
     int pagepos;
 }SearchPanel;
 
+/** set cursor back to "Query" by pressing Circle button 
+ * when scrolling through search results
+ * 
+ * @param prPanel Pointer to a SearchPanel struct representing 
+ * the result list
+ * @return SEARCHPANEL_MEMORY if the SearchPanel pointer is NULL;
+ *         SEARCHPANEL_SUCCESS if cursor has been set back;
+ *         SEARCHPANEL_FAILURE if cursor has not been set 
+ */
 int searchpanel_circle_button(SearchPanel* prPanel);
+
 int searchpanel_cross_button(SearchPanel* prPanel);
 int searchpanel_cursor_down(SearchPanel* prPanel);
 int searchpanel_cursor_left(SearchPanel* prPanel);
