@@ -12,10 +12,6 @@
 #include "colorconfig.h"
 #include "panelconfig.h"
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 /** Indicates success.*/
 #define APPLETCONFIG_SUCCESS        (0)
 
@@ -30,6 +26,10 @@ extern "C" {
 
 /** Indicates an I/O Error. */
 #define APPLETCONFIG_IOERROR        (-4)
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
     typedef struct _AppletConfig {
         /** Panel Configuration struct */

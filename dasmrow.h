@@ -10,10 +10,6 @@
 
 #include <psptypes.h>
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-    
 #include "addresscolumn.h"
 #include "dwordcolumn.h"
 #include "textcolumn.h"
@@ -30,6 +26,10 @@ extern "C" {
     
 /** Indicates a memory error. */
 #define DASMROW_MEMORY          (-3)
+    
+#ifdef	__cplusplus
+extern "C" {
+#endif
     
     typedef struct _DasmRow {
         /** The Address Column. */

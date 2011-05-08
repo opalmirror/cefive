@@ -11,19 +11,19 @@
 
 #include <pspkerneltypes.h>
 
+#define SEARCHENGINE_SUCCESS        (0)
+#define SEARCHENGINE_FAILURE        (-1)
+#define SEARCHENGINE_MEMORY         (-2)
+#define SEARCHENGINE_NOT_FOUND      (-3)
+#define SEARCHENGINE_BAD_ADDR       (-4)
+
+#define SEARCHENGINE_TEXTLEN        255
+#define SEARCHENGINE_MAXRESULTS     100
+#define SEARCHENGINE_DEFIPC         0x10000
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-    #define SEARCHENGINE_SUCCESS        (0)
-    #define SEARCHENGINE_FAILURE        (-1)
-    #define SEARCHENGINE_MEMORY         (-2)
-    #define SEARCHENGINE_NOT_FOUND      (-3)
-    #define SEARCHENGINE_BAD_ADDR       (-4)
-
-    #define SEARCHENGINE_TEXTLEN        255
-    #define SEARCHENGINE_MAXRESULTS     100
-    #define SEARCHENGINE_DEFIPC         0x10000
 
     typedef enum _ESearchMode {
         ESM_Immediate, ESM_Text, ESM_Byte

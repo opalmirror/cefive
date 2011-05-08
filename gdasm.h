@@ -13,6 +13,8 @@
 #include "geelog.h"
 #include "cursorpos.h"
 #include "colorconfig.h"
+#include "dasmtable.h"
+#include "appletconfig.h"
 
 /** Indicates success. */
 #define GDASM_SUCCESS (0)
@@ -34,8 +36,8 @@ extern "C" {
         DasmConfig rConfig;
         /** Pointer to the GeeLog struct representing the logger. */
         GeeLog* prLog;
-        /** Address of the first line of the Page. */
-        SceUInt32 pageAddress;
+        /** Disassembler Table struct */
+        DasmTable rTable;
         /** Indication that the Disassembler needs redrawing. */
         int dirty;
         /** Cursor Position struct. */
@@ -122,12 +124,21 @@ extern "C" {
      */
     ColorConfig* gdasm_get_panelcolor(Gdasm* prDasm);
     
+    /** Return a pointer to a DasmTable struct representing the Disassembler
+     * Table.
+     * 
+     * @param prDasm Pointer to a Gdasm struct representing the Disassembler.
+     * @return A pointer to a DasmTable struct or NULL is returned.
+     */
+    DasmTable* gdasm_get_table(Gdasm* prDasm);
+    
     /** Initialize a Gdasm struct to use to represent a Disassembler.
      * 
      * @param prDasm Pointer to the Gdasm struct to initialize.
+     * @param prLog Pointer to a GeeLog struct representing a Logger to assign.
      * @return 0 indicates success, less than 0 indicates failure.
      */
-    int gdasm_init(Gdasm* prDasm);
+    int gdasm_init(Gdasm* prDasm, GeeLog* prLog);
     
     /** Indicate that the Disassembler needs to be redrawn.
      * 
@@ -160,6 +171,14 @@ extern "C" {
      * @return 0 indicates success, less than 0 indicates failure.
      */
     int gdasm_seek(Gdasm* prDasm, SceUInt32 address);
+    
+    /** Assign an Applet Configuration to a Disassembler.
+     * 
+     * @param prDasm Pointer to a Gdasm struct representing the Disassembler.
+     * @param prCfg Pointer to the AppletConfig struct to assign.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int gdasm_set_appletconfig(Gdasm* prDasm, AppletConfig* prCfg);
     
     /** Assign a trace logger to a Disassembler.
      * 

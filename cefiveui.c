@@ -423,25 +423,25 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     prUi->prEngine = prEngine;
     prColor = &prUiCfg->color;
     prAppCfg = &prConfig->rAppletConfig;
-    prPanel = &prAppCfg->rPanel;
-    prSrc = &prPanel->rColor;
-    colorconfig_setcolor(prColor, prSrc->background, prSrc->text);
+    prPanel = appletconfig_get_panelconfig(prAppCfg);
+    prSrc = panelconfig_get_panelcolor(prPanel);
+    colorconfig_copy(prColor, prSrc);
 
     prColor = &prUiCfg->cursor;
-    prSrc = &prPanel->rCursor;
-    colorconfig_setcolor(prColor, prSrc->background, prSrc->text);
+    prSrc = panelconfig_get_cursorcolor(prPanel);
+    colorconfig_copy(prColor, prSrc);
 
     prColor = &prUiCfg->editcursor;
-    prSrc = &prPanel->rEdit;
-    colorconfig_setcolor(prColor, prSrc->background, prSrc->text);
+    prSrc = panelconfig_get_editcolor(prPanel);
+    colorconfig_copy(prColor, prSrc);
 
     prColor = &prUiCfg->status;
-    prSrc = &prAppCfg->rStatus;
-    colorconfig_setcolor(prColor, prSrc->background, prSrc->text);
+    prSrc = appletconfig_get_statuscolor(prAppCfg);
+    colorconfig_copy(prColor, prSrc);
 
     prColor = &prUiCfg->titlebar;
-    prSrc = &prAppCfg->rTitlebar;
-    colorconfig_setcolor(prColor, prSrc->background, prSrc->text);
+    prSrc = appletconfig_get_titlecolor(prAppCfg);
+    colorconfig_copy(prColor, prSrc);
 
     prUi->applet = 0;
     prUi->splash_viewed = 0;
@@ -576,11 +576,6 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
 }
 
 
-/* Redraw the cefive User Interface screen.
- * 
- * Parameters:
- *   prUi       Pointer to a CEFiveUi struct containing the User Interface.
- */
 void cefiveuiRedraw(CEFiveUi *prUi) {
     CEFiveConfig* prCfg = NULL;
     ColorConfig* prColor = NULL;
@@ -629,16 +624,6 @@ int cefiveui_set_logger(CEFiveUi* prUi, GeeLog *prLog) {
     return CEFIVEUI_SUCCESS;
 }
 
-/* Update the current controller data, calling the button callback function
- * manually to simulate a key repeat.
- * 
- * Parameters:
- *   prUi       Pointer to a CEFiveUi struct containing the User Interface.
- * 
- * Returns:
- *   CEFIVEUI_NULLPTR is returned if the CEFiveUi pointer is NULL.
- *   CEFIVEUI_SUCCESS is returned on success.
- */
 int cefiveui_update_controls(CEFiveUi* prUi) {
     static unsigned int last = 0;
     static int rpt = 0;
@@ -976,4 +961,3 @@ static void editSelectedCheat(CEFiveUi *prUi) {
     prUi->drawn = 0;
     prUi->cheateditor.dirty = 1;
 }
-

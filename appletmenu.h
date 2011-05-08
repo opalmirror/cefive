@@ -13,26 +13,34 @@
 #include "dimension.h"
 #include "appletconfig.h"
 
-typedef struct _AppletMenuConfig {
-    ColorConfig color;
-    ColorConfig cursor;
-    Dimension size;
-    CursorPos top;
-}AppletMenuConfig;
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
-typedef struct _AppletMenu {
-    AppletMenuConfig config;
-    AppletConfig* prApCfg;
-    CursorPos cursor;
-    int visible;
-}AppletMenu;
+    typedef struct _AppletMenuConfig {
+        ColorConfig color;
+        ColorConfig cursor;
+        Dimension size;
+        CursorPos top;
+    } AppletMenuConfig;
 
-void appletmenuCircleButton(AppletMenu* prMenu);
-void appletmenuCrossButton(AppletMenu *prMenu);
-void appletmenuCursorDown(AppletMenu *prMenu);
-void appletmenuCursorUp(AppletMenu *prMenu);
-int appletmenuGetSelectedIndex(AppletMenu *prMenu);
-void appletmenuRedraw(AppletMenu *prMenu);
+    typedef struct _AppletMenu {
+        AppletMenuConfig config;
+        AppletConfig* prApCfg;
+        CursorPos cursor;
+        int visible;
+    } AppletMenu;
+
+    void appletmenuCircleButton(AppletMenu* prMenu);
+    void appletmenuCrossButton(AppletMenu *prMenu);
+    void appletmenuCursorDown(AppletMenu *prMenu);
+    void appletmenuCursorUp(AppletMenu *prMenu);
+    int appletmenuGetSelectedIndex(AppletMenu *prMenu);
+    void appletmenuRedraw(AppletMenu *prMenu);
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif	/* _APPLETMENU_H */
 

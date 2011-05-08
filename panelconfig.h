@@ -13,10 +13,6 @@
 #include "cursorpos.h"
 #include "dimension.h"
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 /** Indicates success. */
 #define PANELCONFIG_SUCCESS     (0)
 
@@ -32,6 +28,10 @@ extern "C" {
 /** Indicates an I/O Error. */
 #define PANELCONFIG_IOERROR     (-4)
     
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
     typedef struct _PanelConfig {
         /** Normal color configuration. */
         ColorConfig rColor;

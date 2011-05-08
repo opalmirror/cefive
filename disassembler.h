@@ -19,10 +19,6 @@
 #include "geelog.h"
 #include "dasmrow.h"
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 /** Indicates success. */
 #define DISASSEMBLER_SUCCESS    (0)
 
@@ -46,6 +42,10 @@ extern "C" {
 
 /** The number of elements in the Jump Stack. */
 #define DISASSEMBLER_JSLEN      10
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
     typedef struct _DisassemberConfig {
         SceUInt32 base_address;

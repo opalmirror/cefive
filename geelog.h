@@ -10,18 +10,18 @@
 
 #include <psptypes.h>
 
+#define GEELOG_SUCCESS      (0)
+#define GEELOG_FAILURE      (-1)
+#define GEELOG_MEMORY       (-2)
+#define GEELOG_NULLPTR      (-3)
+#define GEELOG_IOERROR      (-4)
+
+#define GEELOG_PATH_MAX     256
+#define GEELOG_LINE_MAX     1024
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-    #define GEELOG_SUCCESS      (0)
-    #define GEELOG_FAILURE      (-1)
-    #define GEELOG_MEMORY       (-2)
-    #define GEELOG_NULLPTR      (-3)
-    #define GEELOG_IOERROR      (-4)
-
-    #define GEELOG_PATH_MAX     256
-    #define GEELOG_LINE_MAX     1024
 
     typedef enum _ELogLevel {
         LOG_NONE, LOG_ERROR, LOG_WARN, LOG_INFO, LOG_DEBUG

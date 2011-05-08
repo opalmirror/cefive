@@ -8,32 +8,32 @@
 #ifndef _OPTIONSPANEL_H
 #define	_OPTIONSPANEL_H
 
+#include "colorconfig.h"
+#include "cursorpos.h"
+#include "dimension.h"
+#include "cefiveconfig.h"
+#include "textcolumn.h"
+#include "togglecolumn.h"
+#include "dwordcolumn.h"
+
+#define OPTIONSPANEL_SUCCESS    (0)
+#define OPTIONSPANEL_FAILURE    (-1)
+#define OPTIONSPANEL_MEMORY     (-2)
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-    #include "colorconfig.h"
-    #include "cursorpos.h"
-    #include "dimension.h"
-    #include "cefiveconfig.h"
-    #include "textcolumn.h"
-    #include "togglecolumn.h"
-    #include "dwordcolumn.h"
-
-    #define OPTIONSPANEL_SUCCESS    (0)
-    #define OPTIONSPANEL_FAILURE    (-1)
-    #define OPTIONSPANEL_MEMORY     (-2)
 
     typedef struct _ColorRow {
         TextColumn rLabel;
         DwordColumn rBackground;
         DwordColumn rText;
-    }ColorRow;
+    } ColorRow;
 
     typedef struct _GamePauseRow {
         TextColumn rLabel;
         ToggleColumn rToggle;
-    }GamePauseRow;
+    } GamePauseRow;
 
     typedef struct _OptionsPanelConfig {
         ColorConfig color;
@@ -63,7 +63,7 @@ extern "C" {
     int optionspanel_dpad_up(OptionsPanel* prPanel);
     int optionspanel_init(OptionsPanel* prPanel, CEFiveConfig* prConfig);
     int optionspanel_redraw(OptionsPanel* prPanel);
-    
+
 #ifdef	__cplusplus
 }
 #endif

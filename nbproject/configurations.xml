@@ -39,6 +39,8 @@
       <in>cursorpos.h</in>
       <in>dasmconfig.c</in>
       <in>dasmconfig.h</in>
+      <in>dasmmodel.c</in>
+      <in>dasmmodel.h</in>
       <in>dasmrow.c</in>
       <in>dasmrow.h</in>
       <in>dasmtable.c</in>
@@ -47,6 +49,8 @@
       <in>dimension.h</in>
       <in>disassembler.c</in>
       <in>disassembler.h</in>
+      <in>dmodelrow.c</in>
+      <in>dmodelrow.h</in>
       <in>dwordcolumn.c</in>
       <in>dwordcolumn.h</in>
       <in>dwordeditor.c</in>
@@ -55,6 +59,7 @@
       <in>float.h</in>
       <in>gameinfo.c</in>
       <in>gameinfo.h</in>
+      <in>gapplet.h</in>
       <in>gcheat.c</in>
       <in>gcheat.h</in>
       <in>gcheatengine.h</in>
@@ -70,6 +75,7 @@
       <in>importpanel.h</in>
       <in>mips.c</in>
       <in>mips.h</in>
+      <in>modcefive.c</in>
       <in>module.c</in>
       <in>module.h</in>
       <in>optionspanel.c</in>

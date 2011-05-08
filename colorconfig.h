@@ -9,34 +9,34 @@
 
 #include <pspkerneltypes.h>
 
+/** Indicates success. */
+#define COLORCONFIG_SUCCESS     (0)
+
+/** Indicates failure. */
+#define COLORCONFIG_FAILURE     (-1)
+
+/** Indicates memory error. */
+#define COLORCONFIG_MEMORY      (-2)
+
+/** Indicates NULL pointer. */
+#define COLORCONFIG_NULLPTR     (-3)
+
+/** Default background color */
+#define COLORCONFIG_BACKGROUND  ((u32)0x00000000)
+
+/** Default foreground color */
+#define COLORCONFIG_TEXT        ((u32)0xFFFFFFFF)
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-    /** Indicates success. */
-#define COLORCONFIG_SUCCESS     (0)
-    
-    /** Indicates failure. */
-#define COLORCONFIG_FAILURE     (-1)
-    
-    /** Indicates memory error. */
-#define COLORCONFIG_MEMORY      (-2)
-    
-    /** Indicates NULL pointer. */
-#define COLORCONFIG_NULLPTR     (-3)
-
-    /** Default background color */
-#define COLORCONFIG_BACKGROUND  ((u32)0x00000000)
-    
-    /** Default foreground color */
-#define COLORCONFIG_TEXT        ((u32)0xFFFFFFFF)
 
     typedef struct _ColorConfig {
         /** Background Text Color */
         u32 background;
         /** Foreground Text Color */
         u32 text;
-    } 
+    }
     /** Color Configuration structure.  Used to specify a background and 
      * foreground color for display.
      */

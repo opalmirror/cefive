@@ -12,11 +12,6 @@
 #include "cefiveconfig.h"
 #include "geelog.h"
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
-
 /** Indicates success. */
 #define CHEATENGINE_SUCCESS     (0)
 
@@ -37,6 +32,11 @@ extern "C" {
 
 /** The maximum number of Block structs in the Block array. */
 #define CHEATENGINE_BLOCK_MAX   8192
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 
     typedef struct _CheatEngine {
         /** Pointer to a GeeLog struct representing the Logger. */
