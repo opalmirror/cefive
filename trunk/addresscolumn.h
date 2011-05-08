@@ -16,10 +16,6 @@
 #include <psptypes.h>
 #include "colorconfig.h"
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-    
 /** Indicates success. */
 #define ADDRESSCOLUMN_SUCCESS 0
 
@@ -29,6 +25,10 @@ extern "C" {
 /** Indicates a NULL pointer. */
 #define ADDRESSCOLUMN_NULLPTR (-2)
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+    
     typedef struct _AddressColumn {
         /** Display Color Configuration */
         ColorConfig     color;

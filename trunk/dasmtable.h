@@ -9,8 +9,10 @@
 #define	DASMTABLE_H
 
 #include <psptypes.h>
-#include "dasmrow.h"
 #include "cursorpos.h"
+#include "dasmmodel.h"
+#include "panelconfig.h"
+#include "colorconfig.h"
 
 /** Indicates success. */
 #define DASMTABLE_SUCCESS (0)
@@ -33,30 +35,77 @@
 /** The maximum number of rows in the Table. */
 #define DASMTABLE_MAXROWS (30)
 
+/** The maximum length of the format string. */
+#define DASMTABLE_FMTLEN (80)
+
+/** The default Row Format */
+#define DASMTABLE_DEFFMT "%10s %8s  %48s"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
     typedef struct _DasmTable {
-        /** An array of DasmRow structs representing the rows of the table. */
-        DasmRow arRow[DASMTABLE_MAXROWS];
-        /** The number of rows visible in the table. */
-        int rows;
+        /** The Model that represents the Data in the Table. */
+        DasmModel rModel;
         /** CursorPos struct representing the Cursor Position. */
         CursorPos rCursor;
-        /** Display Address Bitmask. */
-        SceUInt32 uiDispmask;
-        /** Address of the first row in the Table. */
-        SceUInt32 uiPageAddress;
+        /** Panel Configuration struct. */
+        PanelConfig rPanelCfg;
         /** Minimum Possible Page Address. */
         SceUInt32 uiMinPage;
         /** Maximum Possible Page Address. */
         SceUInt32 uiMaxPage;
+        /** String denoting the format of a Row. */
+        char sRowFmt[DASMTABLE_FMTLEN + 1];
+        /** Indicates whether the entire Table needs to be redrawn. */
+        int iPanelDirty;
     }
     /** The DasmTable struct is used to represent a Disassembler table.
      */
     DasmTable;
 
+    /** Move the cursor of a Disassembler Table down by one row.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int dasmtable_cursor_down(DasmTable* prTable);
+    
+    /** Move the cursor of a Disassembler Table left by one column.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int dasmtable_cursor_left(DasmTable* prTable);
+    
+    /** Move the cursor of a Disassembler Table right by one column.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int dasmtable_cursor_right(DasmTable* prTable);
+    
+    /** Move the cursor of a Disassembler Table up by one row.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int dasmtable_cursor_up(DasmTable* prTable);
+    
+    /** Return a pointer to a ColorConfig struct representing the Cursor
+     * Color Configuration for a Disassembler Table.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @return A pointer to a ColorConfig struct or NULL is returned.
+     */
+    ColorConfig* dasmtable_get_cursorcolor(DasmTable* prTable);
+    
     /** Return a pointer to a CursorPos struct representing the Cursor Position
      * of a Disassembler Table.
      * 
@@ -65,31 +114,77 @@ extern "C" {
      * @return A pointer to a CursorPos struct or NULL is returned.
      */
     CursorPos* dasmtable_get_cursorpos(DasmTable* prTable);
-    
-    /** Return a 32-bit unsigned integer containing a bitmask to apply when
-     * displaying Addresses in a Disassembler Table.
+
+    /** Return a pointer to the DasmModel struct that represents the Model
+     * for a Disassembler Table.
      * 
-     * @param prTable Pointer to a DasmTable struct representing the 
+     * @param prTable Pointer to the DasmTable struct representing the
      * Disassembler Table.
-     * @return The bitmask to apply or 0 is returned.
+     * @return A pointer to a DasmModel struct or NULL is returned.
      */
-    SceUInt32 dasmtable_get_displaymask(DasmTable* prTable);
+    DasmModel* dasmtable_get_model(DasmTable* prTable);
     
-    /** Assign a pointer to the specified Disassembler Row in a table.
+    /** Return a pointer to a ColorConfig struct representing the Panel
+     * Color Configuration for a Disassembler Table.
      * 
-     * @param prRow Pointer to a DasmRow struct to assign.
-     * @param prTable Pointer to a DasmTable struct representing the Table.
-     * @param row int containing the index of the Row to assign.
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @return A pointer to a ColorConfig struct or NULL is returned.
+     */
+    ColorConfig* dasmtable_get_panelcolor(DasmTable* prTable);
+    
+    /** Return a pointer to a PanelConfig struct representing the Panel
+     * Configuration of a Disassembler Table.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @return A pointer to a PanelConfig struct or NULL is returned.
+     */
+    PanelConfig* dasmtable_get_panelconfig(DasmTable* prTable);
+    
+    /** Return a pointer to a CursorPos struct representing the Top-Left
+     * corner of a Disassembler Table.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @return A pointer to a CursorPos struct or NULL is returned.
+     */
+    CursorPos* dasmtable_get_position(DasmTable* prTable);
+    
+    /** Return the index of the currently selected Column of a Disassembler
+     * Table.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @return An int containing the currently selected index or a negative
+     * value indicating a failure is returned.
+     */
+    int dasmtable_get_selcol(DasmTable* prTable);
+    
+    /** Return the index of the currently selected Row of a Disassembler
+     * Table.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @return An int containing the currently selected index or a negative
+     * value indicating a failure is returned.
+     */
+    int dasmtable_get_selrow(DasmTable* prTable);
+    
+    /** Indicate that the entire Disassembler Table needs to be redrawn.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
      * @return 0 indicates success, less than 0 indicates failure.
      */
-    int dasmtable_get_row(DasmRow* prRow, DasmTable* prTable, int row);
+    int dasmtable_invalidate(DasmTable* prTable);
     
-    /** Return the number of visible rows in a Disassembler Table.
+    /** Return the number of visible Rows in a Disassembler Table.
      * 
-     * @param prTable Pointer to a DasmTable struct representing the 
+     * @param prTable Pointer to a DasmTable struct representing the
      * Disassembler Table.
-     * @return an int containing the number of visible rows in the Table or a
-     * negative value if an error occured.
+     * @return int containing the number of visible rows, or less than 0 if
+     * an error occured.
      */
     int dasmtable_get_rows(DasmTable* prTable);
     
@@ -100,6 +195,32 @@ extern "C" {
      */
     int dasmtable_init(DasmTable* prTable);
 
+    /** Render a Disassembler Table on the debug screen.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the 
+     * Disassembler Table to render.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int dasmtable_redraw(DasmTable* prTable);
+
+    /** Scroll a Disassembler Table forward by the specified number of Rows.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @param rows int containing the number of rows to scroll.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int dasmtable_scroll_down(DasmTable* prTable, const unsigned int rows);
+    
+    /** Scroll a Disassembler Table backward by the specified number of Rows.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @param rows int containing the number of rows to scroll.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int dasmtable_scroll_up(DasmTable* prTable, const unsigned int rows);
+    
     /** Position a Disassembler Table to where the first row of the table
      * is the specified address.
      * 
@@ -110,25 +231,34 @@ extern "C" {
      */
     int dasmtable_seek(DasmTable* prTable, SceUInt32 address);
     
-    /** Assign the cursor position of a Disassembler Table.
+    /** Assign a string containing a printf style formatting string to act
+     * as the formatting for each Row in the Table.
      * 
      * @param prTable Pointer to a DasmTable struct representing the
      * Disassembler Table.
-     * @param col int containing the column position.
-     * @param row int containing the row position.
+     * @param sFormat String containing the format string to assign.
      * @return 0 indicates success, less than 0 indicates failure.
      */
-    int dasmtable_set_cursor(DasmTable* prTable, int col, int row);
+    int dasmtable_set_rowformat(DasmTable* prTable, const char* sFormat);
     
-    /** Assign the number of visible rows in a Disassembler Table.
+    /** Assign the selected Column index of a Disassembler Table.
      * 
-     * @param prTable Pointer to a DasmTable struct representing a Disassembler
-     * Table.
-     * @param rows int containing the number of visible rows.
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @param col const unsigned int containing the index to assign.
      * @return 0 indicates success, less than 0 indicates failure.
      */
-    int dasmtable_set_rows(DasmTable* prTable, int rows);
-
+    int dasmtable_set_selcol(DasmTable* prTable, const unsigned int col);
+    
+    /** Assign the selected Row index of a Disassembler Table.
+     * 
+     * @param prTable Pointer to a DasmTable struct representing the
+     * Disassembler Table.
+     * @param row const unsigned int containing the index to assign.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int dasmtable_set_selrow(DasmTable* prTable, const unsigned int row);
+    
     /** Return a 32-bit unsigned integer containing the address of the first
      * row of a Disassembler Table.
      * 
@@ -137,15 +267,6 @@ extern "C" {
      * @return SceUInt32 containing the page address or 0 is returned.
      */
     SceUInt32 dasmtable_tell(DasmTable* prTable);
-    
-    /** Refresh the individual cells of a Disassembler Table rereading the
-     * values from memory.
-     * 
-     * @param prTable Pointer to a DasmTable struct representing the
-     * Disassembler Table.
-     * @return 0 indicates success, less than 0 indicates failure.
-     */
-    int dasmtable_update(DasmTable* prTable);
     
 #ifdef	__cplusplus
 }

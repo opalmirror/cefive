@@ -11,17 +11,17 @@
 #include <pspkerneltypes.h>
 #include "colorconfig.h"
 
+#define ASCIICOLUMN_SUCCESS     (0)
+#define ASCIICOLUMN_FAILURE     (-1)
+#define ASCIICOLUMN_MEMORY      (-2)
+
+#define ASCIICOLUMN_COLOR_BG    ((u32)0xFF000000)
+#define ASCIICOLUMN_COLOR_FG    ((u32)0xFFFFFFFF)
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-    #define ASCIICOLUMN_SUCCESS     (0)
-    #define ASCIICOLUMN_FAILURE     (-1)
-    #define ASCIICOLUMN_MEMORY      (-2)
-
-    #define ASCIICOLUMN_COLOR_BG    ((u32)0xFF000000)
-    #define ASCIICOLUMN_COLOR_FG    ((u32)0xFFFFFFFF)
-    
     typedef struct _AsciiColumn {
         ColorConfig color;
         ColorConfig edit;
@@ -29,7 +29,7 @@ extern "C" {
         ColorConfig* prColor;
         int in_edit;
         int dirty;
-    }AsciiColumn;
+    } AsciiColumn;
 
     char asciicolumn_commit(AsciiColumn* prCol);
     int asciicolumn_crossbutton(AsciiColumn* prCol);

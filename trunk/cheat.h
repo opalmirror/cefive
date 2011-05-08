@@ -8,27 +8,27 @@
 #ifndef _CHEAT_H
 #define _CHEAT_H
 
+/** Indicates Cheat is selected. */
+#define CHEAT_FLAG_SELECTED (1<<0)
+
+/** Indicates Cheat is constant. */
+#define CHEAT_FLAG_CONSTANT	(1<<1)
+
+/** Indicates Cheat was recently activated or reset. */
+#define CHEAT_FLAG_FRESH    (1<<2)
+
+/** Indicates Success of a function. */
+#define CHEAT_SUCCESS       (0)
+
+/** Indicates Failure of a function. */
+#define CHEAT_FAILURE       (-1)
+
+/** Indicates a Memory allocation fault in a function. */
+#define CHEAT_MEMORY        (-2)
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-    /** Indicates Cheat is selected. */
-#define CHEAT_FLAG_SELECTED (1<<0)
-
-    /** Indicates Cheat is constant. */
-#define CHEAT_FLAG_CONSTANT	(1<<1)
-
-    /** Indicates Cheat was recently activated or reset. */
-#define CHEAT_FLAG_FRESH    (1<<2)
-
-    /** Indicates Success of a function. */
-#define CHEAT_SUCCESS       (0)
-
-    /** Indicates Failure of a function. */
-#define CHEAT_FAILURE       (-1)
-
-    /** Indicates a Memory allocation fault in a function. */
-#define CHEAT_MEMORY        (-2)
 
     typedef struct _Cheat {
         /** The first Block index of a Cheat. */

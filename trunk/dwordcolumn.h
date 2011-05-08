@@ -10,10 +10,6 @@
 
 #include "colorconfig.h"
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 /** Indicates success. */
 #define DWORDCOLUMN_SUCCESS     (0)
 
@@ -25,6 +21,10 @@ extern "C" {
 
 /** Indicates a NULL pointer. */
 #define DWORDCOLUMN_NULLPTR     (-3)
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
     typedef struct _DwordColumn {
         /** Display Color Configuration */

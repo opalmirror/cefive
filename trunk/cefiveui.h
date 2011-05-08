@@ -22,93 +22,179 @@
 #include "searchengine.h"
 #include "geelog.h"
 
+/** Indicates success. */
 #define CEFIVEUI_SUCCESS        (0)
+
+/** Indicates failure. */
 #define CEFIVEUI_FAILURE        (-1)
+
+/** Indicates memory error. */
 #define CEFIVEUI_MEMORY         (-2)
+
+/** Indicates a NULL pointer. */
 #define CEFIVEUI_NULLPTR        (-3)
 
+/** Maximum path string length */
 #define CEFIVEUI_PATH_MAX   256
+
+/** Length of the SCE Id for a Game. */
 #define CEFIVEUI_SCEID_LEN  10
 
-typedef enum _ECEApplet {
-    CEA_CheatPanel,
-            CEA_CheatEditor,
-            CEA_Disassembler,
-            CEA_HexEditor,
-            CEA_SearchPanel,
-            CEA_Options
-}ECEApplet;
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
-typedef struct _CEFiveUiConfig {
-    ColorConfig color;
-    ColorConfig titlebar;
-    ColorConfig status;
-    ColorConfig cursor;
-    ColorConfig editcursor;
-} CEFiveUiConfig;
+    typedef enum _ECEApplet {
+        CEA_CheatPanel, /** Cheat Panel Applet */
+        CEA_CheatEditor, /** Cheat Editor Applet */
+        CEA_Disassembler, /** Disassembler Applet */
+        CEA_HexEditor, /** Hex Editor Applet */
+        CEA_SearchPanel, /** Search Panel Applet */
+        CEA_Options, /** Options Panel Applet */
+        CEA_GameInfo /** Game Information Applet */
+    } 
+    /** Enumeration specifying an Applet Id. */
+    ECEApplet;
 
-typedef struct _CEFiveUi {
-    CEFiveUiConfig  config;
-    CEFiveConfig*   prCEConfig;
-    GeeLog*         prLog;
-    SearchEngine*   prSearchEngine;
-    CheatEngine*    prEngine;
-    CheatPanel      cheatpanel;
-    Disassembler    disassembler;
-    CheatEditor     cheateditor;
-    HexEditor       hexeditor;
-    SearchPanel     searchpanel;
-    GameInfo        gameinfo;
-    OptionsPanel    optionspanel;
-    AppletMenu      appletmenu;
-    int             applet;
-    int             splash_viewed;
-    char            screenshot_path[CEFIVEUI_PATH_MAX];
-    char            psid_file[CEFIVEUI_PATH_MAX];
-    char            game_id_path[CEFIVEUI_PATH_MAX];
-    char            game_id[CEFIVEUI_SCEID_LEN + 1];
-    SceCtrlData     controlData;
-    int             drawn;
-    void*           vram;
-    int             running;
-    int             cross;
-    ButtonState     buttons;
-} CEFiveUi;
+    typedef struct _CEFiveUiConfig {
+        /** Panel Color Configuration struct */
+        ColorConfig color;
+        /** Title Bar Color Configuration struct */
+        ColorConfig titlebar;
+        /** Status Bar Color Configuration struct */
+        ColorConfig status;
+        /** Cursor Color Configuration struct */
+        ColorConfig cursor;
+        /** Edit Cursor Color Configuration struct */
+        ColorConfig editcursor;
+    } 
+    /** User Interface Configuration struct */
+    CEFiveUiConfig;
 
-void cefiveui_buttoncallback(int curr, int last, CEFiveUi* prUi);
-CEFiveConfig* cefiveui_get_config(CEFiveUi* prUi);
+    typedef struct _CEFiveUi {
+        /** User Interface Configuration struct */
+        CEFiveUiConfig config;
+        /** Pointer to the cefive Configuration struct. */
+        CEFiveConfig* prCEConfig;
+        /** Pointer to the Logger instance. */
+        GeeLog* prLog;
+        /** Pointer to a SearchEngine struct representing the Search Engine */
+        SearchEngine* prSearchEngine;
+        /** Pointer to a CheatEngine struct representing the Cheat Engine */
+        CheatEngine* prEngine;
+        /** Cheat Panel Applet struct */
+        CheatPanel cheatpanel;
+        /** Disassembler Applet struct */
+        Disassembler disassembler;
+        /** Cheat Editor Applet struct */
+        CheatEditor cheateditor;
+        /** Hex Editor Applet struct */
+        HexEditor hexeditor;
+        /** Search Panel Applet struct */
+        SearchPanel searchpanel;
+        /** Game Info Applet struct */
+        GameInfo gameinfo;
+        /** Options Panel Applet struct */
+        OptionsPanel optionspanel;
+        /** Applet Menu Applet struct */
+        AppletMenu appletmenu;
+        /** The currently active Applet Id. */
+        int applet;
+        /** Indicates that the splash screen has been viewed. */
+        int splash_viewed;
+        /** Path to write screenshot files to. */
+        char screenshot_path[CEFIVEUI_PATH_MAX];
+        /** Path to read PSId from. */
+        char psid_file[CEFIVEUI_PATH_MAX];
+        /** Path to read Game Id from. */
+        char game_id_path[CEFIVEUI_PATH_MAX];
+        /** SCE Game Id */
+        char game_id[CEFIVEUI_SCEID_LEN + 1];
+        /** Current controller state struct */
+        SceCtrlData controlData;
+        /** Indicates that the UI has been drawn. */
+        int drawn;
+        /** VRAM pointer */
+        void* vram;
+        /** Indicates that the UI is running. */
+        int running;
+        /** I forgot */
+        int cross;
+        /** Current Button State struct */
+        ButtonState buttons;
+    } 
+    /** The Cheat Engine of Five User Interface struct. */
+    CEFiveUi;
 
-/* cefiveuiHandleInput
- *  Handle User Input for the Cheat Engine of Five User Interface.  This
- *  should be called once per run-cycle to poll the PSP buttons and interact
- *  with the User Interface.
- * Parameters:
- *  prUi(in) - Pointer to the CEFiveUi struct to handle input for.
- */
-int cefiveuiHandleInput(CEFiveUi *prUi);
+    /** Handle user input for buttons.
+     * 
+     * @param curr int containing current button state.
+     * @param last int containing last button state.
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     */
+    void cefiveui_buttoncallback(int curr, int last, CEFiveUi* prUi);
+    
+    /** Return a pointer to a CEFiveConfig struct representing the cefive
+     * Configuration.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @return A pointer to a CEFiveConfig struct or NULL is returned.
+     */
+    CEFiveConfig* cefiveui_get_config(CEFiveUi* prUi);
 
-/* cefiveuiInit
- *  Initialize a CEFiveUi struct.
- * Parameters:
- *  prUi(in/out) - Pointer to the CEFiveUi struct to initialize.
- *  prEngine(in) - Pointer to a CheatEngine struct.
- *  prSearch(in) - Pointer to a SearchEngine struct.
- */
-void cefiveuiInit(CEFiveUi *prUi, CheatEngine *prEngine,
-        SearchEngine* prSearch);
+    /** Handle User Input for the User Interface.  This should be called once
+     * per run-cycle to poll the PSP buttons and interact with the User
+     * Interface.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int cefiveuiHandleInput(CEFiveUi *prUi);
 
-/* cefiveuiRedraw
- *  Redraw the Cheat Engine of Five User Interface.
- * Parameters:
- *  prUi(in/out) - Pointer to the CEFiveUi struct to display.
- */
-void cefiveuiRedraw(CEFiveUi *prUi);
+    /** Initialize a cefive User Interface.
+     * 
+     * @param prUi Pointer to the CEFiveUi struct to initialize.
+     * @param prEngine Pointer to a CheatEngine struct representing the Cheat
+     * Engine.
+     * @param prSearch Pointer to a SearchEngine struct representing the Search
+     * Engine.
+     */
+    void cefiveuiInit(CEFiveUi *prUi, CheatEngine *prEngine,
+            SearchEngine* prSearch);
 
-int cefiveui_log(CEFiveUi* prUi, ELogLevel level, const char* sMsg);
+    /** Draw the User Interface on the debug screen.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     */
+    void cefiveuiRedraw(CEFiveUi *prUi);
 
-int cefiveui_set_logger(CEFiveUi* prUi, GeeLog *prLog);
+    /** Add a Log statement to the configured Logger of a User Interface.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @param level ELogLevel indicating the Log Level of the Message.
+     * @param sMsg string message to log.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int cefiveui_log(CEFiveUi* prUi, ELogLevel level, const char* sMsg);
 
-int cefiveui_update_controls(CEFiveUi* prUi);
+    /** Assign a Logger to a User Interface.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @param prLog Pointer to a GeeLog struct representing the Logger.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int cefiveui_set_logger(CEFiveUi* prUi, GeeLog *prLog);
+
+    /** Update the current control state of a User Interface.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int cefiveui_update_controls(CEFiveUi* prUi);
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif /* _CEFIVEUI_H */
 

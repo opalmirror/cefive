@@ -1,13 +1,3 @@
-#include <stdlib.h>
-#include <pspkerneltypes.h>
-#include <psploadcore.h>
-#include <pspiofilemgr.h>
-#include <string.h>
-#include "cefiveconfig.h"
-#include "cheatengine.h"
-#include "searchengine.h"
-#include "cefiveui.h"
-#include "gameinfo.h"
 #include "cefive.h"
 
 static int load_gameid(CEFive* prCe);
@@ -53,7 +43,7 @@ CEFiveUi* cefive_get_ui(CEFive* prCe) {
     return prUi;
 }
 
-int cefive_init(CEFive* prCe) {
+int cefive_init(CEFive* prCe, GeeLog* prLog) {
     CEFiveConfig* prConfig = NULL;
     SearchEngine* prSearch = NULL;
     int r = 0;
@@ -61,6 +51,7 @@ int cefive_init(CEFive* prCe) {
     if (prCe == NULL) {
         return CEFIVE_NULLPTR;
     }
+    prCe->prLogger = prLog;
     prConfig = cefive_get_config(prCe);
     cefiveconfig_init(prConfig);
     prSearch = cefive_get_searchengine(prCe);

@@ -7,33 +7,33 @@
 #ifndef _BLOCK_H
 #define _BLOCK_H
 
+/* Success Result */
+#define BLOCK_SUCCESS           (0)
+/* Failure Result */
+#define BLOCK_FAILURE           (-1)
+/* Memory Error Result */
+#define BLOCK_MEMORY            (-2)
+
+/* Flag Clear Indication */
+#define BLOCK_FALSE             (0)
+/* Flag Set Indication */
+#define BLOCK_TRUE              (1)
+
+//Block flags
+#define BLOCK_FLAG_DMA  	(1<<4) // 00010000 0x10
+#define BLOCK_FLAG_FREEZE       (1<<5) // 00100000 0x20
+//#define BLOCK_FLAG_DWORD	(3<<6) // 11000000 0xC0 00000100
+#define BLOCK_FLAG_DWORD        ((unsigned char) 0x04)
+//#define BLOCK_FLAG_UWORD	(2<<6) // 10000000 0x80 00001000
+#define BLOCK_FLAG_UWORD        ((unsigned char) 0x08)
+//#define BLOCK_FLAG_WORD		(1<<6) // 01000000 0x40 00000010
+#define BLOCK_FLAG_WORD         ((unsigned char) 0x02)
+//#define BLOCK_FLAG_BYTE		(0<<6) // 00000000 0x00 00000001
+#define BLOCK_FLAG_BYTE         ((unsigned char) 0x01)
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-    /* Success Result */
-#define BLOCK_SUCCESS           (0)
-    /* Failure Result */
-#define BLOCK_FAILURE           (-1)
-    /* Memory Error Result */
-#define BLOCK_MEMORY            (-2)
-
-    /* Flag Clear Indication */
-#define BLOCK_FALSE             (0)
-    /* Flag Set Indication */
-#define BLOCK_TRUE              (1)
-
-    //Block flags
-#define BLOCK_FLAG_DMA  	(1<<4) // 00010000 0x10
-#define BLOCK_FLAG_FREEZE       (1<<5) // 00100000 0x20
-    //#define BLOCK_FLAG_DWORD	(3<<6) // 11000000 0xC0 00000100
-#define BLOCK_FLAG_DWORD        ((unsigned char) 0x04)
-    //#define BLOCK_FLAG_UWORD	(2<<6) // 10000000 0x80 00001000
-#define BLOCK_FLAG_UWORD        ((unsigned char) 0x08)
-    //#define BLOCK_FLAG_WORD		(1<<6) // 01000000 0x40 00000010
-#define BLOCK_FLAG_WORD         ((unsigned char) 0x02)
-    //#define BLOCK_FLAG_BYTE		(0<<6) // 00000000 0x00 00000001
-#define BLOCK_FLAG_BYTE         ((unsigned char) 0x01)
 
     typedef struct _Block {
         unsigned char flags;

@@ -6,10 +6,6 @@
 #ifndef _CURSORPOS_H
 #define _CURSORPOS_H
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 #include <pspkerneltypes.h>
     
 #define CURSORPOS_SUCCESS       (0)
@@ -18,6 +14,10 @@ extern "C" {
 #define CURSORPOS_NULLPTR       (-3)
 #define CURSORPOS_IOERROR       (-4)
     
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
     typedef struct _CursorPos {
         int x;
         int y;

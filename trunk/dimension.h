@@ -8,10 +8,6 @@
 #ifndef _DIMENSION_H
 #define	_DIMENSION_H
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 #include <pspkerneltypes.h>
     
 #define DIMENSION_SUCCESS       (0)
@@ -20,6 +16,10 @@ extern "C" {
 #define DIMENSION_NULLPTR       (-3)
 #define DIMENSION_IOERROR       (-4)
     
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
     typedef struct _Dimension {
         int width;
         int height;
