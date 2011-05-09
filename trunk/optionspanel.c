@@ -145,7 +145,7 @@ int optionspanel_cursor_down(OptionsPanel* prPanel) {
     int y = prPanel->cursor.y;
     y++;
     if (y > 5) {
-        y = 5;
+        y = 0;
     }
     prPanel->cursor.y = y;
     return OPTIONSPANEL_SUCCESS;
@@ -196,7 +196,7 @@ int optionspanel_cursor_up(OptionsPanel* prPanel) {
     int y = prPanel->cursor.y;
     y--;
     if (y < 0) {
-        y = 0;
+        y = 5;
     }
     prPanel->cursor.y = y;
     return OPTIONSPANEL_SUCCESS;

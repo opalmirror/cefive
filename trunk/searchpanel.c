@@ -543,7 +543,7 @@ int searchpanel_cursor_down(SearchPanel* prPanel) {
     row++;
     if (row > 4) {
         if (results <= 0) {
-            row = 4;
+            row = 0;
         } else {
             vrow = row - 5;
             if (vrow > pageheight - 1) {
@@ -606,9 +606,6 @@ int searchpanel_cursor_up(SearchPanel* prPanel) {
         
     }
     row--;
-    if (row < 0) {
-        row = 0;
-    }
     if (row > 3) {
         vrow = row - 5;
         
@@ -617,6 +614,9 @@ int searchpanel_cursor_up(SearchPanel* prPanel) {
             searchpanel_scroll_up(prPanel);
             row = 5;
         }
+    }
+    if (row < 0) {
+        row = 4;
     }
     prPanel->cursor.y = row;
 
