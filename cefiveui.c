@@ -1,7 +1,8 @@
 /* cefiveui.c
  *  The User Interface for CEFive.
- * Author:
+ * Authors:
  *  Sir Gee of Five
+ *  PSP_Lord
  */
 
 #include <pspkerneltypes.h>

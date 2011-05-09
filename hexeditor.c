@@ -471,9 +471,11 @@ int hexeditorCursorLeft(HexEditor* prHex) {
         return HEXEDITOR_MEMORY;
     }
     int x = prHex->cursor.x;
+    int bpl = prHex->config.bytes_per_line;
+    int cols = (bpl * 2) + 1;
     x--;
     if (x < 0) {
-        x = 0;
+        x = cols;
     }
     if (x != prHex->cursor.x) {
         prHex->cursor.x = x;
@@ -491,7 +493,7 @@ int hexeditorCursorRight(HexEditor* prHex) {
     int cols = (bpl * 2) + 1;
     x++;
     if (x >= cols) {
-        x = cols - 1;
+        x = 0;
     }
     if (x != prHex->cursor.x) {
         prHex->cursor.x = x;
