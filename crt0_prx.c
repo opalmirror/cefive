@@ -1365,8 +1365,8 @@ int mainThread() {
     GameInfo* prInfo = &prUi->gameinfo;
     GeeLog* prLog = &krLog;
 
-    geelog_init(prLog, LOG_DEBUG, "ms0:/seplugins/CEFive.log");
-    geelog_start(prLog);
+    geelog_init(prLog, "ms0:/seplugins/CEFive.log");
+    geelog_start(prLog, LOG_DEBUG);
     
     running = 1;
 

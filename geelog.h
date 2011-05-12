@@ -2,70 +2,94 @@
  * File:   geelog.h
  * Author: Sir Gee of Five
  *
- * Created on October 10, 2010, 2:20 PM
+ * Created on May 11, 2011, 2:28 PM
  */
 
-#ifndef _GEELOG_H
-#define	_GEELOG_H
+#ifndef GEELOG_H
+#define	GEELOG_H
 
-#include <psptypes.h>
+#include <pspkerneltypes.h>
 
-#define GEELOG_SUCCESS      (0)
-#define GEELOG_FAILURE      (-1)
-#define GEELOG_MEMORY       (-2)
-#define GEELOG_NULLPTR      (-3)
-#define GEELOG_IOERROR      (-4)
-
-#define GEELOG_PATH_MAX     256
-#define GEELOG_LINE_MAX     1024
+/** Indicates success. */
+#define GEELOG_SUCCESS (0)
+/** Indicates failure. */
+#define GEELOG_FAILURE (-1)
+/** Indicates a NULL pointer. */
+#define GEELOG_NULLPTR (-2)
+/** Indicates a memory error. */
+#define GEELOG_MEMORY (-3)
+/** Indicates an I/O error. */
+#define GEELOG_IOERROR (-4)
+/** Indicates an invalid path or filename. */
+#define GEELOG_INVPATH (-5)
+/** Maximum length of a Log line. */
+#define GEELOG_LINE_LEN (256)
+/** Maximum length of a Log File Path. */
+#define GEELOG_PATH_LEN (256)
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
     typedef enum _ELogLevel {
-        LOG_NONE, LOG_ERROR, LOG_WARN, LOG_INFO, LOG_DEBUG
-    }ELogLevel;
+        LOG_ERROR, /** Indicates an error. */
+        LOG_WARN, /** Indicates a warning. */
+        LOG_INFO, /** Indicates an informational message. */
+        LOG_DEBUG, /** Indicates a debugging message. */
+        LOG_NONE /** Indicates no logging. */
+    } 
+    /** The ELogLevel enumeration is used to indicate a Logging Level. */
+    ELogLevel;
 
     typedef struct _GeeLog {
-        char sLogFile[GEELOG_PATH_MAX];
+        /** Indicates the current Log Level of a Logger. */
         ELogLevel rLevel;
+        /** Log File descriptor */
         SceUID rFd;
-        int initialized;
-    }GeeLog;
+        /** String containing the path to the Log File. */
+        char sLogPath[GEELOG_PATH_LEN + 1];
+    } 
+    /** The GeeLog struct is used to represent a Logger. */
+    GeeLog;
 
-    /* geelog_init
-     *   Initializes the GeeLog logging facility.  Should be called before
-     *   any logging functions are called.
-     * Parameters:
-     *   prLog   Pointer to a GeeLog struct to act as the handle.
-     *   rLevel  The default log level (One of ELogLevel enum).  Only messages
-     *           with a log level below or at this level will be logged.
-     *   sFile   The filename to use for the log file.
-     *
+    /** Initialize a GeeLog struct.  The GeeLog struct is used to represent a
+     * Logger.
+     * 
+     * @param prLog Pointer to the GeeLog struct to initialize.
+     * @param sFile String containing the path to the Log File.
+     * @return 0 indicates success, less than 0 indicates failure.
      */
-    int geelog_init(GeeLog* prLog, ELogLevel rLevel, const char* sFile);
+    int geelog_init(GeeLog* prLog, const char* sFile);
     
-    /* geelog_log
-     *  Add a log statement to the current log file.
-     * Parameters:
-     *  prLog   Pointer to a GeeLog struct initialized with geelog_init.
-     *  rLevel  The log level (one of ELogLevel enum) to act as the log level
-     *          of the message.  If rLevel is above the current log level, the
-     *          message will not be logged.
-     *  sMsg    A string containing the message to write to the log file.
+    /** Conditionally append the specified message to a GeeLog Logger.
+     * 
+     * @param prLog Pointer to a GeeLog struct representing the Logger.
+     * @param rLevel ELogLevel indicating the Log Level of the Message.
+     * @param sMsg String containing the Message to log.
+     * @return 0 indicates success, less than 0 indicates failure.
      */
-    int geelog_log(GeeLog* prLog, ELogLevel rLevel, const char* sMsg);
+    int geelog_log(GeeLog* prLog, const ELogLevel rLevel, const char* sMsg);
     
-    /* CURRENTLY DISABLED */
-    /*int geelog_logf(GeeLog* prLog, ELogLevel rLevel, const char* sFmt, ...);*/
+    /** Start a GeeLog Logger at the specified Log Level.  The Log File will
+     * be created and the Logger will start logging messages below the specified
+     * Log Level.
+     * 
+     * @param prLog Pointer to a GeeLog struct representing the Logger.
+     * @param rLevel ELogLevel indicating the starting Log Level.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int geelog_start(GeeLog* prLog, ELogLevel rLevel);
     
-    int geelog_start(GeeLog* prLog);
+    /** Stop a GeeLog Logger.  The Log File will be closed as a result.
+     * 
+     * @param prLog Pointer to a GeeLog struct representing the Logger.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
     int geelog_stop(GeeLog* prLog);
-
+    
 #ifdef	__cplusplus
 }
 #endif
 
-#endif	/* _GEELOG_H */
+#endif	/* GEELOG_H */
 
