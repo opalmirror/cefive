@@ -7,60 +7,65 @@
 #ifndef _BLOCK_H
 #define _BLOCK_H
 
-/* Success Result */
-#define BLOCK_SUCCESS           (0)
-/* Failure Result */
-#define BLOCK_FAILURE           (-1)
-/* Memory Error Result */
-#define BLOCK_MEMORY            (-2)
+#include <psptypes.h>
 
-/* Flag Clear Indication */
+/** Indicates success */
+#define BLOCK_SUCCESS           (0)
+/** Indicates failure */
+#define BLOCK_FAILURE           (-1)
+/** Indicates a NULL pointer */
+#define BLOCK_NULLPTR           (-2)
+/** Indicates a memory error */
+#define BLOCK_MEMORY            (-3)
+
+/** Indicates that a flag is clear */
 #define BLOCK_FALSE             (0)
-/* Flag Set Indication */
+/** Indicates that a flag is set */
 #define BLOCK_TRUE              (1)
 
-//Block flags
-#define BLOCK_FLAG_DMA  	(1<<4) // 00010000 0x10
-#define BLOCK_FLAG_FREEZE       (1<<5) // 00100000 0x20
-//#define BLOCK_FLAG_DWORD	(3<<6) // 11000000 0xC0 00000100
-#define BLOCK_FLAG_DWORD        ((unsigned char) 0x04)
-//#define BLOCK_FLAG_UWORD	(2<<6) // 10000000 0x80 00001000
-#define BLOCK_FLAG_UWORD        ((unsigned char) 0x08)
-//#define BLOCK_FLAG_WORD		(1<<6) // 01000000 0x40 00000010
-#define BLOCK_FLAG_WORD         ((unsigned char) 0x02)
-//#define BLOCK_FLAG_BYTE		(0<<6) // 00000000 0x00 00000001
-#define BLOCK_FLAG_BYTE         ((unsigned char) 0x01)
+/** Indicates a Dynamic Block */
+#define BLOCK_FLAG_DMA  	((SceUChar8) 0x10) /* 00010000 */
+/** Indicates a Constant Block */
+#define BLOCK_FLAG_FREEZE       ((SceUChar8) 0x20) /* 00100000 */
+/** Indicates that Block is a 32-bit word. */
+#define BLOCK_FLAG_DWORD        ((SceUChar8) 0x04) /* 00000100 */
+/** Indicates that Block is a 64-bit double word. */
+#define BLOCK_FLAG_UWORD        ((SceUChar8) 0x08) /* 00001000 */
+/** Indicates that Block is a 16-bit half word. */
+#define BLOCK_FLAG_WORD         ((SceUChar8) 0x02) /* 00000010 */
+/** Indicates that Block is an 8-bit byte. */
+#define BLOCK_FLAG_BYTE         ((SceUChar8) 0x01) /* 00000001 */
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
     typedef struct _Block {
-        unsigned char flags;
-        unsigned int address;
-        unsigned int stdVal;
-        unsigned int hakVal;
-    } Block;
+        /** Block flags */
+        SceUChar8 flags;
+        /** Address of a Block */
+        SceUInt32 address;
+        /** Memory value before patch */
+        SceUInt32 stdVal;
+        /** Patch value */
+        SceUInt32 hakVal;
+    } 
+    /** The Block struct is used to represent a single Block of a Cheat.
+     * A Block is a value that is to be patched over running memory.
+     */
+    Block;
 
-    /* Clear the BYTE flag of the specified Block.
+    /** Clear the BYTE flag of a Block.
      * 
-     * Parameters:
-     *   prBlock    Pointer to a Block struct containing the block to clear.
-     * 
-     * Results:
-     *   BLOCK_MEMORY is returned if the specified pointer is NULL.
-     *   BLOCK_SUCCESS is returned if the Block flag is cleared.
+     * @param prBlock Pointer to a Block struct representing the Block.
+     * @return 0 indicates success, less than 0 indicates failure.
      */
     int block_clear_byte(Block* prBlock);
 
-    /* Clear the DMA flag of the specified Block.
+    /** Clear the DMA flag of a Block.
      * 
-     * Parameters:
-     *   prBlock    Pointer to a Block struct containing the block to clear.
-     * 
-     * Results:
-     *   BLOCK_MEMORY is returned if the specified pointer is NULL.
-     *   BLOCK_SUCCESS is returned if the Block flag is cleared.
+     * @param prBlock Pointer to a Block struct representing the Block.
+     * @return 0 indicates success, less than 0 indicates failure.
      */
     int block_clear_dma(Block* prBlock);
 
