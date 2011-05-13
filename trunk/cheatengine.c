@@ -507,6 +507,7 @@ int cheatengineResetCheat(CheatEngine *prEng, int index) {
     iEnd = prCheat->len + iStart;
     sprintf(sMsg, "%s: Cheat %d Ending Block is %d.",
             "cheatengineResetCheat", index, iEnd);
+    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     for (iBlock = iStart; iBlock < iEnd; iBlock++) {
         r = cheatengineResetBlock(prEng, iBlock);
         if (r != CHEATENGINE_SUCCESS) {

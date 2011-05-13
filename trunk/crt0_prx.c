@@ -1282,46 +1282,50 @@ static void waitForVram() {
 
 static void start() {
     GeeLog* prLog = &krLog;
+    CEFiveConfig* prCfg = &krConfig;
+    CheatEngine* prEng = &krCheatEngine;
+    SearchEngine* prSearch = &krSearchEngine;
+    CEFiveUi* prUi = &krUi;
     int r = 0;
-    
-    geelog_log(prLog, LOG_DEBUG, "start: Initializing CheatEngine.");
-    /* Initialize the CheatEngine */
-    krCheatEngine.blocklist = block;
-    krCheatEngine.cheatlist = cheat;
-    cheatengineSetLogger(&krCheatEngine, prLog);
 
+    /* Initialize the CeFive Configuration. */
     geelog_log(prLog, LOG_DEBUG, "start: Initializing CEFiveConfig.");
-    cefiveconfig_init(&krConfig);
+    cefiveconfig_init(prCfg);
     
     /* Attempt to load the current configuration. */
     geelog_log(prLog, LOG_DEBUG, "start: Loading configuration.");
-    r = cefiveconfig_load(&krConfig, "ms0:/seplugins/CEFive.cdf");
+    r = cefiveconfig_load(prCfg, "ms0:/seplugins/CEFive.cdf");
     if (r != CEFIVECONFIG_SUCCESS) {
         geelog_log(prLog, LOG_ERROR, "start: Error loading configuration.");
     } else {
         geelog_log(prLog, LOG_INFO, "start: Loaded configuration.");
     }
-    //krConfig.pause_during_ui = 0;
-    sprintf(krConfig.plugins_dir, "seplugins");
-    sprintf(krConfig.cefive_dir, "nitePR");
+    sprintf(prCfg->plugins_dir, "seplugins");
+    sprintf(prCfg->cefive_dir, "nitePR");
+
+    geelog_log(prLog, LOG_DEBUG, "start: Initializing CheatEngine.");
+    /* Initialize the CheatEngine */
+    r = cheatengineInit(prEng, prCfg, cheat, block);
+    cheatengineSetLogger(prEng, prLog);
 
     geelog_log(prLog, LOG_DEBUG, "start: Initializing SearchEngine.");
     // Initialize the SearchEngine
-    searchengine_init(&krSearchEngine);
-    searchengine_start(&krSearchEngine);
+    searchengine_init(prSearch);
+    searchengine_start(prSearch);
 
     geelog_log(prLog, LOG_DEBUG, "start: Initializing UI.");
     /* Initialize the UI */
-    CEFiveUi* prUi = &krUi;
     prUi->prLog = prLog;
-    prUi->prCEConfig = &krConfig;
-    cefiveuiInit(prUi, &krCheatEngine, &krSearchEngine);
+    prUi->prCEConfig = prCfg;
+    cefiveuiInit(prUi, prEng, prSearch);
     krRunState = CES_Starting;
     krStartState = CESS_WaitKernelLib;
 
+    /* I was stoned or something
     krConfig.rAppletConfig.rPanel.rColor.background = krUi.config.color.background;
     krConfig.rAppletConfig.rPanel.rColor.text = krUi.config.color.text;
-
+    */
+    
     geelog_log(prLog, LOG_DEBUG, "start: waiting for Kernel.");
     waitForKernelLibrary();
     geelog_log(prLog, LOG_DEBUG, "start: loading Game Id.");
@@ -1374,16 +1378,15 @@ int mainThread() {
     start();
     geelog_log(prLog, LOG_DEBUG, "mainThread: CEFive Started.");
 
-    /* Load the GameInfo struct in the UI */
-    geelog_log(prLog, LOG_DEBUG, "mainThread: Loading Game Info.");
-    gameinfo_load(prInfo);
-        
-
     //Do the loop-de-loop
     while (running) {
         if (prUi->vram == NULL) {
             waitForVram();
             continue;
+        }
+        if (prInfo->loaded == 0) {
+            geelog_log(prLog, LOG_DEBUG, "mainThread: Loading Game Info.");
+            gameinfo_load(prInfo);
         }
         if (krRunState == CES_UIRequest) {
             geelog_log(prLog, LOG_DEBUG, "mainThread: Showing Interface.");
