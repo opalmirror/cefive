@@ -2,6 +2,8 @@
 #include <pspmodulemgr.h>
 #include <pspdebug.h>
 #include <stdio.h>
+#include <pspmodulemgr_kernel.h>
+#include <psploadcore.h>
 #include "colorconfig.h"
 #include "appletconfig.h"
 #include "cursorpos.h"
@@ -150,6 +152,7 @@ int gameinfo_load(GameInfo *prInfo) {
     unsigned int tablep = 0;
     int i = 0;
     char sMsg[256];
+    int imodules = 0;
 
     if (prInfo == NULL) {
         return GAMEINFO_NULLPTR;
@@ -157,10 +160,13 @@ int gameinfo_load(GameInfo *prInfo) {
     if (prInfo->loaded == 1) {
         gameinfo_log(prInfo, LOG_DEBUG, 
                 "gameinfo_load: GameInfo already loaded.");
-        return;
+        return GAMEINFO_SUCCESS;
     }
 
     prInfo->textEnd = 0x09FFFFFF;
+    imodules = sceKernelModuleCount();
+    sprintf(sMsg, "gameinfo_load: %d Kernel Modules loaded.", imodules);
+    gameinfo_log(prInfo, LOG_DEBUG, sMsg);
     gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_load: Locating Game Module.");
     prModule = sceKernelFindModuleByAddress(0x08804000);
     if (prModule != NULL) {

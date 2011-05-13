@@ -1,4 +1,12 @@
 #include "cefive.h"
+#include <pspkerneltypes.h>
+#include <psploadcore.h>
+#include <pspiofilemgr.h>
+#include "cheatengine.h"
+#include "cefiveconfig.h"
+#include "gameinfo.h"
+#include "searchengine.h"
+#include "cefiveui.h"
 
 static int load_gameid(CEFive* prCe);
 static int wait_for_kernellib(CEFive* prCe);

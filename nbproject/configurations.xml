@@ -124,16 +124,6 @@
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
-          <cTool>
-            <incDir>
-              <pElem>.</pElem>
-            </incDir>
-          </cTool>
-          <ccTool>
-            <incDir>
-              <pElem>.</pElem>
-            </incDir>
-          </ccTool>
         </makeTool>
       </makefileType>
       <item path="addresscolumn.c" ex="false" tool="0" flavor="2">
@@ -196,8 +186,6 @@
             <Elem>_PSP_FW_VERSION=150</Elem>
           </preprocessorList>
         </cTool>
-      </item>
-      <item path="cefive.c" ex="true" tool="0" flavor="0">
       </item>
       <item path="cefiveconfig.c" ex="false" tool="0" flavor="2">
         <cTool>
