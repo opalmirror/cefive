@@ -60,17 +60,15 @@ extern "C" {
      */
     SceUInt32 dasmmodel_get_address(DasmModel* prModel);
 
-    /** Return a pointer to a DmodelRow struct representing the indicated
-     * Disassembler Model Row.
+    /** Return a pointer to a DmodelRow struct representing the indicated Row
+     * of a Disassember Model.
      * 
-     * @param prDest Pointer to a DmodelRow struct representing the
-     * Model Row.
-     * @param prModel Pointer to a DasmModel struct representing the 
+     * @param prModel Pointer to a DasmModel struct representing the
      * Disassembler Model.
      * @param index int containing the row to return.
-     * @return 0 indicates success, less than 0 indicates failure.
+     * @return A pointer to a DmodelRow struct or NULL is returned.
      */
-    int dasmmodel_get_row(DmodelRow* prDest, DasmModel* prModel, int index);
+    DmodelRow* dasmmodel_get_row(DasmModel* prModel, int index);
     
     /** Return a string representation of the indicated cell of a Disassembler
      * Model.

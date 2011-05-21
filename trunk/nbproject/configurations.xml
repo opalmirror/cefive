@@ -62,6 +62,7 @@
       <in>gapplet.h</in>
       <in>gcheat.c</in>
       <in>gcheat.h</in>
+      <in>gcheatengine.c</in>
       <in>gcheatengine.h</in>
       <in>gcheatlist.c</in>
       <in>gcheatlist.h</in>
@@ -74,6 +75,8 @@
       <in>geelogmsg.h</in>
       <in>geelogqueue.c</in>
       <in>geelogqueue.h</in>
+      <in>ggame.c</in>
+      <in>ggame.h</in>
       <in>hexeditor.c</in>
       <in>hexeditor.h</in>
       <in>importpanel.h</in>
@@ -337,8 +340,6 @@
       <item path="gcheat.c" ex="true" tool="0" flavor="0">
       </item>
       <item path="gcheat.h" ex="true" tool="3" flavor="0">
-      </item>
-      <item path="gcheatengine.h" ex="true" tool="3" flavor="0">
       </item>
       <item path="gcheatlist.c" ex="true" tool="0" flavor="0">
       </item>

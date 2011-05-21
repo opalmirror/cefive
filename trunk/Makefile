@@ -19,6 +19,8 @@ OBJS =  block.o \
 	cheatpanel.o \
 	cheateditor.o \
 	cheatengine.o \
+	menumodel.o \
+	appletmenuconfig.o \
 	appletmenu.o \
 	appletconfig.o \
 	panelconfig.o \
@@ -114,7 +116,13 @@ togglecolumn.o: colorconfig.o togglecolumn.c togglecolumn.h
 dwordeditor.o: colorconfig.o dwordeditor.c dwordeditor.h
 	$(CC) $(CFLAGS) -c dwordeditor.c
 
-appletmenu.o: colorconfig.o appletmenu.c appletmenu.h
+menumodel.o: menumodel.c menumodel.h
+	$(CC) $(CFLAGS) -c menumodel.c
+
+appletmenuconfig.o: appletmenuconfig.c appletmenuconfig.h colorconfig.o cursorpos.o dimension.o
+	$(CC) $(CFLAGS) -c appletmenuconfig.c
+
+appletmenu.o: appletmenu.c appletmenu.h appletmenuconfig.o menumodel.o
 	$(CC) $(CFLAGS) -c appletmenu.c
 
 cefiveconfig.o: appletconfig.o cefiveconfig.c cefiveconfig.h

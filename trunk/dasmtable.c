@@ -193,37 +193,37 @@ int dasmtable_init(DasmTable* prTable) {
     /* Initialize the DasmModel */
     prModel = dasmtable_get_model(prTable);
     if (prModel == NULL) {
-        return DASMTABLE_FAILURE;
+        return DASMTABLE_INVMODEL;
     }
     r = dasmmodel_init(prModel);
     if (r != DASMMODEL_SUCCESS) {
-        return DASMTABLE_FAILURE;
+        return DASMTABLE_MODELFAIL;
     }
     
     /* Initialize the CursorPos. */
     prCursor = dasmtable_get_cursorpos(prTable);
     if (prCursor == NULL) {
-        return DASMTABLE_FAILURE;
+        return DASMTABLE_INVCURSOR;
     }
     r = cursorpos_init(prCursor);
     if (r != CURSORPOS_SUCCESS) {
-        return DASMTABLE_FAILURE;
+        return DASMTABLE_CURSORFAIL;
     }
     
     /* Initialize the PanelConfig. */
     prPcfg = dasmtable_get_panelconfig(prTable);
     if (prPcfg == NULL) {
-        return DASMTABLE_FAILURE;
+        return DASMTABLE_INVPCFG;
     }
     r = panelconfig_init(prPcfg);
     if (r != PANELCONFIG_SUCCESS) {
-        return DASMTABLE_FAILURE;
+        return DASMTABLE_PCFGFAIL;
     }
     
     /* Assign the default Row Format. */
     if (dasmtable_set_rowformat(prTable, DASMTABLE_DEFFMT) != DASMTABLE_SUCCESS)
     {
-        return DASMTABLE_FAILURE;
+        return DASMTABLE_RFMTFAIL;
     }
     
     /* Invalidate the Table. */

@@ -19,6 +19,7 @@
 #include "searchpanel.h"
 #include "searchengine.h"
 #include "cefive.h"
+#include "gdasm.h"
 
 static void closeCheatEditor(CEFiveUi *prUi);
 static void drawApplet(CEFiveUi *prUi);
@@ -499,9 +500,14 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
 
     cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing AppletMenu.");
     AppletMenu *prMenu = &prUi->appletmenu;
-    prMenu->prApCfg = prAppCfg;
-    prMenu->config.top.y = 1;
-    prMenu->cursor.y = 0;
+    if (appletmenu_init(prMenu) != APPLETMENU_SUCCESS) {
+        cefiveui_log(prUi, LOG_ERROR, 
+                "cefiveuiInit: Failed to initialize Applet Menu.");
+    } else {
+        prMenu->prApCfg = prAppCfg;
+        appletmenu_set_position(prMenu, 0, 1);
+        appletmenu_set_size(prMenu, 20, 10);
+    }
 
     cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing HexEditor.");
     HexEditor *prHex = &prUi->hexeditor;
@@ -572,6 +578,24 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     gameinfo_set_colorconfig(prInfo, prColor);
     cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Assigning Cursor Position.");
     gameinfo_set_cursor(prInfo, 0, 1);
+    
+    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing Gdasm.");
+    Gdasm* prGasm = &prUi->rDasm;
+    if (gdasm_init(prGasm, prUi->prLog) != GDASM_SUCCESS) {
+        cefiveui_log(prUi, LOG_ERROR, "cefiveuiInit: Failed to init Gdasm.");
+    }
+    if (gdasm_set_appletconfig(prGasm, prAppCfg) != GDASM_SUCCESS) {
+        cefiveui_log(prUi, LOG_ERROR,
+                "cefiveuiInit: Failed to assign AppletConfig to Disassembler.");
+    }
+    if (gdasm_set_tableposition(prGasm, 0, 2) != GDASM_SUCCESS) {
+        cefiveui_log(prUi, LOG_ERROR, 
+                "cefiveuiInit: Failed to position Disassembler Table.");
+    }
+    if (gdasm_set_tablesize(prGasm, 68, 25) != GDASM_SUCCESS) {
+        cefiveui_log(prUi, LOG_ERROR,
+                "cefiveuiInit: Failed to size the Disassembler Table.");
+    }
     
     cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: UI Initialized.");
 }

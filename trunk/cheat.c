@@ -58,6 +58,17 @@ unsigned int cheat_get_length(Cheat *prCheat) {
     return clen;
 }
 
+int cheat_init(Cheat* prCheat) {
+    if (prCheat == NULL) {
+        return CHEAT_NULLPTR;
+    }
+    prCheat->block = (unsigned short) 0;
+    prCheat->flags = (unsigned char) 0;
+    prCheat->len = (unsigned short) 0;
+    prCheat->name[0] = (char) 0;
+    return CHEAT_SUCCESS;
+}
+
 int cheat_is_constant(Cheat* prCheat) {
     int is = 0;
     if (prCheat != NULL) {

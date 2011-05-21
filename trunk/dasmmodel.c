@@ -7,26 +7,24 @@
 SceUInt32 dasmmodel_get_address(DasmModel* prModel) {
     DmodelRow* prRow = NULL;
     SceUInt32 addr = 0;
-    int r = 0;
     
     if (prModel != NULL) {
-        r = dasmmodel_get_row(prRow, prModel, 0);
-        if (r == DASMMODEL_SUCCESS) {
+        prRow = dasmmodel_get_row(prModel, 0);
+        if (prRow != NULL) {
             addr = prRow->uiAddress;
         }
     }
     return addr;
 }
 
-int dasmmodel_get_row(DmodelRow* prDest, DasmModel* prModel, int index) {
-    if (prModel == NULL) {
-        return DASMMODEL_NULLPTR;
+DmodelRow* dasmmodel_get_row(DasmModel* prModel, int index) {
+    DmodelRow* prRow = NULL;
+    if (prModel != NULL) {
+        if ((index >= 0) && (index < prModel->iRows)) {
+            prRow = &prModel->arRow[index];
+        }
     }
-    if ((index < 0) || (index >= prModel->iRows)) {
-        return DASMMODEL_INVIDX;
-    }
-    prDest = &prModel->arRow[index];
-    return DASMMODEL_SUCCESS;
+    return prRow;
 }
 
 int dasmmodel_get_value(char* sDest, DasmModel* prModel, int row, int col) {
@@ -44,8 +42,8 @@ int dasmmodel_get_value(char* sDest, DasmModel* prModel, int row, int col) {
         return DASMMODEL_INVIDX;
     }
     
-    r = dasmmodel_get_row(prRow, prModel, row);
-    if (r != DASMMODEL_SUCCESS) {
+    prRow = dasmmodel_get_row(prModel, row);
+    if (prRow == NULL) {
         return DASMMODEL_FAILURE;
     }
     
@@ -80,8 +78,8 @@ int dasmmodel_init(DasmModel* prModel) {
     
     /* Initialize the Row Array. */
     for (i = 0; i < DASMMODEL_MAXROWS; i++) {
-        r = dasmmodel_get_row(prRow, prModel, i);
-        if (r != DASMMODEL_SUCCESS) {
+        prRow = dasmmodel_get_row(prModel, i);
+        if (prRow == NULL) {
             return DASMMODEL_FAILURE;
         }
         r = dmodelrow_init(prRow);
@@ -124,7 +122,8 @@ int dasmmodel_set_address(DasmModel* prModel, SceUInt32 address) {
     for (i = 0; i < prModel->iRows; i++) {
         /* Compute the address of the Row. */
         raddr = address + (i * 4);
-        if (dasmmodel_get_row(prRow, prModel, i) != DASMMODEL_SUCCESS) {
+        prRow = dasmmodel_get_row(prModel, i);
+        if (prRow == NULL) {
             return DASMMODEL_FAILURE;
         }
         /* Assign the Kernel Address of the Row. */

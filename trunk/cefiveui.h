@@ -21,6 +21,7 @@
 #include "searchpanel.h"
 #include "searchengine.h"
 #include "geelog.h"
+#include "gdasm.h"
 
 /** Indicates success. */
 #define CEFIVEUI_SUCCESS        (0)
@@ -39,6 +40,17 @@
 
 /** Length of the SCE Id for a Game. */
 #define CEFIVEUI_SCEID_LEN  10
+
+#define CEFIVEUI_E_CIRCLE       (0x00000001)
+#define CEFIVEUI_E_CROSS        (0x00000002)
+#define CEFIVEUI_E_SQUARE       (0x00000004)
+#define CEFIVEUI_E_TRIANGLE     (0x00000008)
+#define CEFIVEUI_E_LTRIGGER     (0x00000010)
+#define CEFIVEUI_E_RTRIGGER     (0x00000020)
+#define CEFIVEUI_E_DOWN         (0x00000100)
+#define CEFIVEUI_E_LEFT         (0x00000200)
+#define CEFIVEUI_E_RIGHT        (0x00000400)
+#define CEFIVEUI_E_UP           (0x00000800)
 
 #ifdef	__cplusplus
 extern "C" {
@@ -122,6 +134,7 @@ extern "C" {
         int cross;
         /** Current Button State struct */
         ButtonState buttons;
+        Gdasm rDasm;
     } 
     /** The Cheat Engine of Five User Interface struct. */
     CEFiveUi;

@@ -23,8 +23,11 @@
 /** Indicates Failure of a function. */
 #define CHEAT_FAILURE       (-1)
 
+/** Indicates a NULL pointer. */
+#define CHEAT_NULLPTR (-2)
+
 /** Indicates a Memory allocation fault in a function. */
-#define CHEAT_MEMORY        (-2)
+#define CHEAT_MEMORY        (-3)
 
 #ifdef	__cplusplus
 extern "C" {
@@ -96,6 +99,13 @@ extern "C" {
      */
     unsigned int cheat_get_length(Cheat *prCheat);
 
+    /** Initialize a Cheat struct.
+     * 
+     * @param prCheat Pointer to the Cheat struct to initialize.
+     * @return 0 indicates usccess, less than 0 indicates failure.
+     */
+    int cheat_init(Cheat* prCheat);
+    
     /** Return an integer indicating whether the CONSTANT flag of the specified
      * Cheat is set.
      * 

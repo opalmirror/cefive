@@ -15,6 +15,8 @@
 #include "colorconfig.h"
 #include "dasmtable.h"
 #include "appletconfig.h"
+#include "panelconfig.h"
+#include "dimension.h"
 
 /** Indicates success. */
 #define GDASM_SUCCESS (0)
@@ -132,6 +134,30 @@ extern "C" {
      */
     DasmTable* gdasm_get_table(Gdasm* prDasm);
     
+    /** Return a pointer to a PanelConfig struct representing the Panel
+     * Configuration for the Disassembler Table.
+     * 
+     * @param prDasm Pointer to a Gdasm struct representing the Disassembler.
+     * @return A pointer to a PanelConfig struct or NULL is returned.
+     */
+    PanelConfig* gdasm_get_tablepanelconfig(Gdasm* prDasm);
+
+    /** Return a pointer to a CursorPos struct representing the top left corner
+     * of the Disassembler Table.
+     * 
+     * @param prDasm Pointer to a Gdasm struct representing the Disassembler.
+     * @return A pointer to a CursorPos struct or NULL is returned.
+     */
+    CursorPos* gdasm_get_tableposition(Gdasm* prDasm);
+    
+    /** Return a pointer to a Dimension struct representing the size of the
+     * Disassembler Table.
+     * 
+     * @param prDasm Pointer to a Gdasm struct representing the Disassembler.
+     * @return A pointer to a Dimension struct or NULL is returned.
+     */
+    Dimension* gdasm_get_tablesize(Gdasm* prDasm);
+    
     /** Initialize a Gdasm struct to use to represent a Disassembler.
      * 
      * @param prDasm Pointer to the Gdasm struct to initialize.
@@ -189,6 +215,26 @@ extern "C" {
      */
     int gdasm_set_logger(Gdasm* prDasm, GeeLog* prLog);
 
+    /** Assign the position of the Disassembler Table in the Disassembler by
+     * specifying the top and left corner.
+     * 
+     * @param prDasm Pointer to a Gdasm struct representing the Disassembler.
+     * @param x int containing the column of the left edge.
+     * @param y int containing the row of the top edge.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int gdasm_set_tableposition(Gdasm* prDasm, int x, int y);
+    
+    /** Assign the size of the Disassembler Table in the Disassembler by
+     * specifying the width and height.
+     * 
+     * @param prDasm Pointer to a Gdasm struct representing the Disassembler.
+     * @param width int containing the width of the Table in columns.
+     * @param height int containing the height of the Table in rows.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int gdasm_set_tablesize(Gdasm* prDasm, int width, int height);
+    
     /** Process the user releasing the Square button.
      * 
      * @param prDasm Pointer to a Gdasm struct representing the Disassembler.
