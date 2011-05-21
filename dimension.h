@@ -5,8 +5,8 @@
  * Created on September 20, 2010, 10:33 AM
  */
 
-#ifndef _DIMENSION_H
-#define	_DIMENSION_H
+#ifndef DIMENSION_H
+#define	DIMENSION_H
 
 #include <pspkerneltypes.h>
     
@@ -39,4 +39,4 @@ extern "C" {
 }
 #endif
 
-#endif	/* _DIMENSION_H */
+#endif	/* DIMENSION_H */

@@ -5,6 +5,8 @@
 #include "geelog.h"
 #include "dasmtable.h"
 #include "appletconfig.h"
+#include "panelconfig.h"
+#include "dimension.h"
 
 int gdasm_circle_button(Gdasm* prDasm) {
     if (prDasm == NULL) {
@@ -189,10 +191,50 @@ DasmTable* gdasm_get_table(Gdasm* prDasm) {
     return prTable;
 }
 
+PanelConfig* gdasm_get_tablepanelconfig(Gdasm* prDasm) {
+    DasmTable* prTable = NULL;
+    PanelConfig* prConfig = NULL;
+    
+    if (prDasm != NULL) {
+        prTable = gdasm_get_table(prDasm);
+        if (prTable != NULL) {
+            prConfig = dasmtable_get_panelconfig(prTable);
+        }
+    }
+    return prConfig;
+}
+
+CursorPos* gdasm_get_tableposition(Gdasm* prDasm) {
+    CursorPos* prPos = NULL;
+    PanelConfig* prCfg = NULL;
+    
+    if (prDasm != NULL) {
+        prCfg = gdasm_get_tablepanelconfig(prDasm);
+        if (prCfg != NULL) {
+            prPos = panelconfig_get_position(prCfg);
+        }
+    }
+    return prPos;
+}
+
+Dimension* gdasm_get_tablesize(Gdasm* prDasm) {
+    Dimension* prSize = NULL;
+    PanelConfig* prCfg = NULL;
+    
+    if (prDasm != NULL) {
+        prCfg = gdasm_get_tablepanelconfig(prDasm);
+        if (prCfg != NULL) {
+            prSize = panelconfig_get_size(prCfg);
+        }
+    }
+    return prSize;
+}
+
 int gdasm_init(Gdasm* prDasm, GeeLog* prLog) {
     DasmConfig* prCfg = NULL;
     CursorPos* prPos = NULL;
     DasmTable* prTable = NULL;
+    char sMsg[GEELOG_LINE_LEN + 1];
     int r = 0;
     if (prDasm == NULL) {
         return GDASM_NULLPTR;
@@ -235,8 +277,8 @@ int gdasm_init(Gdasm* prDasm, GeeLog* prLog) {
     }
     r = dasmtable_init(prTable);
     if (r != DASMTABLE_SUCCESS) {
-        gdasm_log(prDasm, LOG_ERROR,
-                "gdasm_init: Failed to initialize Disassembler Table.");
+        sprintf(sMsg, "gdasm_init: dasmtable_init failed (%d).", r);
+        gdasm_log(prDasm, LOG_ERROR, sMsg);
         return GDASM_FAILURE;
     }
     gdasm_log(prDasm, LOG_DEBUG, "gdasm_init: Disassembler Initialized.");
@@ -391,5 +433,47 @@ int gdasm_set_logger(Gdasm* prDasm, GeeLog* prLog) {
         return GDASM_NULLPTR;
     }
     prDasm->prLog = prLog;
+    return GDASM_SUCCESS;
+}
+
+int gdasm_set_tableposition(Gdasm* prDasm, int x, int y) {
+    CursorPos* prPos = NULL;
+    
+    if (prDasm == NULL) {
+        return GDASM_NULLPTR;
+    }
+    prPos = gdasm_get_tableposition(prDasm);
+    if (prPos == NULL) {
+        gdasm_log(prDasm, LOG_ERROR,
+                "gdasm_set_tableposition: Invalid CursorPos pointer.");
+        return GDASM_FAILURE;
+    }
+    if (cursorpos_set(prPos, x, y) != CURSORPOS_SUCCESS) {
+        gdasm_log(prDasm, LOG_ERROR, 
+                "gdasm_set_tableposition: cursorpos_set failed.");
+        return GDASM_FAILURE;
+    }
+    
+    return GDASM_SUCCESS;
+}
+
+int gdasm_set_tablesize(Gdasm* prDasm, int width, int height) {
+    Dimension* prSize = NULL;
+    
+    if (prDasm == NULL) {
+        return GDASM_NULLPTR;
+    }
+    prSize = gdasm_get_tablesize(prDasm);
+    if (prSize == NULL) {
+        gdasm_log(prDasm, LOG_ERROR,
+                "gdasm_set_tablesize: Invalid Dimension pointer.");
+        return GDASM_FAILURE;
+    }
+    if (dimension_set(prSize, width, height) != DIMENSION_SUCCESS) {
+        gdasm_log(prDasm, LOG_ERROR,
+                "gdasm_set_tablesize: dimension_set failed.");
+        return GDASM_FAILURE;
+    }
+    
     return GDASM_SUCCESS;
 }

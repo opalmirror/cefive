@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <pspiofilemgr.h>
 
+static Block karBlock[CHEATENGINE_BLOCK_MAX];
+static Cheat karCheat[CHEATENGINE_CHEAT_MAX];
+
 static SceUInt32 parseDword(const char* sBuf);
 static int parseName(const char* buffer, char* sName, size_t maxlen);
 
@@ -259,6 +262,10 @@ Cheat* cheatengineGetCheat(CheatEngine *prEng, int index) {
 
 int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
         Block* arBlock) {
+    Block* prBlock = NULL;
+    Cheat* prCheat = NULL;
+    int i = 0;
+    
     if (prEng == NULL) {
         return CHEATENGINE_NULLPTR;
     }
@@ -266,8 +273,34 @@ int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
         return CHEATENGINE_NULLPTR;
     }
     prEng->prConfig = prCfg;
-    prEng->cheatlist = arCheat;
-    prEng->blocklist = arBlock;
+    /* I am planning on removing the ability to pass the Cheat and Block array
+     * in to the function and instead use static Arrays from cheatengine itself.
+     * In order to keep from breaking the existing mechanism, this allows NULL
+     * to be passed for both the Cheat and Block arrays to use the static
+     * ones.
+     */
+    if (arCheat == NULL) {
+        prEng->cheatlist = karCheat;
+        for (i = 0; i < CHEATENGINE_CHEAT_MAX; i++) {
+            prCheat = &karCheat[i];
+            if (cheat_init(prCheat) != CHEAT_SUCCESS) {
+                return CHEATENGINE_FAILURE;
+            }
+        }
+    } else {
+        prEng->cheatlist = arCheat;
+    }
+    if (arBlock == NULL) {
+        prEng->blocklist = karBlock;
+        for (i = 0; i < CHEATENGINE_BLOCK_MAX; i++) {
+            prBlock = &karBlock[i];
+            if (block_init(prBlock, 0, 0, (unsigned char) 0) != BLOCK_SUCCESS) {
+                return CHEATENGINE_FAILURE;
+            }
+        }
+    } else {
+        prEng->blocklist = arBlock;
+    }
     prEng->cheat_count = 0;
 
     return CHEATENGINE_SUCCESS;

@@ -13,10 +13,19 @@
 #include "panelconfig.h"
 #include "appletconfig.h"
 
+/** Indicates success. */
 #define CEFIVECONFIG_SUCCESS    (0)
+
+/** Indicates failure. */
 #define CEFIVECONFIG_FAILURE    (-1)
+
+/** Indicates a memory error. */
 #define CEFIVECONFIG_MEMORY     (-2)
+
+/** Indicates a NULL pointer. */
 #define CEFIVECONFIG_NULLPTR    (-3)
+
+/** Indicates an I/O error. */
 #define CEFIVECONFIG_IOERROR    (-4)
 
 #define CEFIVE_DIR_MAX      (64)
@@ -75,6 +84,25 @@ extern "C" {
     int cefiveconfig_load(CEFiveConfig* prConfig, const char* sFilename);
     int cefiveconfig_read(CEFiveConfig* prConfig, SceUID fd);
     int cefiveconfig_save(CEFiveConfig* prConfig, const char* sFilename);
+    
+    /** Assign the CEFive directory.
+     * 
+     * @param prConfig Pointer to a CEFiveConfig struct representing the 
+     * CEFive Configuration.
+     * @param sDir string containing the directory to assign.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int cefiveconfig_set_cefivedir(CEFiveConfig* prConfig, const char* sDir);
+    
+    /** Assign the CFW plugins directory.
+     * 
+     * @param prConfig Pointer to a CEFiveConfig struct representing the 
+     * CEFive Configuration.
+     * @param sDir string containing the directory to assign.
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int cefiveconfig_set_plugindir(CEFiveConfig* prConfig, const char* sDir);
+    
     int cefiveconfig_write(CEFiveConfig* prConfig, SceUID fd);
 
 #ifdef	__cplusplus

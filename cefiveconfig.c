@@ -8,6 +8,7 @@
 #include "dimension.h"
 #include "cursorpos.h"
 #include "cefiveconfig.h"
+#include "cefive.h"
 
 /* Copy the specified CEFiveConfig struct to a destination CEFiveConfig struct.
  * 
@@ -243,6 +244,22 @@ int cefiveconfig_save(CEFiveConfig* prConfig, const char* sFilename) {
         return CEFIVECONFIG_FAILURE;
     }
     sceIoClose(fd);
+    return CEFIVECONFIG_SUCCESS;
+}
+
+int cefiveconfig_set_cefivedir(CEFiveConfig* prConfig, const char* sDir) {
+    if (prConfig == NULL) {
+        return CEFIVECONFIG_NULLPTR;
+    }
+    strncpy(prConfig->cefive_dir, sDir, CEFIVE_DIR_MAX);
+    return CEFIVECONFIG_SUCCESS;
+}
+
+int cefiveconfig_set_plugindir(CEFiveConfig* prConfig, const char* sDir) {
+    if (prConfig == NULL) {
+        return CEFIVECONFIG_NULLPTR;
+    }
+    strncpy(prConfig->plugins_dir, sDir, CEFIVE_DIR_MAX);
     return CEFIVECONFIG_SUCCESS;
 }
 

@@ -32,6 +32,27 @@
 /** Indicate an invalid cursor position. */
 #define DASMTABLE_INVPOS (-5)
 
+/** Indicate an invalid Model pointer. */
+#define DASMTABLE_INVMODEL (-6)
+
+/** Indicate a Model Failure. */
+#define DASMTABLE_MODELFAIL (-7)
+
+/** Indicates an invalid Cursor pointer. */
+#define DASMTABLE_INVCURSOR (-8)
+
+/** Indicates a Cursor failure. */
+#define DASMTABLE_CURSORFAIL (-9)
+
+/** Indicates an invalid PanelConfig pointer. */
+#define DASMTABLE_INVPCFG (-10)
+
+/** Indicates a PanelConfig failure. */
+#define DASMTABLE_PCFGFAIL (-11)
+
+/** Indicates a failure to assign Row Format. */
+#define DASMTABLE_RFMTFAIL (-12)
+
 /** The maximum number of rows in the Table. */
 #define DASMTABLE_MAXROWS (30)
 

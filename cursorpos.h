@@ -3,8 +3,8 @@
  * Author: Sir Gee of Five
  */
 
-#ifndef _CURSORPOS_H
-#define _CURSORPOS_H
+#ifndef CURSORPOS_H
+#define CURSORPOS_H
 
 #include <pspkerneltypes.h>
     
@@ -67,4 +67,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _CURSORPOS_H */
+#endif /* CURSORPOS_H */

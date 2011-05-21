@@ -8,6 +8,7 @@
 #ifndef _CEFIVE_H
 #define	_CEFIVE_H
 
+#include <pspkerneltypes.h>
 #include <psploadcore.h>
 #include "cefiveui.h"
 #include "cheatengine.h"
@@ -15,6 +16,7 @@
 #include "cefiveconfig.h"
 #include "gameinfo.h"
 #include "geelog.h"
+#include "ggame.h"
 
 /** Indicates success. */
 #define CEFIVE_SUCCESS      (0)
@@ -42,6 +44,39 @@
 
 /** The path to the UMD Data for the UMD Drive. */
 #define CEFIVE_UMD_PATH     "disc0:/UMD_DATA.BIN"
+
+/** The path to CFW Plugins. */
+#define CEFIVE_PLUGIN_PATH "ms0:/seplugins"
+
+/** The CFW Plugins directory. */
+#define CEFIVE_PLUGIN_DIR "seplugins"
+
+/** The CEFive Data Folder */
+#define CEFIVE_DATA_DIR "NitePr"
+
+/** The CEFive Configuration File */
+#define CEFIVE_CONFIG_FILE "CEFive.cdf"
+
+/** The name of the CEFive Thread. */
+#define CEFIVE_THREAD_NAME "CEFiveThread"
+
+/** The Init Priority of the CEFive Thread. */
+#define CEFIVE_INIT_PRIO (24)
+
+/** The Stack Size of the CEFive Thread. */
+#define CEFIVE_STACK_SIZE (16384)
+
+/** The Name of the Run State Semaphore. */
+#define CEFIVE_RSS_NAME "CEFiveRSSema"
+
+/** The Length of a Path */
+#define CEFIVE_PATH_LEN (255)
+
+/** STOPPED Signal */
+#define CEFIVE_S_STOPPED (0)
+
+/** FAULT Signal */
+#define CEFIVE_S_FAULT (9)
 
 #ifdef	__cplusplus
 extern "C" {
@@ -101,62 +136,80 @@ extern "C" {
         void* prVideoRam;
         /** String containing the SCE Game Id */
         char sGameId[CEFIVE_GAMEID_LEN + 1];
-    } 
+        /** RunState Signal UID */
+        SceUID rSigRunState;
+        /** GGame struct representing the current Game. */
+        GGame rGame;
+        /** UID of Input Events */
+        SceUID rIEvtUID;
+    }
     /** Structure representing a Cheat Engine of Five. */
     CEFive;
 
-
     /** Return a pointer to a CheatEngine struct representing the Cheat Engine.
      * 
-     * @param prCe Pointer to a CEFive struct representing cefive.
-     * @return A pointer to a CheatEngine struct or NULL is returned.
+     * @return A pointer to a CheatEngine struct is returned.
      */
-    CheatEngine* cefive_get_cheatengine(CEFive* prCe);
+    CheatEngine* cefive_get_cheatengine();
     
-    /** Return a pointer to a CEFiveConfig struct representing the cefive
+    /** Return a pointer to a CEFiveConfig struct representing the CEFive
      * Configuration.
      * 
-     * @param prCe Pointer to a CEFive struct representing cefive.
-     * @return A pointer to a CEFiveConfig struct or NULL is returned.
+     * @return A pointer to a CEFiveConfig struct is returned.
      */
-    CEFiveConfig* cefive_get_config(CEFive* prCe);
+    CEFiveConfig* cefive_get_config();
     
-    /** Return a pointer to a GameInfo struct representing the Game Information
-     * for the current Game.
+    /** Return a pointer to a GGame struct representing the current Game.
      * 
-     * @param prCe Pointer to a CEFive struct representing cefive.
-     * @return A pointer to a GameInfo struct or NULL is returned.
+     * @return A pointer to a GGame struct is returned.
      */
-    GameInfo* cefive_get_gameinfo(CEFive* prCe);
+    GGame* cefive_get_game();
+    
+    /** Return a pointer to a CEFiveUi struct representing the CEFive User
+     * Interface.
+     * 
+     * @return A pointer to a CEFiveUi struct is returned.
+     */
+    CEFiveUi* cefive_get_interface();
+    
+    /** Return a pointer to a SceModule struct representing the 
+     * sceKernelLibrary library.
+     * 
+     * @return A pointer to a SceModule struct or NULL is returned.
+     */
+    SceModule* cefive_get_kernellib();
     
     /** Return a pointer to a SearchEngine struct representing the Search 
      * Engine.
      * 
-     * @param prCe Pointer to a CEFive struct representing cefive.
-     * @return A pointer to a SearchEngine struct or NULL is returned.
+     * @return A pointer to a SearchEngine struct is returned.
      */
-    SearchEngine* cefive_get_searchengine(CEFive* prCe);
+    SearchEngine* cefive_get_searchengine();
     
-    /** Return a pointer to a CEFiveUi struct representing the User Interface.
+    /** Return the Thread Id of the CEFive thread.
      * 
-     * @param prCe Pointer to a CEFive struct representing cefive.
-     * @return A pointer to a CEFiveUi struct or NULL is returned.
+     * @return A SceUID containing the Thread Id is returned.
      */
-    CEFiveUi* cefive_get_ui(CEFive* prCe);
+    SceUID cefive_get_threadid();
     
-    /** Initialize a Cheat Engine of Five.
+    /** Initialize Cheat Engine of Five.
      * 
-     * @param prCe Pointer to a CEFive struct representing cefive.
      * @param prLog Pointer to a GeeLog struct representing the Logger.
      * @return 0 indicates success, less than 0 indicates failure.
      */
-    int cefive_init(CEFive* prCe, GeeLog* prLog);
+    int cefive_init(GeeLog* prLog);
     
-    int cefive_run(CEFive* prCe);
+    /** Start Cheat Engine of Five.
+     * 
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int cefive_start();
     
-    int cefive_start(CEFive* prCe);
-    
-    int cefive_stop(CEFive* prCe);
+    /** Stop Cheat Engine of Five.
+     * 
+     * @return 0 indicates success, less than 0 indicates failure.
+     */
+    int cefive_stop();
 
 #ifdef	__cplusplus
 }
