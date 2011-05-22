@@ -7,12 +7,25 @@
 #define _CHEATPANEL_H
 
 #include <pspkerneltypes.h>
+#include <pspdebug.h>
 #include "cheat.h"
 #include "block.h"
 #include "colorconfig.h"
 #include "cursorpos.h"
 #include "cheatengine.h"
 #include "appletconfig.h"
+
+/** Indicates success. */
+#define CHEATPANEL_SUCCESS (0)
+
+/** Indicates failure. */
+#define CHEATPANEL_FAILURE (-1)
+
+/** Indicates a NULL pointer. */
+#define CHEATPANEL_NULLPTR (-2)
+
+/** Indicates a memory error. */
+#define CHEATPANEL_MEMORY (-3)
 
 #ifdef	__cplusplus
 extern "C" {
@@ -52,15 +65,38 @@ extern "C" {
     /** Cheat Panel Applet struct */
     CheatPanel;
 
+    /** Return a pointer to an AppletConfig struct representing the Applet
+     * Configuration.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat
+     * Panel.
+     * @return A pointer to an AppletConfig struct or NULL is returned.
+     */
+    AppletConfig* cheatpanel_get_appletconfig(CheatPanel* prPanel);
+    
+    CheatPanelConfig* cheatpanel_get_config(CheatPanel* prPanel);
+    
+    ColorConfig* cheatpanel_get_constantcolor(CheatPanel* prPanel);
+    
+    ColorConfig* cheatpanel_get_cursorcolor(CheatPanel* prPanel);
+    
+    CursorPos* cheatpanel_get_cursorpos(CheatPanel* prPanel);
+    
+    ColorConfig* cheatpanel_get_panelcolor(CheatPanel* prPanel);
+    
+    ColorConfig* cheatpanel_get_selectedcolor(CheatPanel* prPanel);
+    
     /** Called when the Circle button is released in the Cheat Panel Applet.
      * 
-     * @param prPanel Pointer to a CheatPanel struct representing the Cheat Panel.
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat 
+     * Panel.
      */
     void cheatpanelCircleButton(CheatPanel* prPanel);
 
     /** Called when the Cross button is released in the Cheat Panel Applet.
      * 
-     * @param prPanel Pointer to a CheatPanel struct representing the Cheat Panel.
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat 
+     * Panel.
      */
     void cheatpanelCrossButton(CheatPanel* prPanel);
     void cheatpanelDpadDown(CheatPanel* prPanel);

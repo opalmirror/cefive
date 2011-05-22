@@ -6,11 +6,14 @@
 #ifndef _CHEATENGINE_H_
 #define _CHEATENGINE_H_
 
+#include <stdio.h>
 #include <pspkerneltypes.h>
+#include <pspiofilemgr.h>
 #include "cheat.h"
 #include "block.h"
 #include "cefiveconfig.h"
-#include "geelog.h"
+#include "cheatmodel.h"
+#include "blockmodel.h"
 
 /** Indicates success. */
 #define CHEATENGINE_SUCCESS     (0)
@@ -39,8 +42,10 @@ extern "C" {
 
 
     typedef struct _CheatEngine {
-        /** Pointer to a GeeLog struct representing the Logger. */
-        GeeLog* logger;
+        /** CheatModel struct representing the Cheat Model. */
+        CheatModel cheatModel;
+        /** BlockModel struct representing the Block Model. */
+        BlockModel blockModel;
         /** Pointer to the first element of an array of Cheat structs. */
         Cheat* cheatlist;
         /** Pointer to the first element of an array of Block structs. */
@@ -62,6 +67,74 @@ extern "C" {
      */
     CheatEngine;
 
+    /** Add a new Block to a Cheat Engine, returning a pointer to the newly
+     * added Block.
+     * 
+     * @param prEng Pointer to a CheatEngine struct representing the Cheat
+     * Engine.
+     * @return A pointer to a Block struct or NULL is returned. 
+     */
+    Block* cheatengine_add_block(CheatEngine* prEng);
+
+    /** Add a new Cheat to a Cheat Engine, returning a pointer to the newly
+     * added Cheat.
+     * 
+     * @param prEng Pointer to a CheatEngine struct representing the Cheat
+     * Engine.
+     * @return A pointer to a Cheat struct or NULL is returned. 
+     */
+    Cheat* cheatengine_add_cheat(CheatEngine* prEng);
+    
+    /** Return a pointer to a Block struct representing the indicated Block.
+     * 
+     * @param prEng Pointer to a CheatEngine struct representing the Cheat
+     * Engine.
+     * @param index int indicating the Block to return.
+     * @return A pointer to a Block struct or NULL is returned.
+     */
+    Block* cheatengine_get_block(CheatEngine* prEng, const int index);
+    
+    /** Return the number of Block elements in a Cheat Engine.
+     * 
+     * @param prEng Pointer to a CheatEngine struct representing the Cheat
+     * Engine.
+     * @return The number of Block elements or -1 is returned. 
+     */
+    int cheatengine_get_blockcount(CheatEngine* prEng);
+    
+    /** Return a pointer to a BlockModel struct representing the Block Model.
+     * 
+     * @param prEng Pointer to a CheatEngine struct representing the Cheat
+     * Engine.
+     * @return A pointer to a BlockModel struct or NULL is returned. 
+     */
+    BlockModel* cheatengine_get_blockmodel(CheatEngine* prEng);
+    
+    /** Return a pointer to a Cheat struct representing the indicated Cheat.
+     * 
+     * @param prEng Pointer to a CheatEngine struct representing the Cheat
+     * Engine.
+     * @param index int indicating the Cheat to return.
+     * @return A pointer to a Cheat struct or NULL is returned.
+     */
+    Cheat* cheatengine_get_cheat(CheatEngine* prEng, const int index);
+    
+    /** Return the number of Cheat elements in a Cheat Engine.
+     * 
+     * @param prEng Pointer to a CheatEngine struct representing the Cheat
+     * Engine.
+     * @return The number of Cheat elements or -1 is returned. 
+     */
+    int cheatengine_get_cheatcount(CheatEngine* prEng);
+    
+    /** Return a pointer to a CheatModel struct representing the Cheat Model.
+     * 
+     * @param prEng Pointer to a CheatEngine struct representing the Cheat
+     * Engine.
+     * @return A pointer to a CheatModel struct or NULL is returned.
+     */
+    CheatModel* cheatengine_get_cheatmodel(CheatEngine* prEng);
+    
     /** Activate all Cheats that are currently inactive.
      * 
      * @param prEng Pointer to a CheatEngine struct representing the Cheat Engine.
@@ -190,17 +263,6 @@ extern "C" {
      */
     int cheatengineLoadCheats(CheatEngine* prEng);
 
-    /** Add a log message to the current Cheat Engine Logger if applicable.
-     * 
-     * @param prEng Pointer to a CheatEngine struct representing a Cheat Engine.
-     * @param rLevel ELogLevel enum value indicating log level of message.
-     * @param sMsg String containing message to log.
-     * @return CHEATENGINE_NULLPTR if prEng is NULL.  CHEATENGINE_FAILURE if the 
-     * Cheat Engine has no logger.  CHEATENGINE_SUCCESS if the message was sent to 
-     * the logger.
-     */
-    int cheatengineLog(CheatEngine* prEng, ELogLevel rLevel, const char* sMsg);
-
     /** Refresh the specified Cheat Engine, Applying or Resetting cheats as 
      * necessary.
      * 
@@ -291,17 +353,6 @@ extern "C" {
      * CHEATENGINE_SUCCESS is returned if the specified Cheat is set to selected.
      */
     int cheatengineSetCheatSelected(CheatEngine* prEng, int index);
-
-    /** Assign a GeeLog pointer to act as the logging facility for the specified
-     * CheatEngine.
-     * 
-     * @param prEng Pointer to a CheatEngine struct that represents the Cheat
-     * Engine.
-     * @param prLog Pointer to a GeeLog struct that represents the Logger.
-     * @return CHEATENGINE_NULLPTR is returned if prEng is NULL.  
-     * CHEATENGINE_SUCCESS is returned if the GeeLog logger is assigned.
-     */
-    int cheatengineSetLogger(CheatEngine* prEng, GeeLog* prLog);
 
 #ifdef	__cplusplus
 }

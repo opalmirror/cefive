@@ -1,11 +1,4 @@
 #include "cheatengine.h"
-#include "block.h"
-#include "cheat.h"
-#include "geelog.h"
-#include <pspkernel.h>
-#include <pspkerneltypes.h>
-#include <stdio.h>
-#include <pspiofilemgr.h>
 
 static Block karBlock[CHEATENGINE_BLOCK_MAX];
 static Cheat karCheat[CHEATENGINE_CHEAT_MAX];
@@ -13,34 +6,100 @@ static Cheat karCheat[CHEATENGINE_CHEAT_MAX];
 static SceUInt32 parseDword(const char* sBuf);
 static int parseName(const char* buffer, char* sName, size_t maxlen);
 
+Block* cheatengine_add_block(CheatEngine* prEng) {
+    Block* prBlock = NULL;
+    BlockModel* prModel = NULL;
+    if (prEng != NULL) {
+        prModel = cheatengine_get_blockmodel(prEng);
+        prBlock = blockmodel_add(prModel);
+    }
+    return prBlock;
+}
+
+Cheat* cheatengine_add_cheat(CheatEngine* prEng) {
+    Cheat* prCheat = NULL;
+    CheatModel* prModel = NULL;
+    if (prEng != NULL) {
+        prModel = cheatengine_get_cheatmodel(prEng);
+        prCheat = cheatmodel_add(prModel);
+    }
+    return prCheat;
+}
+
+Block* cheatengine_get_block(CheatEngine* prEng, const int index) {
+    Block* prBlock = NULL;
+    BlockModel* prModel = NULL;
+    if (prEng != NULL) {
+        prModel = cheatengine_get_blockmodel(prEng);
+        prBlock = blockmodel_get(prModel, index);
+    }
+    return prBlock;
+}
+
+int cheatengine_get_blockcount(CheatEngine* prEng) {
+    int count = CHEATENGINE_FAILURE;
+    BlockModel* prModel = NULL;
+    if (prEng != NULL) {
+        prModel = cheatengine_get_blockmodel(prEng);
+        count = prModel->rowCount;
+    }
+    return count;
+}
+
+BlockModel* cheatengine_get_blockmodel(CheatEngine* prEng) {
+    BlockModel* prModel = NULL;
+    if (prEng != NULL) {
+        prModel = &prEng->blockModel;
+    }
+    return prModel;
+}
+
+Cheat* cheatengine_get_cheat(CheatEngine* prEng, const int index) {
+    Cheat *prCheat = NULL;
+    CheatModel *prModel = NULL;
+    if (prEng != NULL) {
+        prModel = cheatengine_get_cheatmodel(prEng);
+        prCheat = cheatmodel_get(prModel, index);
+    }
+    return prCheat;
+}
+
+int cheatengine_get_cheatcount(CheatEngine* prEng) {
+    int count = CHEATENGINE_FAILURE;
+    CheatModel* prModel = NULL;
+    if (prEng != NULL) {
+        prModel = cheatengine_get_cheatmodel(prEng);
+        count = prModel->rowCount;
+    }
+    return count;
+}
+
+CheatModel* cheatengine_get_cheatmodel(CheatEngine* prEng) {
+    CheatModel* prModel = NULL;
+    if (prEng != NULL) {
+        prModel = &prEng->cheatModel;
+    }
+    return prModel;
+}
+
 int cheatengineActivateCheats(CheatEngine* prEng) {
     Cheat* prCheat = NULL;
     int iCheat = 0;
-    char sMsg[256];
 
     if (prEng == NULL) {
         return CHEATENGINE_NULLPTR;
     }
 
-    cheatengineLog(prEng, LOG_DEBUG, 
-            "cheatEngineActivateCheats: Activating Cheats.");
     for (iCheat = 0; iCheat < prEng->cheat_count; iCheat++) {
         prCheat = cheatengineGetCheat(prEng, iCheat);
         if (prCheat == NULL) {
-            sprintf(sMsg, "%s: Cheat %d is NULL.", 
-                    "cheatEngineActivateCheats", iCheat);
-            cheatengineLog(prEng, LOG_WARN, sMsg);
             continue;
         }
         if (cheat_is_inactive(prCheat) == 0) {
-            sprintf(sMsg, "%s: Applying Cheat %d.", 
-                    "cheatEngineActivateCheat", iCheat);
-            cheatengineLog(prEng, LOG_INFO, sMsg);
             cheatengineApplyCheat(prEng, iCheat);
         }
     }
     prEng->trigger_active = 1;
-    cheatengineLog(prEng, LOG_DEBUG, "cheatengineActivate: Cheats Activated.");
 
     return CHEATENGINE_SUCCESS;
 }
@@ -56,7 +115,6 @@ Block* cheatengineAddBlock(CheatEngine *prEng, unsigned char flags,
     prDest->address = addr;
     prDest->hakVal = value;
     prEng->block_count++;
-    cheatengineLog(prEng, LOG_DEBUG, "cheatengineAddBlock: Block added.");
     return prDest;
 }
 
@@ -75,24 +133,17 @@ Cheat* cheatengineAddCheat(CheatEngine *prEng) {
         cheat_set_block(prDest, prEng->block_count);
         cheat_setflag_fresh(prDest);
         prEng->cheat_count = ct;
-        cheatengineLog(prEng, LOG_DEBUG, "cheatengineAddCheat: Cheat added.");
-    } else {
-        cheatengineLog(prEng, LOG_WARN,
-                "cheatengineAddCheat: cheat_count at max, cannot add Cheat.");
     }
     return prDest;
 }
 
 int cheatengineApplyBlock(CheatEngine *prEng, int index) {
     int r = 0;
-    char sMsg[256];
     if (prEng == NULL) {
         return CHEATENGINE_NULLPTR;
     }
     Block *prBlock = cheatengineGetBlock(prEng, index);
     if (prBlock == NULL) {
-        cheatengineLog(prEng, LOG_WARN,
-               "cheatengineApplyBlock: Unable to get specified Block pointer.");
         return CHEATENGINE_FAILURE;
     }
     if (block_is_byte(prBlock)) {
@@ -104,8 +155,6 @@ int cheatengineApplyBlock(CheatEngine *prEng, int index) {
     if (block_is_dword(prBlock)) {
         r = cheatengineApplyUInt32Block(prBlock);
     }
-    sprintf(sMsg, "%s: Applied Block %d.", "cheatengineApplyBlock", index);
-    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     return CHEATENGINE_SUCCESS;
 }
 
@@ -114,37 +163,23 @@ int cheatengineApplyCheat(CheatEngine *prEng, int index) {
     int iEnd = 0;
     int iStart = 0;
     int r = CHEATENGINE_SUCCESS;
-    char sMsg[256];
 
     if (prEng == NULL) {
         return CHEATENGINE_NULLPTR;
     }
     Cheat* prCheat = cheatengineGetCheat(prEng, index);
     if (prCheat == NULL) {
-        sprintf(sMsg, "%s: Cheat %d is NULL.", "cheatEngineApplyCheat", index);
-        cheatengineLog(prEng, LOG_WARN, sMsg);
         return CHEATENGINE_FAILURE;
     }
     iStart = prCheat->block;
-    sprintf(sMsg, "%s: Cheat starts at Block %d.", 
-            "cheatengineApplyCheat", iStart);
-    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     iEnd = prCheat->len + iStart;
-    sprintf(sMsg, "%s: Cheat ends at Block %d.",
-            "cheatengineApplyCheat", iEnd);
-    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     for (iBlock = iStart; iBlock < iEnd; iBlock++) {
         r = cheatengineApplyBlock(prEng, iBlock);
         if (r != CHEATENGINE_SUCCESS) {
-            sprintf(sMsg, "%s: Failed to apply Block %d.", 
-                    "cheatengineApplyCheat", iBlock);
-            cheatengineLog(prEng, LOG_WARN, sMsg);
             break;
         }
     }
     cheat_setflag_fresh(prCheat);
-    sprintf(sMsg, "%s: Applied Cheat %d.", "cheatengineApplyCheat", index);
-    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     return r;
 }
 
@@ -202,32 +237,21 @@ int cheatengineApplyUShort16Block(Block* prBlock) {
 int cheatengineDeactivateCheats(CheatEngine* prEng) {
     Cheat* prCheat = NULL;
     int iCheat = 0;
-    char sMsg[256];
 
     if (prEng == NULL) {
         return CHEATENGINE_NULLPTR;
     }
 
-    cheatengineLog(prEng, LOG_DEBUG, 
-            "cheatengineDeactivateCheats: Deactivating Cheats.");
     for (iCheat = 0; iCheat < prEng->cheat_count; iCheat++) {
         prCheat = cheatengineGetCheat(prEng, iCheat);
         if (prCheat == NULL) {
-            sprintf(sMsg, "%s: Cheat %d is NULL.",
-                    "cheatengineDeactivateCheats", iCheat);
-            cheatengineLog(prEng, LOG_WARN, sMsg);
             continue;
         }
         if (cheat_is_selected(prCheat) == 1) {
-            sprintf(sMsg, "%s: Deactivating Cheat %d.",
-                    "cheatengineDeactivateCheats", iCheat);
-            cheatengineLog(prEng, LOG_DEBUG, sMsg);
             cheatengineResetCheat(prEng, iCheat);
         }
     }
     prEng->trigger_active = 0;
-    cheatengineLog(prEng, LOG_DEBUG, 
-            "cheatengineDeactivateCheats: Cheats deactivated.");
 
     return CHEATENGINE_SUCCESS;
 }
@@ -238,8 +262,6 @@ Block* cheatengineGetBlock(CheatEngine *prEng, int index) {
         return prDest;
     }
     if (index >= prEng->block_count) {
-        cheatengineLog(prEng, LOG_WARN, 
-                "cheatengineGetBlock: Index out of bounds.");
         return prDest;
     }
     prDest = &(prEng->blocklist[index]);
@@ -252,8 +274,6 @@ Cheat* cheatengineGetCheat(CheatEngine *prEng, int index) {
         return prDest;
     }
     if (index >= prEng->cheat_count) {
-        cheatengineLog(prEng, LOG_WARN, 
-                "cheatengineGetCheat: index out of bounds.");
         return prDest;
     }
     prDest = &(prEng->cheatlist[index]);
@@ -262,6 +282,8 @@ Cheat* cheatengineGetCheat(CheatEngine *prEng, int index) {
 
 int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
         Block* arBlock) {
+    BlockModel* prBmodel = NULL;
+    CheatModel* prCmodel = NULL;
     Block* prBlock = NULL;
     Cheat* prCheat = NULL;
     int i = 0;
@@ -303,6 +325,14 @@ int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
     }
     prEng->cheat_count = 0;
 
+    prBmodel = cheatengine_get_blockmodel(prEng);
+    if (blockmodel_init(prBmodel, 16) != BLOCKMODEL_SUCCESS) {
+        return CHEATENGINE_FAILURE;
+    }
+    prCmodel = cheatengine_get_cheatmodel(prEng);
+    if (cheatmodel_init(prCmodel, 8) != CHEATMODEL_SUCCESS) {
+        return CHEATENGINE_FAILURE;
+    }
     return CHEATENGINE_SUCCESS;
 }
 
@@ -334,22 +364,6 @@ int cheatengineLoadCheats(CheatEngine* prEng) {
     sceIoLseek(fh, 0, SEEK_SET);
 
     sceIoClose(fh);
-    return CHEATENGINE_SUCCESS;
-}
-
-int cheatengineLog(CheatEngine* prEng, ELogLevel rLevel, const char* sMsg) {
-    GeeLog *prLog = NULL;
-    if (prEng == NULL) {
-        return CHEATENGINE_NULLPTR;
-    }
-    
-    prLog = prEng->logger;
-    if (prLog == NULL) {
-        return CHEATENGINE_FAILURE;
-    }
-    
-    geelog_log(prLog, rLevel, sMsg);
-    
     return CHEATENGINE_SUCCESS;
 }
 
@@ -460,7 +474,6 @@ int cheatengineReadline(SceUID rFh, char* buffer) {
 int cheatengineRefresh(CheatEngine* prEng) {
     Cheat* prCheat = NULL;
     int iCheat = 0;
-    char sMsg[256];
 
     if (prEng == NULL) {
         return CHEATENGINE_NULLPTR;
@@ -468,9 +481,6 @@ int cheatengineRefresh(CheatEngine* prEng) {
     for (iCheat = 0; iCheat < prEng->cheat_count; iCheat++) {
         prCheat = cheatengineGetCheat(prEng, iCheat);
         if (prCheat == NULL) {
-            sprintf(sMsg, "%s: Cheat %d pointer is NULL.", 
-                    "cheatengineRefresh", iCheat);
-            cheatengineLog(prEng, LOG_WARN, sMsg);
             continue;
         }
         // If the Cheats are Active
@@ -490,15 +500,11 @@ int cheatengineRefresh(CheatEngine* prEng) {
 
 int cheatengineResetBlock(CheatEngine *prEng, int index) {
     int r = 0;
-    char sMsg[256];
     if (prEng == NULL) {
         return CHEATENGINE_NULLPTR;
     }
     Block *prBlock = cheatengineGetBlock(prEng, index);
     if (prBlock == NULL) {
-        sprintf(sMsg, "%s: Block %d pointer is NULL.", 
-                "cheatengineResetBlock", index);
-        cheatengineLog(prEng, LOG_WARN, sMsg);
         return CHEATENGINE_FAILURE;
     }
     if (block_is_byte(prBlock)) {
@@ -511,8 +517,6 @@ int cheatengineResetBlock(CheatEngine *prEng, int index) {
         cheatengineResetUInt32Block(prBlock);
     }
 
-    sprintf(sMsg, "%s: Reset Block %d.", "cheatengineResetBlock", index);
-    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     return CHEATENGINE_SUCCESS;
 }
 
@@ -521,38 +525,23 @@ int cheatengineResetCheat(CheatEngine *prEng, int index) {
     int iEnd = 0;
     int iStart = 0;
     int r = CHEATENGINE_SUCCESS;
-    char sMsg[256];
 
     if (prEng == NULL) {
         return CHEATENGINE_FAILURE;
     }
     Cheat* prCheat = cheatengineGetCheat(prEng, index);
     if (prCheat == NULL) {
-        sprintf(sMsg, "%s: Cheat %d pointer is NULL.", 
-                "cheatengineResetCheat", index);
-        cheatengineLog(prEng, LOG_WARN, sMsg);
         return CHEATENGINE_FAILURE;
     }
     iStart = prCheat->block;
-    sprintf(sMsg, "%s: Cheat %d Starting Block is %d.",
-            "cheatengineResetCheat", index, iStart);
-    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     iEnd = prCheat->len + iStart;
-    sprintf(sMsg, "%s: Cheat %d Ending Block is %d.",
-            "cheatengineResetCheat", index, iEnd);
-    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     for (iBlock = iStart; iBlock < iEnd; iBlock++) {
         r = cheatengineResetBlock(prEng, iBlock);
         if (r != CHEATENGINE_SUCCESS) {
-            sprintf(sMsg, "%s: Failed to reset Block %d.", 
-                    "cheatengineResetCheat", iBlock);
-            cheatengineLog(prEng, LOG_WARN, sMsg);
             break;
         }
     }
     cheat_setflag_fresh(prCheat);
-    sprintf(sMsg, "%s: Cheat %d Reset.", "cheatengineResetCheat", index);
-    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     return r;
 }
 
@@ -606,69 +595,40 @@ int cheatengineResetUShort16Block(Block* prBlock) {
 
 int cheatengineSetCheatConstant(CheatEngine* prEng, int index) {
     Cheat* prCheat = NULL;
-    char sMsg[256];
     if (prEng == NULL) {
         return CHEATENGINE_NULLPTR;
     }
     prCheat = cheatengineGetCheat(prEng, index);
     if (prCheat == NULL) {
-        sprintf(sMsg, "%s: Cheat %d pointer is NULL.", 
-                "cheatengineSetCheatConstant", index);
-        cheatengineLog(prEng, LOG_WARN, sMsg);
         return CHEATENGINE_FAILURE;
     }
-    sprintf(sMsg, "%s: Setting Cheat %d to constant.",
-            "cheatengineSetCheatConstant", index);
-    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     cheat_set_constant(prCheat);
     return CHEATENGINE_SUCCESS;
 }
 
 int cheatengineSetCheatInactive(CheatEngine* prEng, int index) {
     Cheat* prCheat = NULL;
-    char sMsg[256];
     if (prEng == NULL) {
         return CHEATENGINE_NULLPTR;
     }
     prCheat = cheatengineGetCheat(prEng, index);
     if (prCheat == NULL) {
-        sprintf(sMsg, "%s: Cheat %d pointer is NULL.", 
-                "cheatengineSetCheatInactive", index);
-        cheatengineLog(prEng, LOG_WARN, sMsg);
         return CHEATENGINE_FAILURE;
     }
-    sprintf(sMsg, "%s: Setting Cheat %d to inactive.",
-            "cheatengineSetCheatInactive", index);
-    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     cheat_set_inactive(prCheat);
     return CHEATENGINE_SUCCESS;
 }
 
 int cheatengineSetCheatSelected(CheatEngine* prEng, int index) {
     Cheat *prCheat = NULL;
-    char sMsg[256];
     if (prEng == NULL) {
         return CHEATENGINE_NULLPTR;
     }
     prCheat = cheatengineGetCheat(prEng, index);
     if (prCheat == NULL) {
-        sprintf(sMsg, "%s: Cheat %d pointer is NULL.", 
-                "cheatengineSetCheatSelected", index);
-        cheatengineLog(prEng, LOG_WARN, sMsg);
         return CHEATENGINE_FAILURE;
     }
-    sprintf(sMsg, "%s: Setting Cheat %d to selected.",
-            "cheatengineSetCheatSelected", index);
-    cheatengineLog(prEng, LOG_DEBUG, sMsg);
     cheat_set_selected(prCheat);
-    return CHEATENGINE_SUCCESS;
-}
-
-int cheatengineSetLogger(CheatEngine* prEng, GeeLog* prLog) {
-    if (prEng == NULL) {
-        return CHEATENGINE_NULLPTR;
-    }
-    prEng->logger = prLog;
     return CHEATENGINE_SUCCESS;
 }
 

@@ -474,7 +474,6 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     disassemblerInit(&prUi->disassembler);
     Disassembler *prDasm = &prUi->disassembler;
     prDasm->prApCfg = prAppCfg;
-    prDasm->prLog = prUi->prLog;
     prDasm->config.code_color.background = prUi->config.color.background;
     prDasm->config.code_color.text = prUi->config.color.text;
     prDasm->config.address_color.background = (u32)0xFFA0A0A0;
@@ -570,7 +569,6 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing GameInfo.");
     GameInfo* prInfo = &prUi->gameinfo;
     prColor = &prUi->config.color;
-    prInfo->prLog = prUi->prLog;
     gameinfo_init(prInfo);
     cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Assigning AppletConfig.");
     gameinfo_set_appletconfig(prInfo, prAppCfg);
@@ -578,24 +576,6 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     gameinfo_set_colorconfig(prInfo, prColor);
     cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Assigning Cursor Position.");
     gameinfo_set_cursor(prInfo, 0, 1);
-    
-    cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: Initializing Gdasm.");
-    Gdasm* prGasm = &prUi->rDasm;
-    if (gdasm_init(prGasm, prUi->prLog) != GDASM_SUCCESS) {
-        cefiveui_log(prUi, LOG_ERROR, "cefiveuiInit: Failed to init Gdasm.");
-    }
-    if (gdasm_set_appletconfig(prGasm, prAppCfg) != GDASM_SUCCESS) {
-        cefiveui_log(prUi, LOG_ERROR,
-                "cefiveuiInit: Failed to assign AppletConfig to Disassembler.");
-    }
-    if (gdasm_set_tableposition(prGasm, 0, 2) != GDASM_SUCCESS) {
-        cefiveui_log(prUi, LOG_ERROR, 
-                "cefiveuiInit: Failed to position Disassembler Table.");
-    }
-    if (gdasm_set_tablesize(prGasm, 68, 25) != GDASM_SUCCESS) {
-        cefiveui_log(prUi, LOG_ERROR,
-                "cefiveuiInit: Failed to size the Disassembler Table.");
-    }
     
     cefiveui_log(prUi, LOG_DEBUG, "cefiveuiInit: UI Initialized.");
 }
@@ -629,23 +609,10 @@ void cefiveuiRedraw(CEFiveUi *prUi) {
 }
 
 int cefiveui_log(CEFiveUi* prUi, ELogLevel level, const char* sMsg) {
-    GeeLog* prLog = NULL;
     if (prUi == NULL) {
         return CEFIVEUI_NULLPTR;
     }
-    prLog = prUi->prLog;
-    if (prLog == NULL) {
-        return CEFIVEUI_FAILURE;
-    }
-    geelog_log(prLog, level, sMsg);
-    return CEFIVEUI_SUCCESS;
-}
-
-int cefiveui_set_logger(CEFiveUi* prUi, GeeLog *prLog) {
-    if (prUi == NULL) {
-        return CEFIVEUI_NULLPTR;
-    }
-    prUi->prLog = prLog;
+    geelog_log(level, sMsg);
     return CEFIVEUI_SUCCESS;
 }
 

@@ -88,8 +88,6 @@ extern "C" {
         CEFiveUiConfig config;
         /** Pointer to the cefive Configuration struct. */
         CEFiveConfig* prCEConfig;
-        /** Pointer to the Logger instance. */
-        GeeLog* prLog;
         /** Pointer to a SearchEngine struct representing the Search Engine */
         SearchEngine* prSearchEngine;
         /** Pointer to a CheatEngine struct representing the Cheat Engine */
@@ -189,14 +187,6 @@ extern "C" {
      * @return 0 indicates success, less than 0 indicates failure.
      */
     int cefiveui_log(CEFiveUi* prUi, ELogLevel level, const char* sMsg);
-
-    /** Assign a Logger to a User Interface.
-     * 
-     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
-     * @param prLog Pointer to a GeeLog struct representing the Logger.
-     * @return 0 indicates success, less than 0 indicates failure.
-     */
-    int cefiveui_set_logger(CEFiveUi* prUi, GeeLog *prLog);
 
     /** Update the current control state of a User Interface.
      * 

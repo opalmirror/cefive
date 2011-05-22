@@ -30,6 +30,48 @@ static SceUInt32 getSelectedValuePointer(Disassembler *prPanel);
 static SceUInt32 popAddress(Disassembler *prPanel);
 static void pushAddress(Disassembler *prPanel, SceUInt32 addr);
 
+AppletConfig* disassembler_get_appletconfig(Disassembler* prDasm) {
+    AppletConfig* prConfig = NULL;
+    if (prDasm != NULL) {
+        prConfig = prDasm->prApCfg;
+    }
+    return prConfig;
+}
+
+ColorConfig* disassembler_get_cursorcolor(Disassembler* prDasm) {
+    ColorConfig* prColor = NULL;
+    AppletConfig* prConfig = NULL;
+    
+    if (prDasm != NULL) {
+        prConfig = disassembler_get_appletconfig(prDasm);
+        if (prConfig != NULL) {
+            prColor = appletconfig_get_cursorcolor(prConfig);
+        }
+    }
+    return prColor;
+}
+
+CursorPos* disassembler_get_cursorpos(Disassembler* prDasm) {
+    CursorPos* prPos = NULL;
+    if (prDasm != NULL) {
+        prPos = &prDasm->cursor;
+    }
+    return prPos;
+}
+
+ColorConfig* disassembler_get_panelcolor(Disassembler* prDasm) {
+    ColorConfig* prColor = NULL;
+    AppletConfig* prConfig = NULL;
+    
+    if (prDasm != NULL) {
+        prConfig = disassembler_get_appletconfig(prDasm);
+        if (prConfig != NULL) {
+            prColor = appletconfig_get_panelcolor(prConfig);
+        }
+    }
+    return prColor;
+}
+
 /* commitValueEdit
  *  Write the current value of the value editor to memory.
  * Parameters:
@@ -562,12 +604,10 @@ static void drawTableRow(Disassembler *prPanel, int iRow) {
 static void drawValueColumn(Disassembler *prPanel, int iRow) {
     AppletConfig* prApCfg = NULL;
     ColorConfig* prColor = NULL;
-    GeeLog* prLog = NULL;
 
     if (prPanel == NULL) {
         return;
     }
-    prLog = prPanel->prLog;
     prApCfg = &prPanel->prApCfg;
     DwordColumn *prValue = &(prPanel->rRow.rValue);
     SceUInt32 *pVal = (SceUInt32 *)(prPanel->offset + (iRow * 4));
@@ -581,7 +621,7 @@ static void drawValueColumn(Disassembler *prPanel, int iRow) {
     }
     colorconfig_setcolor(&prValue->color, prColor->background, prColor->text);
     if (*pVal >= base && *pVal < base + msz) {
-        geelog_log(prLog, LOG_DEBUG, "drawValueColumn: Value is a pointer.");
+        geelog_log(LOG_DEBUG, "drawValueColumn: Value is a pointer.");
         prValue->color.text = prPanel->config.pointer_color.text;
     }
     dwordcolumn_redraw(prValue);

@@ -8,6 +8,7 @@
 #ifndef _APPLETMENU_H
 #define	_APPLETMENU_H
 
+#include <pspdebug.h>
 #include "colorconfig.h"
 #include "cursorpos.h"
 #include "dimension.h"
@@ -53,8 +54,20 @@ extern "C" {
     /** The AppletMenu struct represents an Applet Menu. */
     AppletMenu;
 
+    /** Respond to the user pressing the Circle Button.
+     * 
+     * @param prMenu Pointer to an AppletMenu struct representing the Applet
+     * Menu.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int appletmenu_circle_button(AppletMenu* prMenu);
     
+    /** Respond to the user pressing the Cross Button.
+     * 
+     * @param prMenu Pointer to an AppletMenu struct representing the Applet
+     * Menu.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int appletmenu_cross_button(AppletMenu* prMenu);
     
     /** Move the Applet Menu Cursor down by one row.
@@ -151,6 +164,11 @@ extern "C" {
      */
     Dimension* appletmenu_get_size(AppletMenu* prMenu);
     
+    /** Initialize an Applet Menu.
+     * 
+     * @param prMenu Pointer to the AppletMenu struct to initialize.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int appletmenu_init(AppletMenu* prMenu);
     
     /** Indicate that an Applet Menu needs to be redrawn.
@@ -161,8 +179,21 @@ extern "C" {
      */
     int appletmenu_invalidate(AppletMenu* prMenu);
     
+    /** Indicate whether an Applet Menu is visible.
+     * 
+     * @param prMenu Pointer to an AppletMenu struct representing the Applet
+     * Menu.
+     * @return 0 indicates that the Applet Menu is not visible.  1 indicates
+     * that the Applet Menu is visible.
+     */
     int appletmenu_is_visible(AppletMenu* prMenu);
     
+    /** Redraw an Applet Menu on the Debug Screen.
+     * 
+     * @param prMenu Pointer to an AppletMenu struct representing the Applet
+     * Menu.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int appletmenu_redraw(AppletMenu* prMenu);
     
     /** Assign the screen position of an Applet Menu.

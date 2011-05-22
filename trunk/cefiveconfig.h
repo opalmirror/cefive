@@ -59,30 +59,44 @@ extern "C" {
         AppletConfig rAppletConfig;
     }CEFiveConfig;
 
-    /* Copy the specified CEFiveConfig struct to a destination CEFiveConfig struct.
+    /** Copy a CeFive Configuration.
      * 
-     * Parameters:
-     *   prDest     Pointer to a CEFiveConfig struct to act as the destination.
-     *   prSrc      Pointer to a CEFiveConfig struct to act as the source.
-     * 
-     * Returns:
-     *   CEFIVECONFIG_NULLPTR is returned if either parameter is NULL.
-     *   CEFIVECONFIG_FAILURE is returned if the structure failed to copy.
-     *   CEFIVECONFIG_SUCCESS is returned if the structure was copied.
+     * @param prDest Pointer to a CEFiveConfig struct representing the 
+     * destination.
+     * @param prSrc Pointer to a CEFiveConfig struct representing the source.
+     * @return 0 indicates success, &lt;0 indicates failure.
      */
     int cefiveconfig_copy(CEFiveConfig* prDest, CEFiveConfig* prSrc);
 
+    /** Return a pointer to an AppletConfig struct representing the CeFive
+     * Applet Configuration.
+     * 
+     * @param prConfig Pointer to a CEFiveConfig struct representing the CeFive
+     * Configuration.
+     * @return A pointer to an AppletConfig struct or NULL is returned.
+     */
     AppletConfig* cefiveconfig_get_appletconfig(CEFiveConfig* prConfig);
+    
     int cefiveconfig_get_cheatfilename(char* sDest, CEFiveConfig* prConfig);
+    
     ColorConfig* cefiveconfig_get_cursorcolor(CEFiveConfig* prConfig);
+    
     ColorConfig* cefiveconfig_get_editcolor(CEFiveConfig* prConfig);
+    
     ColorConfig* cefiveconfig_get_panelcolor(CEFiveConfig* prConfig);
+    
     PanelConfig* cefiveconfig_get_panelconfig(CEFiveConfig* prConfig);
+    
     ColorConfig* cefiveconfig_get_statuscolor(CEFiveConfig* prConfig);
+    
     ColorConfig* cefiveconfig_get_titlecolor(CEFiveConfig* prConfig);
+    
     int cefiveconfig_init(CEFiveConfig* prConfig);
+    
     int cefiveconfig_load(CEFiveConfig* prConfig, const char* sFilename);
+    
     int cefiveconfig_read(CEFiveConfig* prConfig, SceUID fd);
+    
     int cefiveconfig_save(CEFiveConfig* prConfig, const char* sFilename);
     
     /** Assign the CEFive directory.

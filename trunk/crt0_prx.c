@@ -161,7 +161,6 @@ static CEFiveConfig krConfig;
 static SearchEngine krSearchEngine;
 static CEState krRunState;
 static ECEStartState krStartState;
-static GeeLog krLog;
 
 #define fileBufferPeek(a_out, a_ahead) if((fileBufferOffset + a_ahead) >= 1024) { fileBufferBackup=sceIoLseek(fd, 0, SEEK_CUR); sceIoLseek(fd, a_ahead, SEEK_CUR); sceIoRead(fd, &a_out, 1); sceIoLseek(fd, fileBufferBackup, SEEK_SET); } else { a_out=fileBuffer[fileBufferOffset + a_ahead]; }
 #define fileBufferRead(a_out, a_size) if(fileBufferOffset == 1024) { fileBufferSize=sceIoRead(fd, fileBuffer, 1024); fileBufferOffset=0; } memcpy(a_out, &fileBuffer[fileBufferOffset], a_size); fileBufferOffset+=a_size; fileBufferFileOffset+=a_size;
@@ -670,7 +669,6 @@ static void drawTracker() {
 }
 
 void buttonCallback(int curr, int last, void *arg) {
-    GeeLog *prLog = &krLog;
     int cvd = (curr & PSP_CTRL_VOLDOWN);
     int cvu = (curr & PSP_CTRL_VOLUP);
     int cno = (curr & PSP_CTRL_NOTE);
@@ -679,7 +677,7 @@ void buttonCallback(int curr, int last, void *arg) {
     int lno = (last & PSP_CTRL_NOTE);
 
     if (krUi.vram == NULL) {
-        geelog_log(prLog, LOG_WARN, 
+        geelog_log(LOG_WARN, 
                 "buttonCallback: Current VRAM pointer is NULL.");
         return;
     }
@@ -688,7 +686,7 @@ void buttonCallback(int curr, int last, void *arg) {
     if (krUi.running == 1) {
         CEFiveUi* prUi = &krUi;
         if (cvd && cvu && (!lvd || !lvu)) {
-            geelog_log(prLog, LOG_DEBUG, 
+            geelog_log(LOG_DEBUG, 
                     "buttonCallback: User Interface Requested while visible.");
         }
         cefiveui_buttoncallback(curr, last, prUi);
@@ -697,7 +695,7 @@ void buttonCallback(int curr, int last, void *arg) {
 
     /* If the Volume Up and Volume Down keys are being held */
     if (cvd && cvu && (!lvd || !lvu)) {
-        geelog_log(prLog, LOG_DEBUG,
+        geelog_log(LOG_DEBUG,
                 "buttonCallback: User Interface Requested.");
         krUi.drawn = 0;
         krRunState = CES_UIRequest;
@@ -707,10 +705,10 @@ void buttonCallback(int curr, int last, void *arg) {
     if (cno && !lno) {
         cheatStatus = !cheatStatus;
         if (krCheatEngine.trigger_active == 0) {
-            geelog_log(prLog, LOG_DEBUG, "buttonCallback: Activating Cheats.");
+            geelog_log(LOG_DEBUG, "buttonCallback: Activating Cheats.");
             cheatengineActivateCheats(&krCheatEngine);
         } else {
-            geelog_log(prLog, LOG_DEBUG, 
+            geelog_log(LOG_DEBUG, 
                     "buttonCallback: Deactivating Cheats.");
             cheatengineDeactivateCheats(&krCheatEngine);
         }
@@ -881,17 +879,16 @@ static void loadCheats() {
     SceUInt64 res = 0;
     int rfd;
     char readbuf[256];
-    GeeLog* log = &krLog;
     
     //Load the cheats
-    geelog_log(log, LOG_INFO, "loadCheats: Opening Cheat File.");
-    geelog_log(log, LOG_DEBUG, gameDir);
+    geelog_log(LOG_INFO, "loadCheats: Opening Cheat File.");
+    geelog_log(LOG_DEBUG, gameDir);
     rfd = sceIoOpen(gameDir, PSP_O_RDONLY, 0777);
 
     if (rfd > 0) {
-        geelog_log(log, LOG_DEBUG, "loadCheats: Finding End of File.");
+        geelog_log(LOG_DEBUG, "loadCheats: Finding End of File.");
         unsigned int fileSize = sceIoLseek(rfd, 0, SEEK_END);
-        geelog_log(log, LOG_DEBUG, "loadCheats: Returning to File position.");
+        geelog_log(LOG_DEBUG, "loadCheats: Returning to File position.");
         sceIoLseek(rfd, 0, SEEK_SET);
         unsigned int fileOffset = 0;
         unsigned char commentMode = 0;
@@ -919,7 +916,7 @@ static void loadCheats() {
             else if (readbuf[0] == '#') //Read in the cheat name
             {
                 if (prEngine->cheat_count >= CHEATENGINE_CHEAT_MAX) {
-                    geelog_log(log, LOG_WARN, 
+                    geelog_log(LOG_WARN, 
                             "loadCheats: Too many cheats for the engine.");
                     break;
                 }
@@ -964,10 +961,10 @@ static void loadCheats() {
 
             fileOffset = sceIoLseek(rfd, 0, SEEK_CUR);
         }
-        geelog_log(log, LOG_INFO, "loadCheats: Closing cheat file.");
+        geelog_log(LOG_INFO, "loadCheats: Closing cheat file.");
         sceIoCloseAsync(rfd);
     } else {
-        geelog_log(log, LOG_ERROR, "loadCheats: Failed to open cheat file.");
+        geelog_log(LOG_ERROR, "loadCheats: Failed to open cheat file.");
     }
 
 }
@@ -976,15 +973,14 @@ static void clearSearchHistory() {
 }
 
 static void waitForKernelLibrary() {
-    GeeLog *prLog = &krLog;
-    geelog_log(prLog, LOG_DEBUG, "waitForKernelLibrary: Pausing.");
+    geelog_log(LOG_DEBUG, "waitForKernelLibrary: Pausing.");
     //Wait for the kernel to boot
     sceKernelDelayThread(100000);
-    geelog_log(prLog, LOG_DEBUG, 
+    geelog_log(LOG_DEBUG, 
             "waitForKernelLibrary: Looking for sceKernelLibrary.");
     while (!sceKernelFindModuleByName("sceKernelLibrary"))
         sceKernelDelayThread(100000);
-    geelog_log(prLog, LOG_DEBUG, 
+    geelog_log(LOG_DEBUG, 
             "waitForKernelLibrary: sceKernelLibrary Located, pausing.");
     sceKernelDelayThread(100000);
 }
@@ -1164,21 +1160,20 @@ static void handleScreenshot() {
  * screen.
  */
 static void showInterface() {
-    GeeLog* prLog = &krLog;
     CEFiveUi* prUi = &krUi;
     CEFiveConfig* prConfig = &krConfig;
 
     if (prConfig->pause_during_ui == 1) {
-        geelog_log(prLog, LOG_DEBUG, "showInterface: Pausing Game.");
+        geelog_log(LOG_DEBUG, "showInterface: Pausing Game.");
         gamePause(thid);
     }
     
-    geelog_log(prLog, LOG_DEBUG, "showInterface: Blocking input from Game.");
+    geelog_log(LOG_DEBUG, "showInterface: Blocking input from Game.");
     //Stop the game from receiving input (USER mode input block)
     sceCtrlSetButtonMasks(0xFFFF, 1); // Mask lower 16bits
     sceCtrlSetButtonMasks(0x10000, 2); // Always return HOME key
 
-    geelog_log(prLog, LOG_DEBUG, "showInterface: Initializing frame buffer.");
+    geelog_log(LOG_DEBUG, "showInterface: Initializing frame buffer.");
     //Setup a custom VRAM
     sceDisplaySetFrameBufferInternal(0, prUi->vram, 512, 0, 1);
     pspDebugScreenInitEx(prUi->vram, 0, 0);
@@ -1186,7 +1181,7 @@ static void showInterface() {
     pspDebugScreenSetMaxY(34);
     pspDebugScreenClearLineDisable();
     prUi->running = 1;
-    geelog_log(prLog, LOG_DEBUG, 
+    geelog_log(LOG_DEBUG, 
             "showInterface: Setting Run State to UI Showing.");
     krRunState = CES_UIShowing;
 }
@@ -1196,27 +1191,26 @@ static void showInterface() {
  * input to the game, attempt to save the configuration.
  */
 static void hideInterface() {
-    GeeLog* prLog = &krLog;
     CEFiveConfig* prConfig = &krConfig;
     
-    geelog_log(prLog, LOG_DEBUG, "hideInterface: Clearing Interface.");
+    geelog_log(LOG_DEBUG, "hideInterface: Clearing Interface.");
     pspDebugScreenSetBackColor((u32)0x00000000);
     pspDebugScreenClear();
     
-    geelog_log(prLog, LOG_DEBUG, "hideInterface: Returning frame buffer.");
+    geelog_log(LOG_DEBUG, "hideInterface: Returning frame buffer.");
     //Return the standard VRAM
     sceDisplaySetFrameBufferInternal(0, 0, 512, 0, 1);
 
-    geelog_log(prLog, LOG_DEBUG, "hideInterface: Clearing input mask.");
+    geelog_log(LOG_DEBUG, "hideInterface: Clearing input mask.");
     //Allow the game to receive input
     sceCtrlSetButtonMasks(0x10000, 0); // Unset HOME key
     sceCtrlSetButtonMasks(0xFFFF, 0); // Unset mask
     
-    geelog_log(prLog, LOG_DEBUG, "hideInterface: Saving configuration.");
+    geelog_log(LOG_DEBUG, "hideInterface: Saving configuration.");
     /* Try to save the current CEFiveConfig. */
     cefiveconfig_save(prConfig, "ms0:/seplugins/CEFive.cdf");
     krRunState = CES_Running;
-    geelog_log(prLog, LOG_DEBUG, "hideInterface: Resuming Game.");
+    geelog_log(LOG_DEBUG, "hideInterface: Resuming Game.");
     gameResume(thid);
 }
 
@@ -1281,7 +1275,6 @@ static void waitForVram() {
 }
 
 static void start() {
-    GeeLog* prLog = &krLog;
     CEFiveConfig* prCfg = &krConfig;
     CheatEngine* prEng = &krCheatEngine;
     SearchEngine* prSearch = &krSearchEngine;
@@ -1289,33 +1282,31 @@ static void start() {
     int r = 0;
 
     /* Initialize the CeFive Configuration. */
-    geelog_log(prLog, LOG_DEBUG, "start: Initializing CEFiveConfig.");
+    geelog_log(LOG_DEBUG, "start: Initializing CEFiveConfig.");
     cefiveconfig_init(prCfg);
     
     /* Attempt to load the current configuration. */
-    geelog_log(prLog, LOG_DEBUG, "start: Loading configuration.");
+    geelog_log(LOG_DEBUG, "start: Loading configuration.");
     r = cefiveconfig_load(prCfg, "ms0:/seplugins/CEFive.cdf");
     if (r != CEFIVECONFIG_SUCCESS) {
-        geelog_log(prLog, LOG_ERROR, "start: Error loading configuration.");
+        geelog_log(LOG_ERROR, "start: Error loading configuration.");
     } else {
-        geelog_log(prLog, LOG_INFO, "start: Loaded configuration.");
+        geelog_log(LOG_INFO, "start: Loaded configuration.");
     }
     sprintf(prCfg->plugins_dir, "seplugins");
     sprintf(prCfg->cefive_dir, "nitePR");
 
-    geelog_log(prLog, LOG_DEBUG, "start: Initializing CheatEngine.");
+    geelog_log(LOG_DEBUG, "start: Initializing CheatEngine.");
     /* Initialize the CheatEngine */
     r = cheatengineInit(prEng, prCfg, cheat, block);
-    cheatengineSetLogger(prEng, prLog);
 
-    geelog_log(prLog, LOG_DEBUG, "start: Initializing SearchEngine.");
+    geelog_log(LOG_DEBUG, "start: Initializing SearchEngine.");
     // Initialize the SearchEngine
     searchengine_init(prSearch);
     searchengine_start(prSearch);
 
-    geelog_log(prLog, LOG_DEBUG, "start: Initializing UI.");
+    geelog_log(LOG_DEBUG, "start: Initializing UI.");
     /* Initialize the UI */
-    prUi->prLog = prLog;
     prUi->prCEConfig = prCfg;
     cefiveuiInit(prUi, prEng, prSearch);
     krRunState = CES_Starting;
@@ -1326,18 +1317,18 @@ static void start() {
     krConfig.rAppletConfig.rPanel.rColor.text = krUi.config.color.text;
     */
     
-    geelog_log(prLog, LOG_DEBUG, "start: waiting for Kernel.");
+    geelog_log(LOG_DEBUG, "start: waiting for Kernel.");
     waitForKernelLibrary();
-    geelog_log(prLog, LOG_DEBUG, "start: loading Game Id.");
+    geelog_log(LOG_DEBUG, "start: loading Game Id.");
     findGameId();
-    geelog_log(prLog, LOG_DEBUG, "start: loading cheats.");
+    geelog_log(LOG_DEBUG, "start: loading cheats.");
     loadCheats();
-    geelog_log(prLog, LOG_DEBUG, "start: Getting Initial VRAM.");
+    geelog_log(LOG_DEBUG, "start: Getting Initial VRAM.");
     setupInitialVram();
-    geelog_log(prLog, LOG_DEBUG, "start: Initializing Controller.");
+    geelog_log(LOG_DEBUG, "start: Initializing Controller.");
     setupController();
 
-    geelog_log(prLog, LOG_DEBUG, "start: Registering Button Callbacks.");
+    geelog_log(LOG_DEBUG, "start: Registering Button Callbacks.");
     //Register the button callbacks
     unsigned int bmask = 0;
     bmask |= PSP_CTRL_CIRCLE;
@@ -1357,26 +1348,23 @@ static void start() {
     bmask |= PSP_CTRL_VOLUP;
 
     sceCtrlRegisterButtonCallback(3, bmask, buttonCallback, NULL);
-    geelog_log(prLog, LOG_DEBUG, "start: started.");
+    geelog_log(LOG_DEBUG, "start: started.");
 }
 
 /* Main thread of cefive.
  */
 int mainThread() {
+    const char* sFunc = "mainThread";
     CEFiveUi* prUi = &krUi;
     SearchEngine* prSearch = &krSearchEngine;
     CheatEngine* prEngine = &krCheatEngine;
     GameInfo* prInfo = &prUi->gameinfo;
-    GeeLog* prLog = &krLog;
 
-    geelog_init(prLog, "ms0:/seplugins/CEFive.log");
-    geelog_start(prLog, LOG_DEBUG);
-    
     running = 1;
 
-    geelog_log(prLog, LOG_DEBUG, "mainThread: Starting CEFive.");
+    geelog_flog(LOG_DEBUG, sFunc, "Starting CEFive.");
     start();
-    geelog_log(prLog, LOG_DEBUG, "mainThread: CEFive Started.");
+    geelog_flog(LOG_DEBUG, sFunc, "CEFive Started.");
 
     //Do the loop-de-loop
     while (running) {
@@ -1385,22 +1373,22 @@ int mainThread() {
             continue;
         }
         if (prInfo->loaded == 0) {
-            geelog_log(prLog, LOG_DEBUG, "mainThread: Loading Game Info.");
+            geelog_flog(LOG_DEBUG, sFunc, "Loading Game Info.");
             gameinfo_load(prInfo);
         }
         if (krRunState == CES_UIRequest) {
-            geelog_log(prLog, LOG_DEBUG, "mainThread: Showing Interface.");
+            geelog_flog(LOG_DEBUG, sFunc, "Showing Interface.");
             showInterface();
             while (prUi->running == 1) {
                 if (prUi->vram == NULL) {
-                    geelog_log(prLog, LOG_DEBUG, 
-                         "mainThread: Invalid VRAM Pointer, shutting down UI.");
+                    geelog_flog(LOG_DEBUG, sFunc, 
+                            "Invalid VRAM Pointer, shutting down UI.");
                     prUi->running = 0;
                     continue;
                 }
                 if (krRunState == CES_UIRequest) {
-                    geelog_log(prLog, LOG_DEBUG,
-                            "mainThread: UI Requested, Showing Interface.");
+                    geelog_flog(LOG_DEBUG, sFunc, 
+                            "UI Requested, Showing Interface.");
                     showInterface();
                 }
                 cefiveui_update_controls(prUi);
@@ -1409,7 +1397,7 @@ int mainThread() {
                 cheatengineRefresh(prEngine);
                 sceKernelDelayThread(50000);
             }
-            geelog_log(prLog, LOG_DEBUG, "mainThread: Hiding Interface.");
+            geelog_flog(LOG_DEBUG, sFunc, "Hiding Interface.");
             hideInterface();
         }
         searchengine_run(prSearch);
@@ -1417,8 +1405,8 @@ int mainThread() {
         sceKernelDelayThread(50000);
     }
     
-    geelog_log(prLog, LOG_INFO, "mainThread: CEFive Stopped.");
-    geelog_stop(prLog);
+    geelog_flog(LOG_INFO, sFunc, "CEFive Stopped.");
+    geelog_stop();
     return 0;
 }
 
@@ -1442,6 +1430,10 @@ int module_start(SceSize args, void *argp) {
     memcpy(&menuKey, cfg + 15, 4);
     memcpy(&screenKey, cfg + 20, 4);
 
+    /* Start the Logger. */
+    geelog_init("ms0:/seplugins/CEFive.log");
+    geelog_start(LOG_DEBUG);
+    
     //Create thread
     sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, thread_buf_start,
             MAX_THREAD, &thread_count_start);
@@ -1457,6 +1449,7 @@ int module_start(SceSize args, void *argp) {
 
 int module_stop(SceSize args, void *argp) {
     running = 0;
+    geelog_stop();
     sceKernelTerminateThread(thid);
     return 0;
 }

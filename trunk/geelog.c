@@ -1,150 +1,156 @@
 #include "geelog.h"
-#include <stdio.h>
-#include <string.h>
-#include <pspiofilemgr.h>
 
-/** Return a string containing a human readable Log Level name for the specified
- * Log Level.
- * 
- * @param rLevel ELogLevel indicating the Log Level.
- * @return A string containing the Log Level name is returned.
- */
-static const char* levelname(ELogLevel rLevel);
+static int log_append(const char* sLine);
+static int log_close();
+static int log_open();
 
-/** Append the specified line to a Logger.
- * 
- * @param prLog Pointer to a GeeLog struct representing the Logger.
- * @param sLine String containing the line to append.  Linefeeds should be 
- * present.
- * @return 0 indicates success, less than 0 indicates failure.
- */
-static int logappend(GeeLog* prLog, const char *sLine);
+static GeeLog krLog;
 
-/** Close a GeeLog Logger Log File.
- * 
- * @param prLog Pointer to a GeeLog struct representing the Logger.
- * @return 0 indicates success, less than 0 indicates failure.
- */
-static int logclose(GeeLog* prLog);
-
-/** Open a GeeLog Logger Log File.
- * 
- * @param prLog Pointer to a GeeLog struct representing the Logger.
- * @return 0 indicates success, less than 0 indicates failure.
- */
-static int logopen(GeeLog* prLog);
-
-int geelog_init(GeeLog* prLog, const char* sFile) {
-    if (prLog == NULL) {
+int geelog_dlog(ELogLevel rLevel, const char* sMsg) {
+    SceUID rFd = -1;
+    char sLine[GEELOG_LINELEN + 1];
+    int llen;
+    int bw;
+    if (sMsg == NULL) {
         return GEELOG_NULLPTR;
     }
-    prLog->rFd = -1;
-    strncpy(prLog->sLogPath, sFile, GEELOG_PATH_LEN);
+    rFd = sceIoOpen("ms0:/seplugins/GDEBUG.log", 
+            PSP_O_CREAT|PSP_O_APPEND|PSP_O_WRONLY, 0644);
+    if (rFd < 0) {
+        return GEELOG_IOERROR;
+    }
+    sprintf(sLine, "%s: %s\n", geelog_levelname(rLevel), sMsg);
+    llen = strlen(sLine);
+    bw = sceIoWrite(rFd, sLine, llen);
+    if (bw != llen) {
+        return GEELOG_IOERROR;
+    }
+    sceIoClose(rFd);
     return GEELOG_SUCCESS;
 }
 
-int geelog_log(GeeLog* prLog, const ELogLevel rLevel, const char* sMsg) {
-    char sLine[GEELOG_LINE_LEN + 1];
-    if (prLog == NULL || sMsg == NULL) {
+int geelog_flog(ELogLevel rLevel, const char* sFunc, const char* sMsg) {
+    char sLine[GEELOG_LINELEN + 1];
+    
+    if ((sFunc == NULL) || (sMsg == NULL)) {
         return GEELOG_NULLPTR;
     }
-    if (rLevel > prLog->rLevel) {
-        return GEELOG_SUCCESS;
-    }
-    sprintf(sLine, "%s: %s\n", levelname(rLevel), sMsg);
-    if (logappend(prLog, sLine) != GEELOG_SUCCESS) {
-        return GEELOG_FAILURE;
+    sprintf(sLine, "%s: %s", sFunc, sMsg);
+    return geelog_log(rLevel, sLine);
+}
+
+int geelog_init(const char* sLogFile) {
+    krLog.rFd = -1;
+    krLog.rLevel = LOG_NONE;
+    krLog.rMutex = -1;
+    if (sLogFile != NULL) {
+        strncpy(krLog.sLogFile, sLogFile, GEELOG_PATH_LEN);
     }
     return GEELOG_SUCCESS;
 }
 
-int geelog_start(GeeLog* prLog, ELogLevel rLevel) {
-    if (prLog == NULL) {
-        return GEELOG_NULLPTR;
-    }
-    prLog->rLevel = rLevel;
-    if (logopen(prLog) != GEELOG_SUCCESS) {
-        return GEELOG_FAILURE;
-    }
-    return GEELOG_SUCCESS;
-}
-
-int geelog_stop(GeeLog* prLog) {
-    if (prLog == NULL) {
-        return GEELOG_NULLPTR;
-    }
-    if (logclose(prLog) != GEELOG_SUCCESS) {
-        return GEELOG_FAILURE;
-    }
-    return GEELOG_SUCCESS;
-}
-
-static const char* levelname(ELogLevel rLevel) {
+const char* geelog_levelname(ELogLevel rLevel) {
     const char* sName = NULL;
     switch (rLevel) {
         case LOG_ERROR:
-            sName = "ERROR";
+            sName = GEELOG_N_ERROR;
             break;
         case LOG_WARN:
-            sName = "WARNING";
+            sName = GEELOG_N_WARN;
             break;
         case LOG_INFO:
-            sName = "INFO";
+            sName = GEELOG_N_INFO;
             break;
         case LOG_DEBUG:
-            sName = "DEBUG";
+            sName = GEELOG_N_DEBUG;
             break;
         case LOG_NONE:
-            sName = "NONE";
+            sName = GEELOG_N_NONE;
             break;
     }
     return sName;
 }
 
-static int logappend(GeeLog* prLog, const char *sLine) {
-    int llen = 0;
-    int bw = 0;
-    
-    if (prLog == NULL || sLine == NULL) {
+int geelog_log(ELogLevel rLevel, const char* sMsg) {
+    char sLine[GEELOG_LINELEN + 1];
+    if (sMsg == NULL) {
         return GEELOG_NULLPTR;
     }
-    if (prLog->rFd < 0) {
+    /* If the Message log level is higher than the Logger log level, discard. */
+    if (rLevel > krLog.rLevel) {
+        return GEELOG_SUCCESS;
+    }
+    sprintf(sLine, "%s: %s\n", geelog_levelname(rLevel), sMsg);
+    if (log_append(sLine) != GEELOG_SUCCESS) {
         return GEELOG_FAILURE;
     }
-    llen = strnlen(sLine, GEELOG_LINE_LEN);
-    bw = sceIoWrite(prLog->rFd, sLine, llen);
+    return GEELOG_SUCCESS;
+}
+
+int geelog_start(ELogLevel rLevel) {
+    if (krLog.rFd != -1) {
+        return GEELOG_FAILURE;
+    }
+    if (strlen(krLog.sLogFile) < 1) {
+        return GEELOG_INVPATH;
+    }
+    krLog.rLevel = rLevel;
+    krLog.rMutex = sceKernelCreateSema(GEELOG_MUTEX_NAME, 0, 1, 1, NULL);
+    if (log_open() != GEELOG_SUCCESS) {
+        return GEELOG_FAILURE;
+    }
+    return GEELOG_SUCCESS;
+}
+
+int geelog_stop() {
+    if (log_close() != GEELOG_SUCCESS) {
+        return GEELOG_IOERROR;
+    }
+    sceKernelDeleteSema(krLog.rMutex);
+    return GEELOG_SUCCESS;
+}
+
+static int log_append(const char* sLine) {
+    int llen = 0;
+    int bw = 0;
+    if (krLog.rFd < 0) {
+        return GEELOG_FAILURE;
+    }
+    if (sLine == NULL) {
+        return GEELOG_NULLPTR;
+    }
+    sceKernelWaitSema(krLog.rMutex, 1, NULL);
+    llen = strlen(sLine);
+    bw = sceIoWrite(krLog.rFd, sLine, llen);
+    sceKernelSignalSema(krLog.rMutex, 1);
     if (bw != llen) {
         return GEELOG_IOERROR;
     }
+    
     return GEELOG_SUCCESS;
 }
 
-static int logclose(GeeLog* prLog) {
-    if (prLog == NULL) {
-        return GEELOG_NULLPTR;
-    }
-    if (prLog->rFd < 0) {
+static int log_close() {
+    if (krLog.rFd < 0) {
         return GEELOG_SUCCESS;
     }
-    if (sceIoClose(prLog->rFd) < 0) {
-        return GEELOG_IOERROR;
+    sceKernelWaitSema(krLog.rMutex, 1, NULL);
+    if (sceIoClose(krLog.rFd) < 0) {
+        sceKernelSignalSema(krLog.rMutex, 1);
+        return GEELOG_FAILURE;
     }
+    krLog.rFd = -1;
+    sceKernelSignalSema(krLog.rMutex, 1);
     return GEELOG_SUCCESS;
 }
 
-static int logopen(GeeLog* prLog) {
-    if (prLog == NULL) {
-        return GEELOG_NULLPTR;
-    }
-    if (prLog->rFd >= 0) {
+static int log_open() {
+    if (krLog.rFd != -1) {
         return GEELOG_FAILURE;
     }
-    if (prLog->sLogPath == NULL) {
-        return GEELOG_INVPATH;
-    }
-    prLog->rFd = sceIoOpen(prLog->sLogPath, 
-            PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0644);
-    if (prLog->rFd < 0) {
+    krLog.rFd = sceIoOpen(krLog.sLogFile, 
+            PSP_O_CREAT|PSP_O_APPEND|PSP_O_WRONLY, 0644);
+    if (krLog.rFd < 0) {
         return GEELOG_IOERROR;
     }
     return GEELOG_SUCCESS;
