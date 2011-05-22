@@ -47,7 +47,7 @@
 extern "C" {
 #endif
 
-    typedef struct _DisassemberConfig {
+    typedef struct _DisassemblerConfig {
         SceUInt32 base_address;
         SceUInt32 min_offset;
         SceUInt32 max_offset;
@@ -65,7 +65,6 @@ extern "C" {
     typedef struct _Disassembler {
         DisassemblerConfig config;
         AppletConfig* prApCfg;
-        GeeLog* prLog;
         SceUInt32 offset;
         SceUInt32 poffset;
         CursorPos cursor;
@@ -81,6 +80,14 @@ extern "C" {
         GameInfo* prGameInfo;
     } Disassembler;
 
+    AppletConfig* disassembler_get_appletconfig(Disassembler* prDasm);
+
+    ColorConfig* disassembler_get_cursorcolor(Disassembler* prDasm);
+    
+    CursorPos* disassembler_get_cursorpos(Disassembler* prDasm);
+    
+    ColorConfig* disassembler_get_panelcolor(Disassembler* prDasm);
+    
     void disassemblerAttemptJump(Disassembler *);
     void disassemblerAttemptReturn(Disassembler *);
     void disassemblerCircleButton(Disassembler *);

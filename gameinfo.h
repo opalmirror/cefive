@@ -34,8 +34,6 @@ extern "C" {
     } GameInfoConfig;
 
     typedef struct _GameInfo {
-        /** Pointer to a GeeLog struct acting as the Logger. */
-        GeeLog* prLog;
         /** Pointer to a GameInfoConfig struct containing the configuration. */
         GameInfoConfig config;
         /** Pointer to a AppletConfig struct containing Applet configuration. */
@@ -204,16 +202,6 @@ extern "C" {
      * GAMEINFO_SUCCESS is returned if the CursorPos is assigned.
      */
     int gameinfo_set_cursorpos(GameInfo* prInfo, CursorPos* prPos);
-
-    /** Assign a GeeLog to the specified GameInfo.  A GeeLog is assigned to 
-     * facilitate trace logging to a text file.
-     * 
-     * @param prInfo Pointer to a GameInfo struct representing the Game Info.
-     * @param prLog Pointer to the GeeLog struct to assign.
-     * @return GAMEINFO_NULLPTR is returned if the prInfo parameter is NULL.
-     * GAMEINFO_SUCCESS is returned if the GeeLog is assigned.
-     */
-    int gameinfo_set_logger(GameInfo* prInfo, GeeLog *prLog);
 
 #ifdef	__cplusplus
 }

@@ -1,6 +1,8 @@
 TARGET = CEFive
 OBJS =  block.o \
+	blockmodel.o \
 	cheat.o \
+	cheatmodel.o \
 	mips.o \
 	cursorpos.o \
 	dimension.o \
@@ -77,8 +79,14 @@ dimension.o: dimension.c dimension.h
 block.o: block.c block.h
 	$(CC) $(CFLAGS) -c block.c
 
+blockmodel.o: blockmodel.c blockmodel.h block.o
+	$(CC) $(CFLAGS) -c blockmodel.c
+
 cheat.o: cheat.c cheat.h
 	$(CC) $(CFLAGS) -c cheat.c
+
+cheatmodel.o: cheatmodel.c cheatmodel.h cheat.o
+	$(CC) $(CFLAGS) -c cheatmodel.c
 
 colorconfig.o: colorconfig.c colorconfig.h
 	$(CC) $(CFLAGS) -c colorconfig.c
@@ -131,7 +139,7 @@ cefiveconfig.o: appletconfig.o cefiveconfig.c cefiveconfig.h
 cheateditor.o: colorconfig.o dwordeditor.o cheatengine.o cheat.o block.o cheateditor.c cheateditor.h
 	$(CC) $(CFLAGS) -c cheateditor.c
 
-cheatengine.o: cefiveconfig.o cheat.o block.o cheatengine.c cheatengine.h
+cheatengine.o: cheatengine.c cheatengine.h blockmodel.o cheatmodel.o
 	$(CC) $(CFLAGS) -c cheatengine.c
 
 cheatpanel.o: cheatengine.o colorconfig.o cheat.o block.o cheatpanel.c cheatpanel.h

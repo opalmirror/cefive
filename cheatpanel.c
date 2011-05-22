@@ -1,13 +1,79 @@
-#include <pspkerneltypes.h>
-#include <pspdebug.h>
 #include "cheatpanel.h"
-#include "cheatengine.h"
-#include "cheat.h"
-#include "appletconfig.h"
-#include "colorconfig.h"
 
 static void toggleCheatConstant(CheatPanel *prPanel, int index);
 static void toggleCheatSelected(CheatPanel *prPanel, int index);
+
+AppletConfig* cheatpanel_get_appletconfig(CheatPanel* prPanel) {
+    AppletConfig* prConfig = NULL;
+    if (prPanel != NULL) {
+        prConfig = prPanel->prApCfg;
+    }
+    return prConfig;
+}
+
+CheatPanelConfig* cheatpanel_get_config(CheatPanel* prPanel) {
+    CheatPanelConfig* prConfig = NULL;
+    if (prPanel != NULL) {
+        prConfig = &prPanel->config;
+    }
+    return prConfig;
+}
+
+ColorConfig* cheatpanel_get_constantcolor(CheatPanel* prPanel) {
+    ColorConfig* prColor = NULL;
+    CheatPanelConfig* prConfig = NULL;
+    if (prPanel != NULL) {
+        prConfig = cheatpanel_get_config(prPanel);
+        if (prConfig != NULL) {
+            prColor = &prConfig->constantcolor;
+        }
+    }
+    return prColor;
+}
+
+ColorConfig* cheatpanel_get_cursorcolor(CheatPanel* prPanel) {
+    ColorConfig* prColor = NULL;
+    AppletConfig* prConfig = NULL;
+    if (prPanel != NULL) {
+        prConfig = cheatpanel_get_appletconfig(prPanel);
+        if (prConfig != NULL) {
+            prColor = appletconfig_get_cursorcolor(prConfig);
+        }
+    }
+    return prColor;
+}
+
+CursorPos* cheatpanel_get_cursorpos(CheatPanel* prPanel) {
+    CursorPos* prPos = NULL;
+    if (prPanel != NULL) {
+        prPos = &prPanel->cursor;
+    }
+    return prPos;
+}
+
+ColorConfig* cheatpanel_get_panelcolor(CheatPanel* prPanel) {
+    ColorConfig* prColor = NULL;
+    AppletConfig* prConfig = NULL;
+    if (prPanel != NULL) {
+        prConfig = cheatpanel_get_appletconfig(prPanel);
+        if (prConfig != NULL) {
+            prColor = appletconfig_get_panelcolor(prConfig);
+        }
+    }
+    return prColor;
+}
+
+ColorConfig* cheatpanel_get_selectedcolor(CheatPanel* prPanel) {
+    ColorConfig* prColor = NULL;
+    CheatPanelConfig* prConfig = NULL;
+    if (prPanel != NULL) {
+        prConfig = cheatpanel_get_config(prPanel);
+        if (prConfig != NULL) {
+            prColor = &prConfig->selectedcolor;
+        }
+    }
+    return prColor;
+}
 
 void cheatpanelCircleButton(CheatPanel *prPanel) {
 }

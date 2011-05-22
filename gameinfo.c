@@ -235,16 +235,11 @@ int gameinfo_load(GameInfo *prInfo) {
 }
 
 int gameinfo_log(GameInfo* prInfo, ELogLevel rLevel, const char* sMsg) {
-    GeeLog* prLog = NULL;
     int r = 0;
     if (prInfo == NULL) {
         return GAMEINFO_NULLPTR;
     }
-    prLog = prInfo->prLog;
-    if (prLog == NULL) {
-        return GAMEINFO_FAILURE;
-    }
-    r = geelog_log(prLog, rLevel, sMsg);
+    r = geelog_log(rLevel, sMsg);
     if (r != GEELOG_SUCCESS) {
         return GAMEINFO_FAILURE;
     }
@@ -364,12 +359,4 @@ int gameinfo_set_cursorpos(GameInfo* prInfo, CursorPos* prPos) {
     }
     prConfig = gameinfo_get_config(prInfo);
     return gameinfoconfig_set_cursorpos(prConfig, prPos);
-}
-
-int gameinfo_set_logger(GameInfo* prInfo, GeeLog* prLog) {
-    if (prInfo == NULL) {
-        return GAMEINFO_NULLPTR;
-    }
-    prInfo->prLog = prLog;
-    return GAMEINFO_SUCCESS;
 }

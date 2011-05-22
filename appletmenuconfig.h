@@ -47,10 +47,29 @@ extern "C" {
     
     ColorConfig* appletmenuconfig_get_panelcolor(AppletMenuConfig* prConfig);
     
+    /** Return a pointer to a CursorPos struct representing the position of
+     * an Applet Menu on the Debug screen.
+     * 
+     * @param prConfig Pointer to an AppletMenuConfig struct representing the
+     * Applet Menu Configuration.
+     * @return A pointer to a CursorPos struct or NULL is returned.
+     */
     CursorPos* appletmenuconfig_get_position(AppletMenuConfig* prConfig);
     
+    /** Return a pointer to a Dimension struct representing the size of an
+     * Applet Menu on the Debug screen.
+     * 
+     * @param prConfig Pointer to an AppletMenuConfig struct representing the
+     * Applet Menu Configuration.
+     * @return A pointer to a Dimension struct or NULL is returned.
+     */
     Dimension* appletmenuconfig_get_size(AppletMenuConfig* prConfig);
     
+    /** Initialize an Applet Menu Configuration.
+     * 
+     * @param prConfig Pointer to the AppletMenuConfig struct to initialize.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int appletmenuconfig_init(AppletMenuConfig* prConfig);
     
 #ifdef	__cplusplus

@@ -234,7 +234,7 @@ int gdasm_init(Gdasm* prDasm, GeeLog* prLog) {
     DasmConfig* prCfg = NULL;
     CursorPos* prPos = NULL;
     DasmTable* prTable = NULL;
-    char sMsg[GEELOG_LINE_LEN + 1];
+    char sMsg[GEELOG_LINELEN + 1];
     int r = 0;
     if (prDasm == NULL) {
         return GDASM_NULLPTR;
@@ -299,11 +299,7 @@ int gdasm_log(Gdasm* prDasm, ELogLevel rLevel, const char* sMsg) {
     if (prDasm == NULL) {
         return GDASM_NULLPTR;
     }
-    prLog = prDasm->prLog;
-    if (prLog == NULL) {
-        return GDASM_FAILURE;
-    }
-    r = geelog_log(prLog, rLevel, sMsg);
+    r = geelog_log(rLevel, sMsg);
     if (r != GEELOG_SUCCESS) {
         return GDASM_FAILURE;
     }

@@ -1,5 +1,3 @@
-#include <pspdebug.h>
-
 #include "appletmenu.h"
 
 static int render_row(AppletMenu* prMenu, const int row);
@@ -18,6 +16,7 @@ int appletmenu_cross_button(AppletMenu* prMenu) {
     }
     if (appletmenu_is_visible(prMenu)) {
         prMenu->visible = 0;
+        prMenu->dirty = 1;
     }
     return APPLETMENU_SUCCESS;
 }
