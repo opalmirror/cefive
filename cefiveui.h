@@ -145,12 +145,43 @@ extern "C" {
      */
     void cefiveui_buttoncallback(int curr, int last, CEFiveUi* prUi);
     
+    /** Return a pointer to an AppletConfig struct representing the cefive
+     * Applet Configuration.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @return A pointer to an AppletConfig struct or NULL is returned.
+     */
+    AppletConfig* cefiveui_get_appletconfig(CEFiveUi* prUi);
+    
     /** Return a pointer to an AppletMenu struct representing the Applet Menu.
      * 
      * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
      * @return A pointer to an AppletMenu struct or NULL is returned.
      */
     AppletMenu* cefiveui_get_appletmenu(CEFiveUi* prUi);
+    
+    /** Return a pointer to a CheatEditor struct representing the cefive Cheat
+     * Editor Applet.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @return A pointer to a CheatEditor struct or NULL is returned.
+     */
+    CheatEditor* cefiveui_get_cheateditor(CEFiveUi* prUi);
+    
+    /** Return a pointer to a CheatEngine struct representing the Cheat Engine.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @return A pointer to a CheatEngine struct or NULL is returned.
+     */
+    CheatEngine* cefiveui_get_cheatengine(CEFiveUi* prUi);
+    
+    /** Return a pointer to a CheatPanel struct representing the cefive Cheat
+     * Panel Applet.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @return A pointer to a CheatPanel struct or NULL is returned.
+     */
+    CheatPanel* cefiveui_get_cheatpanel(CEFiveUi* prUi);
     
     /** Return a pointer to a CEFiveConfig struct representing the cefive
      * Configuration.
@@ -160,6 +191,22 @@ extern "C" {
      */
     CEFiveConfig* cefiveui_get_config(CEFiveUi* prUi);
 
+    /** Return a pointer to a HexEditor struct representing the Hex Editor 
+     * Applet.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @return A pointer to a HexEditor struct or NULL is returned.
+     */
+    HexEditor* cefiveui_get_hexeditor(CEFiveUi* prUi);
+    
+    /** Return a pointer to a CEFiveUiConfig struct representing the cefive
+     * User Interface Configuration.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @return A pointer to a CEFiveUiConfig struct or NULL is returned.
+     */
+    CEFiveUiConfig* cefiveui_get_uiconfig(CEFiveUi* prUi);
+    
     /** Handle User Input for the User Interface.  This should be called once
      * per run-cycle to poll the PSP buttons and interact with the User
      * Interface.

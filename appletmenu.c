@@ -125,7 +125,7 @@ ColorConfig* appletmenu_get_panelcolor(AppletMenu* prMenu) {
     if (prMenu != NULL) {
         prApCfg = appletmenu_get_appletconfig(prMenu);
         if (prApCfg != NULL) {
-            prColor = appletconfig_get_panelcolor(prApCfg);
+            prColor = appletconfig_get_statuscolor(prApCfg);
         }
     }
     return prColor;
