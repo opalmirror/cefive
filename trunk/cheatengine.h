@@ -14,6 +14,7 @@
 #include "cefiveconfig.h"
 #include "cheatmodel.h"
 #include "blockmodel.h"
+#include "geelog.h"
 
 /** Indicates success. */
 #define CHEATENGINE_SUCCESS     (0)

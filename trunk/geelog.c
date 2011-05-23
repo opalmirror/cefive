@@ -113,6 +113,7 @@ int geelog_stop() {
 static int log_append(const char* sLine) {
     int llen = 0;
     int bw = 0;
+    SceInt64 res = 0;
     if (krLog.rFd < 0) {
         return GEELOG_FAILURE;
     }
@@ -121,7 +122,11 @@ static int log_append(const char* sLine) {
     }
     sceKernelWaitSema(krLog.rMutex, 1, NULL);
     llen = strlen(sLine);
-    bw = sceIoWrite(krLog.rFd, sLine, llen);
+    bw = sceIoWriteAsync(krLog.rFd, sLine, llen);
+    if (sceIoWaitAsync(krLog.rFd, &res) < 0) {
+        sceKernelSignalSema(krLog.rMutex, 1);
+        return GEELOG_IOERROR;
+    }
     sceKernelSignalSema(krLog.rMutex, 1);
     if (bw != llen) {
         return GEELOG_IOERROR;

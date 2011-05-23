@@ -21,6 +21,7 @@ OBJS =  block.o \
 	cheatpanel.o \
 	cheateditor.o \
 	cheatengine.o \
+	niteprio.o \
 	menumodel.o \
 	appletmenuconfig.o \
 	appletmenu.o \
@@ -141,6 +142,9 @@ cheateditor.o: colorconfig.o dwordeditor.o cheatengine.o cheat.o block.o cheated
 
 cheatengine.o: cheatengine.c cheatengine.h blockmodel.o cheatmodel.o
 	$(CC) $(CFLAGS) -c cheatengine.c
+
+niteprio.o: niteprio.c niteprio.h cheatengine.o geelog.o
+	$(CC) $(CFLAGS) -c niteprio.c
 
 cheatpanel.o: cheatengine.o colorconfig.o cheat.o block.o cheatpanel.c cheatpanel.h
 	$(CC) $(CFLAGS) -c cheatpanel.c

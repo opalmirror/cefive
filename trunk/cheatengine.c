@@ -282,6 +282,7 @@ Cheat* cheatengineGetCheat(CheatEngine *prEng, int index) {
 
 int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
         Block* arBlock) {
+    const char* sFunc = "cheatengineInit";
     BlockModel* prBmodel = NULL;
     CheatModel* prCmodel = NULL;
     Block* prBlock = NULL;
@@ -289,9 +290,11 @@ int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
     int i = 0;
     
     if (prEng == NULL) {
+        geelog_flog(LOG_ERROR, sFunc, "Invalid CheatEngine pointer.");
         return CHEATENGINE_NULLPTR;
     }
     if (prCfg == NULL) {
+        geelog_flog(LOG_ERROR, sFunc, "Invalid CEFiveConfig pointer.");
         return CHEATENGINE_NULLPTR;
     }
     prEng->prConfig = prCfg;
@@ -306,6 +309,7 @@ int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
         for (i = 0; i < CHEATENGINE_CHEAT_MAX; i++) {
             prCheat = &karCheat[i];
             if (cheat_init(prCheat) != CHEAT_SUCCESS) {
+                geelog_flog(LOG_ERROR, sFunc, "Failed to initialize Cheat.");
                 return CHEATENGINE_FAILURE;
             }
         }
@@ -317,6 +321,7 @@ int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
         for (i = 0; i < CHEATENGINE_BLOCK_MAX; i++) {
             prBlock = &karBlock[i];
             if (block_init(prBlock, 0, 0, (unsigned char) 0) != BLOCK_SUCCESS) {
+                geelog_flog(LOG_ERROR, sFunc, "Failed to initialize Block.");
                 return CHEATENGINE_FAILURE;
             }
         }
@@ -327,12 +332,15 @@ int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
 
     prBmodel = cheatengine_get_blockmodel(prEng);
     if (blockmodel_init(prBmodel, 16) != BLOCKMODEL_SUCCESS) {
+        geelog_flog(LOG_ERROR, sFunc, "Failed to initialize Block Model.");
         return CHEATENGINE_FAILURE;
     }
     prCmodel = cheatengine_get_cheatmodel(prEng);
     if (cheatmodel_init(prCmodel, 8) != CHEATMODEL_SUCCESS) {
+        geelog_flog(LOG_ERROR, sFunc, "Failed to initialize Cheat Model.");
         return CHEATENGINE_FAILURE;
     }
+    geelog_flog(LOG_INFO, sFunc, "Cheat Engine initialized.");
     return CHEATENGINE_SUCCESS;
 }
 

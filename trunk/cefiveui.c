@@ -149,23 +149,27 @@ static void buttonLTriggerDown(CEFiveUi *prUi) {
 
 /* print/close the applet menu */
 static void buttonLTriggerUp(CEFiveUi *prUi) {
+    AppletMenu* prMenu = NULL;
     if (prUi != NULL) {
+        prMenu = cefiveui_get_appletmenu(prUi);
         prUi->buttons.ltrigger = 0;
         /* close the applet menu */
-        if (prUi->appletmenu.visible == 1) {
+        if (prMenu->visible == 1) {
             cefiveui_log(prUi, LOG_DEBUG, 
                     "cefiveui buttonLTriggerUp: Hiding Applet Menu.");
-            prUi->appletmenu.visible = 0;
+            prMenu->visible = 0;
+            appletmenu_invalidate(prMenu);
             prUi->drawn = 0;
             return;
         }
         /* draw the applet menu */
-        if (prUi->appletmenu.visible == 0) {
+        if (prMenu->visible == 0) {
             /* Don't pop the applet menu while the Cheat Editor is showing. */
             if (prUi->applet != 1) {
                 cefiveui_log(prUi, LOG_DEBUG,
                         "cefiveui buttonLTriggerUp: Showing Applet Menu.");
-                prUi->appletmenu.visible = 1;
+                prMenu->visible = 1;
+                appletmenu_invalidate(prMenu);
                 return;
             }
         }
@@ -277,6 +281,14 @@ void cefiveui_buttoncallback(int curr, int last, CEFiveUi* prUi) {
     if (rSc.up && !rLa.up) dpadUpDown(prUi);
     if (rSc.up && rLa.up) dpadUpDown(prUi);
     if (rLa.up && !rSc.up) dpadUpUp(prUi);
+}
+
+AppletMenu* cefiveui_get_appletmenu(CEFiveUi* prUi) {
+    AppletMenu* prMenu = NULL;
+    if (prUi != NULL) {
+        prMenu = &prUi->appletmenu;
+    }
+    return prMenu;
 }
 
 CEFiveConfig* cefiveui_get_config(CEFiveUi* prUi) {

@@ -36,6 +36,7 @@
 #include "searchengine.h"
 #include "cefive.h"
 #include "geelog.h"
+#include "niteprio.h"
 
 extern SceUID sceKernelSearchModuleByName(unsigned char *);
 
@@ -44,7 +45,8 @@ PSP_MODULE_INFO("CEFive", 0x3007, CEFIVE_VERSION_MAJ, CEFIVE_VERSION_MIN);
 PSP_MAIN_THREAD_ATTR(0); //0 for kernel mode too
 
 //Globals
-unsigned char *gameDir = "ms0:/seplugins/nitePR/__________.txt";
+//unsigned char *gameDir = "ms0:/seplugins/nitePR/__________.txt";
+static char gameDir[256];
 unsigned char gameId[10];
 unsigned char running = 0;
 SceUID thid;
@@ -196,6 +198,7 @@ static void gameResume(SceUID thid);
  *       NOT COOL!  Remove.
  */
 #include "screenshot.h"
+#include "niteprio.h"
 
 /* hookMac
  *  Global Variable References:
@@ -897,8 +900,10 @@ static void loadCheats() {
         while (fileOffset < fileSize) {
             sceKernelDelayThread(1500);
 
-            sceIoRead(rfd, &readbuf, 1);
-
+            if (sceIoRead(rfd, &readbuf, 1) < 0) {
+                geelog_log(LOG_WARN, "loadCheats: Error reading Cheat File.");
+            }
+            
             if ((readbuf[0] == '\r') || (readbuf[0] == '\n')) {
                 commentMode = 0;
                 if (nameMode) {
@@ -966,7 +971,6 @@ static void loadCheats() {
     } else {
         geelog_log(LOG_ERROR, "loadCheats: Failed to open cheat file.");
     }
-
 }
 
 static void clearSearchHistory() {
@@ -1098,7 +1102,7 @@ static void findGameId() {
     } while (fd <= 0);
     sceIoRead(fd, gameId, 10);
     sceIoClose(fd);
-    memcpy(&gameDir[22], gameId, 10);
+    sprintf(gameDir, "ms0:/seplugins/nitePR/%s.txt", gameId);
     sprintf(krUi.game_id, "%s", gameId);
     strcpy(krConfig.game_id, gameId);
 }
@@ -1323,6 +1327,7 @@ static void start() {
     findGameId();
     geelog_log(LOG_DEBUG, "start: loading cheats.");
     loadCheats();
+    
     geelog_log(LOG_DEBUG, "start: Getting Initial VRAM.");
     setupInitialVram();
     geelog_log(LOG_DEBUG, "start: Initializing Controller.");
