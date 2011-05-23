@@ -93,6 +93,8 @@
       <in>modcefive.c</in>
       <in>module.c</in>
       <in>module.h</in>
+      <in>niteprio.c</in>
+      <in>niteprio.h</in>
       <in>optionspanel.c</in>
       <in>optionspanel.h</in>
       <in>panelconfig.c</in>

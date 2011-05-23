@@ -145,6 +145,13 @@ extern "C" {
      */
     void cefiveui_buttoncallback(int curr, int last, CEFiveUi* prUi);
     
+    /** Return a pointer to an AppletMenu struct representing the Applet Menu.
+     * 
+     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
+     * @return A pointer to an AppletMenu struct or NULL is returned.
+     */
+    AppletMenu* cefiveui_get_appletmenu(CEFiveUi* prUi);
+    
     /** Return a pointer to a CEFiveConfig struct representing the cefive
      * Configuration.
      * 
