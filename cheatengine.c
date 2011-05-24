@@ -8,30 +8,36 @@ static int parseName(const char* buffer, char* sName, size_t maxlen);
 
 Block* cheatengine_add_block(CheatEngine* prEng) {
     Block* prBlock = NULL;
-    BlockModel* prModel = NULL;
+    int index = 0;
     if (prEng != NULL) {
-        prModel = cheatengine_get_blockmodel(prEng);
-        prBlock = blockmodel_add(prModel);
+        if (prEng->block_count < CHEATENGINE_BLOCK_MAX) {
+            index = prEng->block_count;
+            prEng->block_count++;
+            prBlock = cheatengine_get_block(prEng, index);
+        }
     }
     return prBlock;
 }
 
 Cheat* cheatengine_add_cheat(CheatEngine* prEng) {
     Cheat* prCheat = NULL;
-    CheatModel* prModel = NULL;
+    int index = 0;
     if (prEng != NULL) {
-        prModel = cheatengine_get_cheatmodel(prEng);
-        prCheat = cheatmodel_add(prModel);
+        if (prEng->cheat_count < CHEATENGINE_CHEAT_MAX) {
+            index = prEng->cheat_count;
+            prEng->cheat_count++;
+            prCheat = cheatengine_get_cheat(prEng, index);
+        }
     }
     return prCheat;
 }
 
 Block* cheatengine_get_block(CheatEngine* prEng, const int index) {
     Block* prBlock = NULL;
-    BlockModel* prModel = NULL;
     if (prEng != NULL) {
-        prModel = cheatengine_get_blockmodel(prEng);
-        prBlock = blockmodel_get(prModel, index);
+        if ((index >= 0) && (index < prEng->block_count)) {
+            prBlock = &prEng->blocklist[index];
+        }
     }
     return prBlock;
 }
@@ -56,10 +62,10 @@ BlockModel* cheatengine_get_blockmodel(CheatEngine* prEng) {
 
 Cheat* cheatengine_get_cheat(CheatEngine* prEng, const int index) {
     Cheat *prCheat = NULL;
-    CheatModel *prModel = NULL;
     if (prEng != NULL) {
-        prModel = cheatengine_get_cheatmodel(prEng);
-        prCheat = cheatmodel_get(prModel, index);
+        if ((index >= 0) && (index < prEng->cheat_count)) {
+            prCheat = &prEng->cheatlist[index];
+        }
     }
     return prCheat;
 }

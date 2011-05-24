@@ -1067,7 +1067,7 @@ static int init_cheatpanel(CEFiveUi *prUi) {
         cheatpanel_set_selectedcolor(prPanel, prColor->background, 
                 (u32)0xFF00D000);
         cheatpanel_set_constantcolor(prPanel, prColor->background,
-                (u32)0xFFD00000);
+                (u32)0xFF00D0D0);
     }
     cheatpanel_set_tableheight(prPanel, 30);
     cheatpanel_set_cursorpos(prPanel, 0, 0);

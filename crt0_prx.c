@@ -193,6 +193,7 @@ static void computeCheats();
 static void freshenCheats();
 static void gamePause(SceUID thid);
 static void gameResume(SceUID thid);
+static int parse_line(const char* sLine);
 
 /* TODO: This file refers to magic variables and must be included at this point.
  *       NOT COOL!  Remove.
@@ -283,111 +284,6 @@ unsigned int char2hex(unsigned char *a_data, unsigned int *a_type) {
 
     *a_type = 8;
     return dword;
-}
-
-unsigned int cheatNew(unsigned char a_size, unsigned int a_address,
-        unsigned int a_value) {
-    CheatEngine* prEngine = &krCheatEngine;
-    Cheat* prCheat = NULL;
-    Block* prBlock = NULL;
-    if ((prEngine->cheat_count + 1 < CHEATENGINE_CHEAT_MAX) &&
-            (prEngine->block_count + 1 < CHEATENGINE_BLOCK_MAX)) {
-        prCheat = &(prEngine->cheatlist[prEngine->cheat_count]);
-        cheat_set_block(prCheat, prEngine->block_count);
-        cheat_clear_flags(prCheat);
-        cheat_set_length(prCheat, 1);
-
-        prBlock = &(prEngine->blocklist[prEngine->block_count]);
-        prBlock->address = a_address;
-        prBlock->address &= 0x0FFFFFFF;
-        prBlock->address += 0x08800000;
-
-        prBlock->flags = 0;
-        prBlock->hakVal = a_value;
-
-        switch (a_size) {
-        case 1:
-            block_set_byte(prBlock);
-            if (cheatSaved)
-                prBlock->stdVal = *((unsigned char*) (prBlock->address));
-            break;
-        case 2:
-            block_set_word(prBlock);
-            if (cheatSaved)
-                prBlock->stdVal = *((unsigned short*) (prBlock->address));
-            break;
-        case 4:
-            block_set_dword(prBlock);
-            if (cheatSaved)
-                prBlock->stdVal = *((unsigned int*) (prBlock->address));
-            break;
-        default:
-            block_set_qword(prBlock);
-        }
-
-        sprintf(prCheat->name, "NEW CHEAT %d", cheatNo);
-        cheatNo++;
-        prEngine->cheat_count++;
-        prEngine->block_count++;
-    }
-}
-
-unsigned int blockAdd(int fd, unsigned char *a_data) {
-    unsigned int type;
-    unsigned int offset;
-    unsigned char hex[8];
-    SceUInt64 res = 0;
-    CheatEngine* prEngine = &krCheatEngine;
-    Block* prBlock = NULL;
-
-    if (prEngine->block_count != CHEATENGINE_BLOCK_MAX) {
-        prBlock = &(prEngine->blocklist[prEngine->block_count]);
-        prBlock->flags = 0;
-
-        sceIoLseek(fd, 1, SEEK_CUR);
-        sceIoRead(fd, hex, 8);
-
-        prBlock->address = char2hex(hex, &type);
-
-        if (prBlock->address == 0xFFFFFFFF) {
-            block_set_dma(prBlock);
-            prBlock->stdVal = 0xFFFFFFFF;
-        } else {
-            prBlock->address &= 0x0FFFFFFF;
-            prBlock->address += 0x08800000;
-        }
-
-        offset = sceIoLseek(fd, 3, SEEK_CUR);
-        sceIoRead(fd, hex, 8);
-
-        block_set_patch(prBlock, char2hex(hex, &type));
-
-        if (hex[0] == '_') {
-            block_set_freeze(prBlock);
-        }
-
-        switch (type) {
-        case 2:
-            block_set_byte(prBlock);
-            break;
-        case 4:
-            block_set_word(prBlock);
-            break;
-        case 8:
-            block_set_dword(prBlock);
-            break;
-        default:
-            block_set_qword(prBlock);
-        }
-
-        sceIoLseek(fd, offset + type, SEEK_SET); //Reposition the cursor depending on size of Hex value
-
-        prEngine->block_count++;
-        blockTotal++;
-
-        return 1;
-    }
-    return 0;
 }
 
 void cheatEnable(unsigned int a_cheat) {
@@ -871,121 +767,159 @@ int sceOpenPSIDGetOpenPSID(char *openpsid) {
     return 0;
 }
 
-/* loadCheats
- *
- * Global Variable References:
- *  gameDir
- */
 static void loadCheats() {
+    SceUID fd = -1;
+    SceOff fileSz = 0;
+    SceOff bytes = 0;
+    char sLine[256];
+    SceOff llen = 0;
+    int r = 0;
+    char cIn = 0;
+    
+    fd = sceIoOpen(gameDir, PSP_O_RDONLY, 0777);
+    if (fd < 0) {
+        return;
+    }
+    fileSz = sceIoLseek(fd, 0, SEEK_END);
+    sceIoLseek(fd, 0, SEEK_SET);
+    
+    while (bytes < fileSz) {
+        r = sceIoRead(fd, &cIn, 1);
+        if (r <= 0) {
+            break;
+        }
+        bytes++;
+        if (cIn == '\n' || cIn == '\r') {
+            sLine[llen] = '\0';
+            if (llen > 0) {
+                parse_line(sLine);
+            }
+            llen = 0;
+        } else {
+            sLine[llen] = cIn;
+            llen++;
+        }
+    }
+    sceIoCloseAsync(fd);
+}
+
+static int parse_line(const char* sLine) {
+    const char* sFunc = "parse_line";
     CheatEngine* prEngine = &krCheatEngine;
     Cheat* prCheat = NULL;
-    SceUInt64 res = 0;
-    int rfd;
-    char readbuf[256];
+    Block* prBlock = NULL;
+    char* sName = NULL;
+    char* sHex = NULL;
+    int llen = 0;
+    int inname = 0;
+    char sMsg[GEELOG_LINELEN + 1];
+    unsigned int btype = 0;
+    unsigned int value = 0;
     
-    //Load the cheats
-    geelog_log(LOG_INFO, "loadCheats: Opening Cheat File.");
-    geelog_log(LOG_DEBUG, gameDir);
-    rfd = sceIoOpen(gameDir, PSP_O_RDONLY, 0777);
-
-    if (rfd > 0) {
-        geelog_log(LOG_DEBUG, "loadCheats: Finding End of File.");
-        unsigned int fileSize = sceIoLseek(rfd, 0, SEEK_END);
-        geelog_log(LOG_DEBUG, "loadCheats: Returning to File position.");
-        sceIoLseek(rfd, 0, SEEK_SET);
-        unsigned int fileOffset = 0;
-        unsigned char commentMode = 0;
-        unsigned char nameMode = 0;
-
-        while (fileOffset < fileSize) {
-            sceKernelDelayThread(1500);
-
-            if (sceIoRead(rfd, &readbuf, 1) < 0) {
-                geelog_log(LOG_WARN, "loadCheats: Error reading Cheat File.");
-            }
-            
-            if ((readbuf[0] == '\r') || (readbuf[0] == '\n')) {
-                commentMode = 0;
-                if (nameMode) {
-                    prEngine->cheat_count++;
-                    nameMode = 0;
-                }
-            } else if ((readbuf[0] == ' ') && (!nameMode)) {
-            } else if (readbuf[0] == ';') {
-                commentMode = 1;
-                if (nameMode) {
-                    prEngine->cheat_count++;
-                    nameMode = 0;
-                }
-            } //Skip comments till next line
-            else if (readbuf[0] == '#') //Read in the cheat name
-            {
-                if (prEngine->cheat_count >= CHEATENGINE_CHEAT_MAX) {
-                    geelog_log(LOG_WARN, 
-                            "loadCheats: Too many cheats for the engine.");
-                    break;
-                }
-                prCheat = &(prEngine->cheatlist[prEngine->cheat_count]);
-                cheat_set_block(prCheat, prEngine->block_count);
-                prCheat->flags = 0;
-                cheat_set_length(prCheat, 0);
-                prCheat->name[0] = 0;
-                nameMode = 1;
-                cheat_setflag_fresh(prCheat);
-            } else if ((readbuf[0] == '!') && (nameMode)) {
-                prCheat = &(prEngine->cheatlist[prEngine->cheat_count]);
-                //Cheat's selected by default
-                if (cheat_is_selected(prCheat) == 1) {
-                    //Two ! = selected for constant on status
+    if (sLine == NULL) {
+        return -1;
+    }
+    llen = strlen(sLine);
+    if (llen <= 0) {
+        return 0;
+    }
+    if (sLine[0] == '#') {
+        if (llen <= 1) {
+            geelog_flog(LOG_ERROR, sFunc, "Malformed Cheat Line.");
+            return -1;
+        }
+        prCheat = cheatengine_add_cheat(prEngine);
+        if (prCheat == NULL) {
+            geelog_flog(LOG_ERROR, sFunc, "Failed to add Cheat.");
+            return -1;
+        }
+        inname = 0;
+        sName = &sLine[1];
+        while (inname == 0) {
+            if (*sName == '!') {
+                if (cheat_is_selected(prCheat)) {
                     cheat_set_constant(prCheat);
                 } else {
-                    //One ! = selected for music on/off button
                     cheat_set_selected(prCheat);
                 }
-            } else if ((!commentMode) && (nameMode)) {
-                prCheat = &(prEngine->cheatlist[prEngine->cheat_count]);
-                if (nameMode < 32) //1 to 31 = letters, 32=Null terminator
-                {
-                    prCheat->name[nameMode - 1] = readbuf[0];
-                    nameMode++;
-                    prCheat->name[nameMode - 1] = 0;
-                }
-            } else if ((!commentMode) && (!nameMode)) {
-                //Add 0xAABBCCDD 0xAABBCCDD block
-                if (!blockAdd(rfd, readbuf)) {
-                    //No more RAM?
-                    if (prEngine->cheat_count != 0) {
-                        prEngine->cheat_count--;
-                        break;
-                    }
-                }
-                if (prEngine->cheat_count != 0) {
-                    prEngine->cheatlist[prEngine->cheat_count - 1].len++;
-                }
+                sName++;
+                continue;
             }
-
-            fileOffset = sceIoLseek(rfd, 0, SEEK_CUR);
+            if (*sName == ' ') {
+                sName++;
+                continue;
+            }
+            inname = 1;
         }
-        geelog_log(LOG_INFO, "loadCheats: Closing cheat file.");
-        sceIoCloseAsync(rfd);
-    } else {
-        geelog_log(LOG_ERROR, "loadCheats: Failed to open cheat file.");
+        if (sName != NULL) {
+            strcpy(prCheat->name, sName);
+        }
     }
+    if (sLine[0] == ';') {
+        /* Comment Mode */
+    }
+    if (sLine[0] == '0') {
+        prCheat = cheatengine_get_cheat(prEngine, prEngine->cheat_count - 1);
+        if (prCheat == NULL) {
+            geelog_flog(LOG_ERROR, sFunc, "Could not get last Cheat.");
+            return -1;
+        }
+        if (llen < 10) {
+            geelog_flog(LOG_ERROR, sFunc, "Malformed Block Line.");
+        }
+        if (sLine[1] == 'x' || sLine[1] == 'X') {
+            prBlock = cheatengine_add_block(prEngine);
+            if (prBlock == NULL) {
+                geelog_flog(LOG_ERROR, sFunc, "Failed to add Block.");
+                return -1;
+            }
+            if (prCheat->len == 0) {
+                prCheat->block = prEngine->block_count - 1;
+            }
+            prCheat->len++;
+            sHex = &sLine[2];
+            value = char2hex(sHex, &btype);
+            if (value == 0xFFFFFFFF) {
+                block_set_dma(prBlock);
+                prBlock->stdVal = 0xFFFFFFFF;
+            } else {
+                prBlock->address = value + 0x08800000;
+            }
+            sHex += 10;
+            if (*sHex != 'x' && *sHex != 'X') {
+                geelog_flog(LOG_ERROR, sFunc, "Malformed Block Value.");
+                return -1;
+            }
+            sHex++;
+            value = char2hex(sHex, &btype);
+            prBlock->hakVal = value;
+            switch (btype) {
+            case 2:
+                block_set_byte(prBlock);
+                break;
+            case 4:
+                block_set_word(prBlock);
+                break;
+            case 8:
+                block_set_dword(prBlock);
+                break;
+            default:
+                block_set_qword(prBlock);
+            }
+            
+        }
+    }
+    return 0;
 }
 
 static void clearSearchHistory() {
 }
 
 static void waitForKernelLibrary() {
-    geelog_log(LOG_DEBUG, "waitForKernelLibrary: Pausing.");
     //Wait for the kernel to boot
     sceKernelDelayThread(100000);
-    geelog_log(LOG_DEBUG, 
-            "waitForKernelLibrary: Looking for sceKernelLibrary.");
     while (!sceKernelFindModuleByName("sceKernelLibrary"))
         sceKernelDelayThread(100000);
-    geelog_log(LOG_DEBUG, 
-            "waitForKernelLibrary: sceKernelLibrary Located, pausing.");
     sceKernelDelayThread(100000);
 }
 
