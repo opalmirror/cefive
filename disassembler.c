@@ -1,20 +1,4 @@
-/* disassembler.c
- *  The Disassembler for CEFive
- * Author:
- *  Sir Gee of Five
- */
-
-#include <pspkerneltypes.h>
-#include <pspdebug.h>
-#include <stdio.h>
 #include "disassembler.h"
-#include "mips.h"
-#include "dwordeditor.h"
-#include "addresscolumn.h"
-#include "dwordcolumn.h"
-#include "textcolumn.h"
-#include "colorconfig.h"
-#include "appletconfig.h"
 
 static void drawAddressColumn(Disassembler *prPanel, int iRow);
 static void drawAssemblyColumn(Disassembler *prPanel, int iRow);
@@ -59,6 +43,14 @@ CursorPos* disassembler_get_cursorpos(Disassembler* prDasm) {
     return prPos;
 }
 
+MemViewPanel* disassembler_get_memview(Disassembler* prDasm) {
+    MemViewPanel* prPanel = NULL;
+    if (prDasm != NULL) {
+        prPanel = &prDasm->memViewPanel;
+    }
+    return prPanel;
+}
+
 ColorConfig* disassembler_get_panelcolor(Disassembler* prDasm) {
     ColorConfig* prColor = NULL;
     AppletConfig* prConfig = NULL;
@@ -70,6 +62,30 @@ ColorConfig* disassembler_get_panelcolor(Disassembler* prDasm) {
         }
     }
     return prColor;
+}
+
+CursorPos* disassembler_get_position(Disassembler* prDasm) {
+    CursorPos* prPos = NULL;
+    AppletConfig *prConfig = NULL;
+    if (prDasm != NULL) {
+        prConfig = disassembler_get_appletconfig(prDasm);
+        if (prConfig != NULL) {
+            prPos = appletconfig_get_position(prConfig);
+        }
+    }
+    return prPos;
+}
+
+Dimension* disassembler_get_size(Disassembler* prDasm) {
+    Dimension* prSize = NULL;
+    AppletConfig* prConfig = NULL;
+    if (prDasm != NULL) {
+        prConfig = disassembler_get_appletconfig(prDasm);
+        if (prConfig != NULL) {
+            prSize = appletconfig_get_size(prConfig);
+        }
+    }
+    return prSize;
 }
 
 /* commitValueEdit
@@ -92,7 +108,7 @@ static void commitValueEdit(Disassembler *prPanel) {
     sceKernelIcacheInvalidateRange(offset, 4);
 }
 
-void disassemblerAttemptJump(Disassembler *prPanel) {
+void disassembler_attempt_jump(Disassembler *prPanel) {
     if (prPanel == NULL) {
         return;
     }
@@ -167,18 +183,13 @@ void disassemblerCrossButton(Disassembler *prPanel) {
     prPanel->cursordirty = 1;
 }
 
-void disassemblerCursorDown(Disassembler *prPanel) {
+void disassembler_cursor_down(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
     if (prPanel == NULL) {
         return;
     }
-    int y = prPanel->cursor.y;
-    y++;
-    if (y >= prPanel->config.tablesize.height) {
-        disassemblerScrollDown(prPanel);
-        y = prPanel->config.tablesize.height - 1;
-    }
-    prPanel->rPrev.y = prPanel->cursor.y;
-    prPanel->cursor.y = y;
+    prMemView = disassembler_get_memview(prPanel);
+    memviewpanel_cursor_down(prMemView);
 }
 
 void disassemblerCursorLeft(Disassembler *prPanel) {
@@ -203,24 +214,19 @@ void disassemblerCursorRight(Disassembler *prPanel) {
     x++;
     if (x > 1) {
         x = 1;
-        disassemblerAttemptJump(prPanel);
+        disassembler_attempt_jump(prPanel);
     }
     prPanel->rPrev.x = prPanel->cursor.x;
     prPanel->cursor.x = x;
 }
 
-void disassemblerCursorUp(Disassembler *prPanel) {
+void disassembler_cursor_up(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
     if (prPanel == NULL) {
         return;
     }
-    int y = prPanel->cursor.y;
-    y--;
-    if (y < 0) {
-        disassemblerScrollUp(prPanel);
-        y = 0;
-    }
-    prPanel->rPrev.y = prPanel->cursor.y;
-    prPanel->cursor.y = y;
+    prMemView = disassembler_get_memview(prPanel);
+    memviewpanel_cursor_up(prMemView);
 }
 
 void disassemblerDpadDown(Disassembler *prPanel) {
@@ -229,7 +235,7 @@ void disassemblerDpadDown(Disassembler *prPanel) {
         return;
     }
     if (prPanel->editing == 0) {
-        disassemblerCursorDown(prPanel);
+        disassembler_cursor_down(prPanel);
     } else {
         if (prPanel->cursor.x == 0) {
             dwordeditorDpadDown(&prPanel->address_editor);
@@ -280,7 +286,7 @@ void disassemblerDpadUp(Disassembler *prPanel) {
         return;
     }
     if (prPanel->editing == 0) {
-        disassemblerCursorUp(prPanel);
+        disassembler_cursor_up(prPanel);
     } else {
         if (prPanel->cursor.x == 0) {
             dwordeditorDpadUp(&prPanel->address_editor);
@@ -293,10 +299,14 @@ void disassemblerDpadUp(Disassembler *prPanel) {
     prPanel->cursordirty = 1;
 }
 
-int disassemblerInit(Disassembler *prPanel) {
+int disassembler_init(Disassembler *prPanel, AppletConfig *prApCfg) {
+    MemViewPanel* prMemView = NULL;
+    ColorConfig* prColor = NULL;
+    
     if (prPanel == NULL) {
         return DISASSEMBLER_MEMORY;
     }
+    prPanel->prApCfg = prApCfg;
     prPanel->config.address_color.background = DISASSEMBLER_DEFBGCOLOR;
     prPanel->config.address_color.text = DISASSEMBLER_DEFFGCOLOR;
     prPanel->config.base_address = 0x08800000;
@@ -337,51 +347,61 @@ int disassemblerInit(Disassembler *prPanel) {
     prAssembly->prCursor = &(prPanel->config.cursorrow_color);
 
     prPanel->prGameInfo = NULL;
+    
+    prMemView = disassembler_get_memview(prPanel);
+    if (memviewpanel_init(prMemView) != MEMVIEWPANEL_SUCCESS) {
+        return DISASSEMBLER_FAILURE;
+    }
+    if (memviewpanel_set_size(prMemView, 68, 30) != MEMVIEWPANEL_SUCCESS) {
+        return DISASSEMBLER_FAILURE;
+    }
+    if (memviewpanel_set_position(prMemView, 0, 2) != MEMVIEWPANEL_SUCCESS) {
+        return DISASSEMBLER_FAILURE;
+    }
+    prColor = disassembler_get_panelcolor(prPanel);
+    if (prColor != NULL) {
+        if (memviewpanel_set_panelcolor(prMemView, 
+                prColor->background, prColor->text) != MEMVIEWPANEL_SUCCESS) {
+            return DISASSEMBLER_FAILURE;
+        }
+    }
+    prColor = disassembler_get_cursorcolor(prPanel);
+    if (prColor != NULL) {
+        if (memviewpanel_set_cursorcolor(prMemView,
+                prColor->background, prColor->text) != MEMVIEWPANEL_SUCCESS) {
+            return DISASSEMBLER_FAILURE;
+        }
+    }
     return DISASSEMBLER_SUCCESS;
 }
 
 void disassemblerRedraw(Disassembler *prPanel) {
-    AppletConfig* prApCfg = NULL;
+    MemViewPanel* prMemView = NULL;
+    CursorPos* prPos = NULL;
+    Dimension* prSize = NULL;
     ColorConfig* prColor = NULL;
-
+    char sFmt[10];
+    
     if (prPanel == NULL) {
         return;
     }
-    prApCfg = prPanel->prApCfg;
-    prColor = appletconfig_get_panelcolor(prApCfg);
-
-    if (prPanel->dirty == 1) {
-        pspDebugScreenSetBackColor(prColor->background);
-        pspDebugScreenSetTextColor(prColor->text);
-        pspDebugScreenSetXY(prPanel->config.position.x,
-                prPanel->config.position.y);
-        pspDebugScreenKprintf("Disassembler");
-        drawTable(prPanel);
-        drawCursor(prPanel);
-        prPanel->dirty = 0;
+    prMemView = disassembler_get_memview(prPanel);
+    if (memviewpanel_redraw(prMemView) != MEMVIEWPANEL_SUCCESS) {
         return;
     }
-    if (prPanel->offset != prPanel->poffset) {
-        drawTable(prPanel);
-        drawCursor(prPanel);
+    if (prPanel->dirty == 0) {
         return;
     }
-    if (prPanel->cursor.y != prPanel->rPrev.y) {
-        drawTableRow(prPanel, prPanel->rPrev.y);
-        drawTableRow(prPanel, prPanel->cursor.y);
-        drawCursor(prPanel);
-        prPanel->rPrev.y = prPanel->cursor.y;
-        return;
-    }
-    if (prPanel->cursor.x != prPanel->rPrev.x) {
-        drawTableRow(prPanel, prPanel->cursor.y);
-        drawCursor(prPanel);
-        prPanel->rPrev.x = prPanel->cursor.x;
-        return;
-    }
-    if (prPanel->cursordirty == 1) {
-        drawCursor(prPanel);
-    }
+    prPos = disassembler_get_position(prPanel);
+    pspDebugScreenSetXY(prPos->x, prPos->y + 1);
+    prColor = disassembler_get_panelcolor(prPanel);
+    pspDebugScreenSetBackColor(prColor->background);
+    pspDebugScreenSetTextColor(prColor->text);
+    prSize = disassembler_get_size(prPanel);
+    sprintf(sFmt, "%%-%ds", prSize->width);
+    pspDebugScreenKprintf(sFmt, "Disassembler");
+    memviewpanel_invalidate(prMemView);
+    prPanel->dirty = 0;
 }
 
 void disassemblerPageDown(Disassembler *prPanel) {

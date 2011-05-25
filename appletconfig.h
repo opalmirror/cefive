@@ -8,9 +8,13 @@
 #ifndef _APPLETCONFIG_H
 #define	_APPLETCONFIG_H
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <pspkerneltypes.h>
 #include "colorconfig.h"
 #include "panelconfig.h"
+#include "cursorpos.h"
+#include "dimension.h"
 
 /** Indicates success.*/
 #define APPLETCONFIG_SUCCESS        (0)
@@ -89,6 +93,24 @@ extern "C" {
      */
     PanelConfig* appletconfig_get_panelconfig(AppletConfig* prConfig);
     
+    /** Return a pointer to a CursorPos struct representing the position of
+     * the Applet on the Debug screen.
+     * 
+     * @param prConfig Pointer to an AppletConfig struct representing the
+     * Applet Configuration.
+     * @return A pointer to a CursorPos struct or NULL is returned.
+     */
+    CursorPos* appletconfig_get_position(AppletConfig* prConfig);
+    
+    /** Return a pointer to a Dimension struct representing the size of the
+     * Applet on the Debug screen.
+     * 
+     * @param prConfig Pointer to an AppletConfig struct representing the
+     * Applet Configuration.
+     * @return A pointer to a Dimension struct or NULL is returned.
+     */
+    Dimension* appletconfig_get_size(AppletConfig* prConfig);
+    
     /** Return a pointer to the ColorConfig struct representing the Status Bar
      * color configuration.
      * 
@@ -110,7 +132,7 @@ extern "C" {
     /** Initialize an AppletConfig struct.
      * 
      * @param prConfig Pointer to the AppletConfig struct to initialize.
-     * @return 0 is returned on success, less than 0 is returned on failure.
+     * @return 0 indicates success, &lt0; indicates failure.
      */
     int appletconfig_init(AppletConfig* prConfig);
     
@@ -118,15 +140,92 @@ extern "C" {
      * 
      * @param prConfig Pointer to the AppletConfig struct to read into.
      * @param fd SceUID indicating a valid file descriptor.
-     * @return 0 is returned on success, less than 0 is returned on failure.
+     * @return 0 indicates success, &lt0; indicates failure.
      */
     int appletconfig_read(AppletConfig* prConfig, SceUID fd);
+
+    /** Assign the Cursor Color Configuration.
+     * 
+     * @param prConfig Pointer to an AppletConfig struct representing the 
+     * Applet Configuration.
+     * @param background u32 representing the background color.
+     * @param text u32 representing the text color.
+     * @return 0 indicates success, &lt0; indicates failure.
+     */
+    int appletconfig_set_cursorcolor(AppletConfig* prConfig, 
+            const u32 background, const u32 text);
+    
+    /** Assign the Editor Color Configuration.
+     * 
+     * @param prConfig Pointer to an AppletConfig struct representing the 
+     * Applet Configuration.
+     * @param background u32 representing the background color.
+     * @param text u32 representing the text color.
+     * @return 0 indicates success, &lt0; indicates failure.
+     */
+    int appletconfig_set_editcolor(AppletConfig* prConfig, 
+            const u32 background, const u32 text);
+    
+    /** Assign the Panel Color Configuration.
+     * 
+     * @param prConfig Pointer to an AppletConfig struct representing the 
+     * Applet Configuration.
+     * @param background u32 representing the background color.
+     * @param text u32 representing the text color.
+     * @return 0 indicates success, &lt0; indicates failure.
+     */
+    int appletconfig_set_panelcolor(AppletConfig* prConfig, 
+            const u32 background, const u32 text);
+    
+    /** Assign the position of an Applet on the Debug Screen.
+     * 
+     * @param prConfig Pointer to an AppletConfig struct representing the
+     * Applet Configuration.
+     * @param x int indicating the column of the left edge of the Applet.
+     * @param y int indicating the row of the top edge of the Applet.
+     * @return 0 indicates success, &lt0; indicates failure.
+     */
+    int appletconfig_set_position(AppletConfig* prConfig, 
+            const int x, const int y);
+    
+    /** Assign the size of an Applet on the Debug Screen.
+     * 
+     * @param prConfig Pointer to an AppletConfig struct representing the
+     * Applet Configuration.
+     * @param width int indicating the width in columns.
+     * @param height int indicating the height in rows.
+     * @return 0 indicates success, &lt0; indicates failure.
+     */
+    int appletconfig_set_size(AppletConfig* prConfig,
+            const int width, const int height);
+    
+    /** Assign the Status Bar Color Configuration.
+     * 
+     * @param prConfig Pointer to an AppletConfig struct representing the 
+     * Applet Configuration.
+     * @param background u32 representing the background color.
+     * @param text u32 representing the text color.
+     * @return 0 indicates success, &lt0; indicates failure.
+     */
+    int appletconfig_set_statuscolor(AppletConfig* prConfig, 
+            const u32 background, const u32 text);
+    
+    /** Assign the Title Bar Color Configuration.
+     * 
+     * @param prConfig Pointer to an AppletConfig struct representing the 
+     * Applet Configuration.
+     * @param background u32 representing the background color.
+     * @param text u32 representing the text color.
+     * @return 0 indicates success, &lt0; indicates failure.
+     */
+    int appletconfig_set_titlecolor(AppletConfig* prConfig, 
+            const u32 background, const u32 text);
     
     /** Write an AppletConfig struct to a file descriptor.
      * 
      * @param prConfig Pointer to the AppletConfig struct to write.
      * @param fd SceUID indicating a valid file descriptor.
-     * @return 0 is returned on success, less than 0 is returned on failure.
+     * @return 0 indicates success, &lt0; indicates failure.
      */
     int appletconfig_write(AppletConfig* prConfig, SceUID fd);
 

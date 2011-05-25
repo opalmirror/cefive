@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-#include <pspkerneltypes.h>
-#include <pspiofilemgr.h>
 #include "ggame.h"
 
 int ggame_init(GGame* prGame) {

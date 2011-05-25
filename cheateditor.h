@@ -17,6 +17,16 @@
 #include "cefiveconfig.h"
 #include "cheatengine.h"
 
+#define CHEATEDITOR_SUCCESS (0)
+
+#define CHEATEDITOR_FAILURE (-1)
+
+#define CHEATEDITOR_NULLPTR (-2)
+
+#define CHEATEDITOR_MEMORY (-3)
+
+#define CHEATEDITOR_INVIDX (-4)
+
 #ifdef	__cplusplus
 extern "C" {
 #endif

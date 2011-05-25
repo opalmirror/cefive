@@ -86,6 +86,8 @@
       <in>hexeditor.c</in>
       <in>hexeditor.h</in>
       <in>importpanel.h</in>
+      <in>memviewpanel.c</in>
+      <in>memviewpanel.h</in>
       <in>menumodel.c</in>
       <in>menumodel.h</in>
       <in>mips.c</in>

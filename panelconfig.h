@@ -5,8 +5,8 @@
  * Created on October 3, 2010, 1:31 PM
  */
 
-#ifndef _PANELCONFIG_H
-#define	_PANELCONFIG_H
+#ifndef PANELCONFIG_H
+#define	PANELCONFIG_H
 
 #include <pspkerneltypes.h>
 #include "colorconfig.h"
@@ -143,5 +143,5 @@ extern "C" {
 }
 #endif
 
-#endif	/* _PANELCONFIG_H */
+#endif	/* PANELCONFIG_H */
 
