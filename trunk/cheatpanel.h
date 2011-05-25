@@ -35,12 +35,6 @@ extern "C" {
 #endif
 
     typedef struct _CheatPanelConfig {
-        /** Normal Color Settings */
-        ColorConfig color;
-        /** Cursor Column Color Settings */
-        ColorConfig cursorcolor;
-        /** Cursor Row Color Settings */
-        ColorConfig cursorrowcolor;
         /** Selected Cheat Color Settings */
         ColorConfig selectedcolor;
         /** Constant Cheat Color Settings */
@@ -69,6 +63,54 @@ extern "C" {
     }
     /** Cheat Panel Applet struct */
     CheatPanel;
+
+    /** Called when the Circle button is released in the Cheat Panel Applet.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat 
+     * Panel.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int cheatpanel_circle_button(CheatPanel* prPanel);
+
+    /** Called when the Cross button is released in the Cheat Panel Applet.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat 
+     * Panel.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int cheatpanel_cross_button(CheatPanel* prPanel);
+
+    /** Called when the D-Pad is pressed Down in the Cheat Panel Applet.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat
+     * Panel Applet.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int cheatpanel_dpad_down(CheatPanel* prPanel);
+    
+    /** Called when the D-Pad is pressed Left in the Cheat Panel Applet.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat
+     * Panel Applet.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int cheatpanel_dpad_left(CheatPanel* prPanel);
+    
+    /** Called when the D-Pad is pressed Right in the Cheat Panel Applet.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat
+     * Panel Applet.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int cheatpanel_dpad_right(CheatPanel* prPanel);
+    
+    /** Called when the D-Pad is pressed Up in the Cheat Panel Applet.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat
+     * Panel Applet.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int cheatpanel_dpad_up(CheatPanel* prPanel);
 
     /** Return a pointer to an AppletConfig struct representing the Applet
      * Configuration.
@@ -141,6 +183,25 @@ extern "C" {
      */
     ColorConfig* cheatpanel_get_selectedcolor(CheatPanel* prPanel);
     
+    /** Return the index of the currently selected Cheat within the Cheat
+     * Engine.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat
+     * Panel Applet.
+     * @return An int containing the index of the currently selected Cheat is
+     * returned.
+     */
+    int cheatpanel_get_selectedindex(CheatPanel* prPanel);
+
+    /** Initialize a Cheat Panel Applet.
+     * 
+     * @param prPanel Pointer to the CheatPanel struct to initialize.
+     * @param prEngine Pointer to a CheatEngine struct representing the Cheat
+     * Engine.
+     * @return 0 indicates success, &lt;0 indicates failure. 
+     */
+    int cheatpanel_init(CheatPanel* prPanel, CheatEngine* prEngine);
+
     /** Indicate that a Cheat Panel needs to be redrawn.
      * 
      * @param prPanel Pointer to a CheatPanel struct representing the Cheat
@@ -149,6 +210,30 @@ extern "C" {
      */
     int cheatpanel_invalidate(CheatPanel* prPanel);
     
+    /** Redraw a Cheat Panel on the Debug Screen.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat
+     * Panel Applet.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int cheatpanel_redraw(CheatPanel* prPanel);
+
+    /** Scroll the Cheat list down by a single line.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat
+     * Panel Applet.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int cheatpanel_scroll_down(CheatPanel* prPanel);
+    
+    /** Scroll the Cheat list up by a single line.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat
+     * Panel Applet.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int cheatpanel_scroll_up(CheatPanel* prPanel);
+
     /** Assign the Color Configuration values for Cheats that are constant.
      * 
      * @param prPanel Pointer to a CheatPanel struct representing the Cheat
@@ -198,31 +283,22 @@ extern "C" {
      * @return 0 indicates success, &lt;0 indicates failure.
      */
     int cheatpanel_set_tableheight(CheatPanel* prPanel, int height);
-    
-    /** Called when the Circle button is released in the Cheat Panel Applet.
-     * 
-     * @param prPanel Pointer to a CheatPanel struct representing the Cheat 
-     * Panel.
-     */
-    void cheatpanel_circle_button(CheatPanel* prPanel);
 
-    /** Called when the Cross button is released in the Cheat Panel Applet.
+    /** Called when the user presses and releases the Square button.
      * 
-     * @param prPanel Pointer to a CheatPanel struct representing the Cheat 
-     * Panel.
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat
+     * Panel Applet.
+     * @return 0 indicates success, &lt;0 indicates failure.
      */
-    void cheatpanelCrossButton(CheatPanel* prPanel);
-    void cheatpanelDpadDown(CheatPanel* prPanel);
-    void cheatpanelDpadLeft(CheatPanel* prPanel);
-    void cheatpanelDpadRight(CheatPanel* prPanel);
-    void cheatpanelDpadUp(CheatPanel* prPanel);
-    int cheatpanelGetSelectedIndex(CheatPanel* prPanel);
-    void cheatpanelInit(CheatPanel* prPanel, CheatEngine* prEngine);
-    void cheatpanelRedraw(CheatPanel* prPanel);
-    void cheatpanelScrollDown(CheatPanel* prPanel);
-    void cheatpanelScrollUp(CheatPanel* prPanel);
-    void cheatpanelSquareButton(CheatPanel* prPanel);
-    void cheatpanelTriangleButton(CheatPanel* prPanel);
+    int cheatpanel_square_button(CheatPanel* prPanel);
+    
+    /** Called when the user presses and releases the Triangle button.
+     * 
+     * @param prPanel Pointer to a CheatPanel struct representing the Cheat
+     * Panel Applet.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int cheatpanel_triangle_button(CheatPanel* prPanel);
 
 #ifdef	__cplusplus
 }

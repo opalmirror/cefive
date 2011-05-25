@@ -7,17 +7,21 @@
 #define _DISASSEMBLER_H_
 
 #include <pspkerneltypes.h>
+#include <pspdebug.h>
+#include <stdio.h>
+#include "addresscolumn.h"
+#include "appletconfig.h"
 #include "colorconfig.h"
 #include "cursorpos.h"
-#include "dwordeditor.h"
-#include "dimension.h"
-#include "addresscolumn.h"
-#include "dwordcolumn.h"
-#include "textcolumn.h"
-#include "gameinfo.h"
-#include "appletconfig.h"
-#include "geelog.h"
 #include "dasmrow.h"
+#include "dimension.h"
+#include "dwordcolumn.h"
+#include "dwordeditor.h"
+#include "gameinfo.h"
+#include "geelog.h"
+#include "memviewpanel.h"
+#include "mips.h"
+#include "textcolumn.h"
 
 /** Indicates success. */
 #define DISASSEMBLER_SUCCESS    (0)
@@ -78,35 +82,64 @@ extern "C" {
         int cur_jump;
         DasmRow rRow;
         GameInfo* prGameInfo;
+        MemViewPanel memViewPanel;
     } Disassembler;
 
+    /** Return a pointer to an AppletConfig struct representing the Applet
+     * Configuration.
+     * 
+     * @param prDasm Pointer to a Disassembler struct representing the
+     * Disassembler Applet.
+     * @return A pointer to an AppletConfig struct or NULL is returned.
+     */
     AppletConfig* disassembler_get_appletconfig(Disassembler* prDasm);
 
+    /** Return a pointer to a ColorConfig struct representing the Cursor
+     * Color Configuration.
+     * 
+     * @param prDasm Pointer to a Disassembler struct representing the
+     * Disassembler Applet.
+     * @return A pointer to a ColorConfig struct or NULL is returned.
+     */
     ColorConfig* disassembler_get_cursorcolor(Disassembler* prDasm);
     
     CursorPos* disassembler_get_cursorpos(Disassembler* prDasm);
     
+    MemViewPanel* disassembler_get_memview(Disassembler* prDasm);
+    
     ColorConfig* disassembler_get_panelcolor(Disassembler* prDasm);
     
-    void disassemblerAttemptJump(Disassembler *);
+    CursorPos* disassembler_get_position(Disassembler* prDasm);
+    
+    Dimension* disassembler_get_size(Disassembler* prDasm);
+    
+    void disassembler_attempt_jump(Disassembler *prPanel);
+    
     void disassemblerAttemptReturn(Disassembler *);
     void disassemblerCircleButton(Disassembler *);
     void disassemblerCrossButton(Disassembler *);
-    void disassemblerCursorDown(Disassembler *);
+    
+    void disassembler_cursor_down(Disassembler *prPanel);
+    
     void disassemblerCursorLeft(Disassembler *);
     void disassemblerCursorRight(Disassembler *);
-    void disassemblerCursorUp(Disassembler *);
+    
+    void disassembler_cursor_up(Disassembler *prPanel);
+    
     void disassemblerDpadDown(Disassembler *);
     void disassemblerDpadLeft(Disassembler *);
     void disassemblerDpadRight(Disassembler *);
     void disassemblerDpadUp(Disassembler *);
-    int disassemblerInit(Disassembler *);
+    
+    int disassembler_init(Disassembler *prPanel, AppletConfig *prApCfg);
+    
     void disassemblerPageDown(Disassembler *prPanel);
     void disassemblerPageUp(Disassembler *prPanel);
     void disassemblerRedraw(Disassembler *);
     void disassemblerScrollDown(Disassembler *);
     void disassemblerScrollUp(Disassembler *);
     int disassemblerSeek(Disassembler *, SceUInt32 offset);
+    
     void disassemblerSquareButton(Disassembler *);
     SceUInt32 disassemblerTell(Disassembler *);
     void disassemblerTriangleButton(Disassembler *);

@@ -1,8 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <pspkerneltypes.h>
-#include "colorconfig.h"
-#include "panelconfig.h"
 #include "appletconfig.h"
 
 int appletconfig_copy(AppletConfig* prDest, AppletConfig* prSrc) {
@@ -60,6 +55,26 @@ PanelConfig* appletconfig_get_panelconfig(AppletConfig* prConfig) {
     return prPan;
 }
 
+CursorPos* appletconfig_get_position(AppletConfig* prConfig) {
+    CursorPos* prPos = NULL;
+    PanelConfig* prCfg = NULL;
+    if (prConfig != NULL) {
+        prCfg = appletconfig_get_panelconfig(prConfig);
+        prPos = panelconfig_get_position(prCfg);
+    }
+    return prPos;
+}
+
+Dimension* appletconfig_get_size(AppletConfig* prConfig) {
+    Dimension* prSize = NULL;
+    PanelConfig* prCfg = NULL;
+    if (prConfig != NULL) {
+        prCfg = appletconfig_get_panelconfig(prConfig);
+        prSize = panelconfig_get_size(prCfg);
+    }
+    return prSize;
+}
+
 ColorConfig* appletconfig_get_statuscolor(AppletConfig* prConfig) {
     ColorConfig* prColor = NULL;
     if (prConfig != NULL) {
@@ -114,6 +129,102 @@ int appletconfig_read(AppletConfig* prConfig, SceUID fd) {
     }
     r = colorconfig_read(&prConfig->rTitlebar, fd);
     if (r != COLORCONFIG_SUCCESS) {
+        return APPLETCONFIG_FAILURE;
+    }
+    return APPLETCONFIG_SUCCESS;
+}
+
+int appletconfig_set_cursorcolor(AppletConfig* prConfig, 
+            const u32 background, const u32 text) {
+    ColorConfig* prColor = NULL;
+    if (prConfig == NULL) {
+        return APPLETCONFIG_NULLPTR;
+    }
+    prColor = appletconfig_get_cursorcolor(prConfig);
+    if (colorconfig_setcolor(prColor, background, text) != COLORCONFIG_SUCCESS)
+    {
+        return APPLETCONFIG_FAILURE;
+    }
+    return APPLETCONFIG_SUCCESS;
+}
+
+int appletconfig_set_editcolor(AppletConfig* prConfig, 
+            const u32 background, const u32 text) {
+    ColorConfig* prColor = NULL;
+    if (prConfig == NULL) {
+        return APPLETCONFIG_NULLPTR;
+    }
+    prColor = appletconfig_get_editcolor(prConfig);
+    if (colorconfig_setcolor(prColor, background, text) != COLORCONFIG_SUCCESS)
+    {
+        return APPLETCONFIG_FAILURE;
+    }
+    return APPLETCONFIG_SUCCESS;
+}
+
+int appletconfig_set_panelcolor(AppletConfig* prConfig, 
+            const u32 background, const u32 text) {
+    ColorConfig* prColor = NULL;
+    if (prConfig == NULL) {
+        return APPLETCONFIG_NULLPTR;
+    }
+    prColor = appletconfig_get_panelcolor(prConfig);
+    if (colorconfig_setcolor(prColor, background, text) != COLORCONFIG_SUCCESS)
+    {
+        return APPLETCONFIG_FAILURE;
+    }
+    return APPLETCONFIG_SUCCESS;
+}
+
+int appletconfig_set_position(AppletConfig* prConfig, 
+            const int x, const int y) {
+    CursorPos *prPos = NULL;
+    if (prConfig == NULL) {
+        return APPLETCONFIG_NULLPTR;
+    }
+    prPos = appletconfig_get_position(prConfig);
+    if (cursorpos_set(prPos, x, y) != CURSORPOS_SUCCESS) {
+        return APPLETCONFIG_FAILURE;
+    }
+    return APPLETCONFIG_SUCCESS;
+}
+
+int appletconfig_set_size(AppletConfig* prConfig,
+            const int width, const int height) {
+    Dimension* prSize = NULL;
+    if (prConfig == NULL) {
+        return APPLETCONFIG_NULLPTR;
+    }
+    prSize = appletconfig_get_size(prConfig);
+    if (dimension_set(prSize, width, height) != DIMENSION_SUCCESS) {
+        return APPLETCONFIG_FAILURE;
+    }
+    return APPLETCONFIG_SUCCESS;
+}
+
+int appletconfig_set_statuscolor(AppletConfig* prConfig, 
+            const u32 background, const u32 text) {
+    ColorConfig* prColor = NULL;
+    if (prConfig == NULL) {
+        return APPLETCONFIG_NULLPTR;
+    }
+    prColor = appletconfig_get_statuscolor(prConfig);
+    if (colorconfig_setcolor(prColor, background, text) != COLORCONFIG_SUCCESS)
+    {
+        return APPLETCONFIG_FAILURE;
+    }
+    return APPLETCONFIG_SUCCESS;
+}
+
+int appletconfig_set_titlecolor(AppletConfig* prConfig, 
+            const u32 background, const u32 text) {
+    ColorConfig* prColor = NULL;
+    if (prConfig == NULL) {
+        return APPLETCONFIG_NULLPTR;
+    }
+    prColor = appletconfig_get_titlecolor(prConfig);
+    if (colorconfig_setcolor(prColor, background, text) != COLORCONFIG_SUCCESS)
+    {
         return APPLETCONFIG_FAILURE;
     }
     return APPLETCONFIG_SUCCESS;

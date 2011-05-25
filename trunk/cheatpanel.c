@@ -4,6 +4,101 @@ static int render_row(CheatPanel* prPanel, const int row);
 static void toggle_constant(CheatPanel *prPanel, int index);
 static void toggle_selected(CheatPanel *prPanel, int index);
 
+int cheatpanel_circle_button(CheatPanel *prPanel) {
+    if (prPanel == NULL) {
+        return CHEATPANEL_NULLPTR;
+    }
+    return CHEATPANEL_SUCCESS;
+}
+
+int cheatpanel_cross_button(CheatPanel *prPanel) {
+    if (prPanel == NULL) {
+        return CHEATPANEL_NULLPTR;
+    }
+    int si = cheatpanel_get_selectedindex(prPanel);
+    if (si == -1) {
+        return CHEATPANEL_FAILURE;
+    }
+    toggle_selected(prPanel, si);
+    return CHEATPANEL_SUCCESS;
+}
+
+int cheatpanel_dpad_down(CheatPanel *prPanel) {
+    CheatEngine* prEngine = NULL;
+    CursorPos* prCursor = NULL;
+    int lpp = 0;
+    int y = 0;
+    int cc = 0;
+    int si = 0;
+    int oldy = 0;
+    
+    if (prPanel == NULL) {
+        return CHEATPANEL_NULLPTR;
+    }
+    prEngine = cheatpanel_get_cheatengine(prPanel);
+    if (prEngine == NULL) {
+        return CHEATPANEL_FAILURE;
+    }
+    prCursor = cheatpanel_get_cursorpos(prPanel);
+    lpp = prPanel->config.table_height;
+    y = prCursor->y;
+    cc = prEngine->cheat_count;
+    si = cheatpanel_get_selectedindex(prPanel);
+    if (si < cc) {
+        y++;
+    }
+    if (y >= lpp) {
+        cheatpanel_scroll_down(prPanel);
+        y = lpp - 1;
+    }
+    if (prCursor->y != y) {
+        oldy = prCursor->y;
+        prCursor->y = y;
+        render_row(prPanel, oldy);
+        render_row(prPanel, y);
+    }
+    return CHEATPANEL_SUCCESS;
+}
+
+int cheatpanel_dpad_left(CheatPanel *prPanel) {
+    if (prPanel == NULL) {
+        return CHEATPANEL_NULLPTR;
+    }
+    return CHEATPANEL_SUCCESS;
+}
+
+int cheatpanel_dpad_right(CheatPanel *prPanel) {
+    if (prPanel == NULL) {
+        return CHEATPANEL_NULLPTR;
+    }
+    return CHEATPANEL_SUCCESS;
+}
+
+int cheatpanel_dpad_up(CheatPanel* prPanel) {
+    CursorPos* prCursor = NULL;
+    int y = 0;
+    int oldy = 0;
+    
+    if (prPanel == NULL) {
+        return CHEATPANEL_NULLPTR;
+    }
+    prCursor = cheatpanel_get_cursorpos(prPanel);
+    y = prCursor->y;
+    y--;
+    if (y < 0) {
+        cheatpanel_scroll_up(prPanel);
+        prCursor->y = 0;
+    } else {
+        if (y != prCursor->y) {
+            oldy = prCursor->y;
+            prCursor->y = y;
+            render_row(prPanel, oldy);
+            render_row(prPanel, y);
+        }
+    }
+    return CHEATPANEL_SUCCESS;
+}
+
 AppletConfig* cheatpanel_get_appletconfig(CheatPanel* prPanel) {
     AppletConfig* prConfig = NULL;
     if (prPanel != NULL) {
@@ -84,11 +179,107 @@ ColorConfig* cheatpanel_get_selectedcolor(CheatPanel* prPanel) {
     return prColor;
 }
 
+int cheatpanel_get_selectedindex(CheatPanel *prPanel) {
+    int index = -1;
+    index = prPanel->page_position + prPanel->cursor.y;
+    return index;
+}
+
+int cheatpanel_init(CheatPanel* prPanel, CheatEngine* prEngine) {
+    if (prPanel == NULL) {
+        return CHEATPANEL_NULLPTR;
+    }
+    if (prEngine == NULL) {
+        return CHEATPANEL_INVENGINE;
+    }
+    prPanel->prEngine = prEngine;
+    prPanel->prApCfg = NULL;
+    prPanel->dirty = 1;
+    return CHEATPANEL_SUCCESS;
+}
+
 int cheatpanel_invalidate(CheatPanel* prPanel) {
     if (prPanel == NULL) {
         return CHEATPANEL_NULLPTR;
     }
     prPanel->dirty = 1;
+    return CHEATPANEL_SUCCESS;
+}
+
+int cheatpanel_redraw(CheatPanel *prPanel) {
+    CheatPanelConfig* prConfig = NULL;
+    AppletConfig* prApCfg = NULL;
+    ColorConfig* prColor = NULL;
+    ColorConfig* prCursor = NULL;
+    int i;
+    int iTop;
+    int iSelIndex;
+
+    if (prPanel == NULL) {
+        return CHEATPANEL_NULLPTR;
+    }
+    if (prPanel->dirty == 0) {
+        return CHEATPANEL_SUCCESS;
+    }
+    
+    prConfig = cheatpanel_get_config(prPanel);
+    prApCfg = cheatpanel_get_appletconfig(prPanel);
+    
+    iTop = prConfig->top_row;
+    iSelIndex = cheatpanel_get_selectedindex(prPanel);
+
+    pspDebugScreenSetXY(0, iTop);
+    if (prApCfg != NULL) {
+        prColor = appletconfig_get_panelcolor(prApCfg);
+        prCursor = appletconfig_get_cursorcolor(prApCfg);
+    }
+    pspDebugScreenSetBackColor(prColor->background);
+    pspDebugScreenSetTextColor(prColor->text);
+    pspDebugScreenKprintf("%-67s", "Cheat Panel");
+    iTop++;
+
+    for (i = 0; i < prPanel->config.table_height; i++) {
+        render_row(prPanel, i);
+    }
+    prPanel->dirty = 0;
+    return CHEATPANEL_SUCCESS;
+}
+
+int cheatpanel_scroll_down(CheatPanel *prPanel) {
+    CheatEngine* prEngine = NULL;
+    if (prPanel == NULL) {
+        return CHEATPANEL_NULLPTR;
+    }
+    prEngine = prPanel->prEngine;
+    if (prEngine == NULL) {
+        return CHEATPANEL_INVENGINE;
+    }
+    int pp = prPanel->page_position;
+    int cc = prEngine->cheat_count;
+    int lpp = prPanel->config.table_height;
+    if (cc <= lpp) {
+        return;
+    }
+    pp++;
+    if (pp + lpp >= cc) {
+        return;
+    }
+    prPanel->page_position = pp;
+    cheatpanel_invalidate(prPanel);
+    return CHEATPANEL_SUCCESS;
+}
+
+int cheatpanel_scroll_up(CheatPanel *prPanel) {
+    if (prPanel == NULL) {
+        return CHEATPANEL_NULLPTR;
+    }
+    int pp = prPanel->page_position;
+    pp--;
+    if (pp < 0) {
+        pp = 0;
+    }
+    prPanel->page_position = pp;
+    cheatpanel_invalidate(prPanel);
     return CHEATPANEL_SUCCESS;
 }
 
@@ -150,225 +341,23 @@ int cheatpanel_set_tableheight(CheatPanel* prPanel, int height) {
     return CHEATPANEL_SUCCESS;
 }
 
-void cheatpanel_circle_button(CheatPanel *prPanel) {
-}
-
-void cheatpanelCrossButton(CheatPanel *prPanel) {
+int cheatpanel_square_button(CheatPanel *prPanel) {
     if (prPanel == NULL) {
-        return;
+        return CHEATPANEL_NULLPTR;
     }
-    int si = cheatpanelGetSelectedIndex(prPanel);
-    if (si == -1) {
-        return;
-    }
-    toggle_selected(prPanel, si);
-}
-
-void cheatpanelDpadDown(CheatPanel *prPanel) {
-    CheatEngine* prEngine = NULL;
-    CursorPos* prCursor = NULL;
-    int lpp = 0;
-    int y = 0;
-    int cc = 0;
-    int si = 0;
-    int oldy = 0;
-    
-    if (prPanel == NULL) {
-        return;
-    }
-    prEngine = cheatpanel_get_cheatengine(prPanel);
-    if (prEngine == NULL) {
-        return;
-    }
-    prCursor = cheatpanel_get_cursorpos(prPanel);
-    lpp = prPanel->config.table_height;
-    y = prCursor->y;
-    cc = prEngine->cheat_count;
-    si = cheatpanelGetSelectedIndex(prPanel);
-    if (si < cc) {
-        y++;
-    }
-    if (y >= lpp) {
-        cheatpanelScrollDown(prPanel);
-        y = lpp - 1;
-    }
-    if (prCursor->y != y) {
-        oldy = prCursor->y;
-        prCursor->y = y;
-        render_row(prPanel, oldy);
-        render_row(prPanel, y);
-    }
-}
-
-void cheatpanelDpadLeft(CheatPanel *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-}
-
-void cheatpanelDpadRight(CheatPanel *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-}
-
-void cheatpanelDpadUp(CheatPanel* prPanel) {
-    CursorPos* prCursor = NULL;
-    int y = 0;
-    int oldy = 0;
-    
-    if (prPanel == NULL) {
-        return;
-    }
-    prCursor = cheatpanel_get_cursorpos(prPanel);
-    y = prCursor->y;
-    y--;
-    if (y < 0) {
-        cheatpanelScrollUp(prPanel);
-        prCursor->y = 0;
-    } else {
-        if (y != prCursor->y) {
-            oldy = prCursor->y;
-            prCursor->y = y;
-            render_row(prPanel, oldy);
-            render_row(prPanel, y);
-        }
-    }
-}
-
-int cheatpanelGetSelectedIndex(CheatPanel *prPanel) {
-    int index = -1;
-    index = prPanel->page_position + prPanel->cursor.y;
-    return index;
-}
-
-void cheatpanelInit(CheatPanel* prPanel, CheatEngine* prEngine) {
-    if (prPanel == NULL) {
-        return;
-    }
-    if (prEngine == NULL) {
-        return;
-    }
-    prPanel->prEngine = prEngine;
-    prPanel->prApCfg = NULL;
-    prPanel->dirty = 1;
-}
-
-void cheatpanelRedraw(CheatPanel *prPanel) {
-    CheatPanelConfig* prConfig = NULL;
-    AppletConfig* prApCfg = NULL;
-    ColorConfig* prColor = NULL;
-    ColorConfig* prCursor = NULL;
-    int i;
-    int iTop;
-    int iSelIndex;
-
-    if (prPanel == NULL) {
-        return;
-    }
-    if (prPanel->dirty == 0) {
-        return;
-    }
-    
-    prConfig = cheatpanel_get_config(prPanel);
-    prApCfg = cheatpanel_get_appletconfig(prPanel);
-    
-    iTop = prConfig->top_row;
-    iSelIndex = cheatpanelGetSelectedIndex(prPanel);
-
-    pspDebugScreenSetXY(0, iTop);
-    if (prApCfg != NULL) {
-        prColor = appletconfig_get_panelcolor(prApCfg);
-        prCursor = appletconfig_get_cursorcolor(prApCfg);
-    } else {
-        prColor = &prConfig->color;
-        prCursor = &prConfig->cursorrowcolor;
-    }
-    pspDebugScreenSetBackColor(prColor->background);
-    pspDebugScreenSetTextColor(prColor->text);
-    pspDebugScreenKprintf("%-67s", "Cheat Panel");
-    iTop++;
-
-    for (i = 0; i < prPanel->config.table_height; i++) {
-        render_row(prPanel, i);
-    }
-    prPanel->dirty = 0;
-}
-
-void cheatpanelScrollDown(CheatPanel *prPanel) {
-    CheatEngine* prEngine = NULL;
-    if (prPanel == NULL) {
-        return;
-    }
-    prEngine = prPanel->prEngine;
-    if (prEngine == NULL) {
-        return;
-    }
-    int pp = prPanel->page_position;
-    int cc = prEngine->cheat_count;
-    int lpp = prPanel->config.table_height;
-    if (cc <= lpp) {
-        return;
-    }
-    pp++;
-    if (pp + lpp >= cc) {
-        return;
-    }
-    prPanel->page_position = pp;
-    cheatpanel_invalidate(prPanel);
-}
-
-void cheatpanelScrollUp(CheatPanel *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-    int pp = prPanel->page_position;
-    pp--;
-    if (pp < 0) {
-        pp = 0;
-    }
-    prPanel->page_position = pp;
-    cheatpanel_invalidate(prPanel);
-}
-
-void cheatpanelSquareButton(CheatPanel *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-    int si = cheatpanelGetSelectedIndex(prPanel);
+    int si = cheatpanel_get_selectedindex(prPanel);
     if (si == -1) {
         return;
     }
     toggle_constant(prPanel, si);
+    return CHEATPANEL_SUCCESS;
 }
 
-void cheatpanelTriangleButton(CheatPanel *prPanel) {
-}
-
-static void toggle_constant(CheatPanel *prPanel, int index) {
+int cheatpanel_triangle_button(CheatPanel *prPanel) {
     if (prPanel == NULL) {
-        return;
+        return CHEATPANEL_NULLPTR;
     }
-    Cheat *prCheat = cheatengineGetCheat(prPanel->prEngine, index);
-    if (cheat_is_constant(prCheat)) {
-        cheatengineSetCheatInactive(prPanel->prEngine, index);
-    } else {
-        cheatengineSetCheatConstant(prPanel->prEngine, index);
-    }
-    cheatpanel_invalidate(prPanel);
-}
-
-static void toggle_selected(CheatPanel *prPanel, int index) {
-    if (prPanel == NULL) {
-        return;
-    }
-    Cheat *prCheat = cheatengineGetCheat(prPanel->prEngine, index);
-    if (cheat_is_selected(prCheat)) {
-        cheatengineSetCheatInactive(prPanel->prEngine, index);
-    } else {
-        cheatengineSetCheatSelected(prPanel->prEngine, index);
-    }
-    cheatpanel_invalidate(prPanel);
+    return CHEATPANEL_SUCCESS;
 }
 
 static int render_row(CheatPanel* prPanel, const int row) {
@@ -421,4 +410,30 @@ static int render_row(CheatPanel* prPanel, const int row) {
     pspDebugScreenSetXY(0, y);
     pspDebugScreenKprintf("%-67s", prCheat->name);
     return CHEATPANEL_SUCCESS;
+}
+
+static void toggle_constant(CheatPanel *prPanel, int index) {
+    if (prPanel == NULL) {
+        return;
+    }
+    Cheat *prCheat = cheatengineGetCheat(prPanel->prEngine, index);
+    if (cheat_is_constant(prCheat)) {
+        cheatengineSetCheatInactive(prPanel->prEngine, index);
+    } else {
+        cheatengineSetCheatConstant(prPanel->prEngine, index);
+    }
+    cheatpanel_invalidate(prPanel);
+}
+
+static void toggle_selected(CheatPanel *prPanel, int index) {
+    if (prPanel == NULL) {
+        return;
+    }
+    Cheat *prCheat = cheatengineGetCheat(prPanel->prEngine, index);
+    if (cheat_is_selected(prCheat)) {
+        cheatengineSetCheatInactive(prPanel->prEngine, index);
+    } else {
+        cheatengineSetCheatSelected(prPanel->prEngine, index);
+    }
+    cheatpanel_invalidate(prPanel);
 }

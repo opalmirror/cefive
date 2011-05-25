@@ -14,6 +14,7 @@ OBJS =  block.o \
 	togglecolumn.o \
 	dwordcolumn.o \
 	dwordeditor.o \
+	memviewpanel.o \
 	disassembler.o \
 	hexeditor.o \
 	searchengine.o \
@@ -33,11 +34,6 @@ OBJS =  block.o \
 	colorconfig.o \
 	cefiveconfig.o \
 	geelog.o \
-	dmodelrow.o \
-	dasmmodel.o \
-	dasmtable.o \
-	dasmconfig.o \
-	gdasm.o \
 	crt0_prx.o \
 	module.o
 
@@ -65,12 +61,6 @@ include $(PSPSDK)/lib/build.mak
 mips.o: mips.c mips.h
 	$(CC) $(CFLAGS) -c mips.c
 
-dmodelrow.o: dmodelrow.c dmodelrow.h
-	$(CC) $(CFLAGS) -c dmodelrow.c
-
-dasmmodel.o: dasmmodel.c dasmmodel.h dmodelrow.o
-	$(CC) $(CFLAGS) -c dasmmodel.c
-
 cursorpos.o: cursorpos.c cursorpos.h
 	$(CC) $(CFLAGS) -c cursorpos.c
 
@@ -94,9 +84,6 @@ colorconfig.o: colorconfig.c colorconfig.h
 
 panelconfig.o: colorconfig.o cursorpos.o dimension.o panelconfig.c panelconfig.h
 	$(CC) $(CFLAGS) -c panelconfig.c
-
-dasmtable.o: dasmtable.c dasmtable.h dasmmodel.o cursorpos.o panelconfig.o
-	$(CC) $(CFLAGS) -c dasmtable.c
 
 appletconfig.o: panelconfig.o colorconfig.o appletconfig.c appletconfig.h
 	$(CC) $(CFLAGS) -c appletconfig.c
@@ -151,15 +138,12 @@ cheatpanel.o: cheatengine.o colorconfig.o cheat.o block.o cheatpanel.c cheatpane
 
 geelog.o: geelog.c geelog.h
 	$(CC) $(CFLAGS) -c geelog.c
+
+memviewpanel.o: memviewpanel.c memviewpanel.h
+	$(CC) $(CFLAGS) -c memviewpanel.c
 	
 disassembler.o: mips.o dwordeditor.o addresscolumn.o dwordcolumn.o textcolumn.o colorconfig.o appletconfig.o disassembler.c disassembler.h
 	$(CC) $(CFLAGS) -c disassembler.c
-
-dasmconfig.o: dasmconfig.c dasmconfig.h appletconfig.o colorconfig.o
-	$(CC) $(CFLAGS) -c dasmconfig.c
-	
-gdasm.o: gdasm.c gdasm.h dasmconfig.o geelog.o cursorpos.o colorconfig.o dasmtable.o appletconfig.o
-	$(CC) $(CFLAGS) -c gdasm.c
 
 crt_prx.o: cheat.o block.o cheatengine.o cefiveui.o cefiveconfig.o searchengine.o geelog.o crt_prx.c crt_prx.h
 	$(CC) $(CFLAGS) -c crt_prx.o

@@ -137,7 +137,7 @@ static void button_cross_up(CEFiveUi *prUi) {
         } else {
             switch(prUi->applet) {
                 case 0:
-                    cheatpanelCrossButton(&prUi->cheatpanel);
+                    cheatpanel_cross_button(&prUi->cheatpanel);
                     break;
                 case 1:
                     cheateditorCrossButton(&prUi->cheateditor);
@@ -220,7 +220,7 @@ static void button_square_up(CEFiveUi *prUi) {
         }
         switch (prUi->applet) {
             case 0:
-                cheatpanelSquareButton(&prUi->cheatpanel);
+                cheatpanel_square_button(&prUi->cheatpanel);
                 break;
         }
     }
@@ -549,9 +549,8 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     prEd->top_row = toprow;
 
     geelog_flog(LOG_DEBUG, sFunc, "Initializing Disassembler Applet.");
-    disassemblerInit(&prUi->disassembler);
     Disassembler *prDasm = &prUi->disassembler;
-    prDasm->prApCfg = prAppCfg;
+    disassembler_init(prDasm, prAppCfg);
     prDasm->config.code_color.background = prUi->config.color.background;
     prDasm->config.code_color.text = prUi->config.color.text;
     prDasm->config.address_color.background = (u32)0xFFA0A0A0;
@@ -726,7 +725,7 @@ static void dpad_down_down(CEFiveUi *prUi) {
         }
         switch(prUi->applet) {
             case 0:
-                cheatpanelDpadDown(&prUi->cheatpanel);
+                cheatpanel_dpad_down(&prUi->cheatpanel);
                 break;
             case 1:
                 cheateditorDpadDown(&prUi->cheateditor);
@@ -785,7 +784,7 @@ static void dpad_left_down(CEFiveUi *prUi) {
         prUi->buttons.left = 1;
         switch(prUi->applet) {
             case 0:
-                cheatpanelDpadLeft(&prUi->cheatpanel);
+                cheatpanel_dpad_left(&prUi->cheatpanel);
                 break;
             case 1:
                 cheateditorDpadLeft(&prUi->cheateditor);
@@ -819,7 +818,7 @@ static void dpad_right_down(CEFiveUi *prUi) {
         prUi->buttons.right = 1;
         switch(prUi->applet) {
             case 0:
-                cheatpanelDpadRight(&prUi->cheatpanel);
+                cheatpanel_dpad_right(&prUi->cheatpanel);
                 break;
             case 1:
                 cheateditorDpadRight(&prUi->cheateditor);
@@ -856,7 +855,7 @@ static void dpad_up_down(CEFiveUi *prUi) {
         }
         switch(prUi->applet) {
             case 0:
-                cheatpanelDpadUp(&prUi->cheatpanel);
+                cheatpanel_dpad_up(&prUi->cheatpanel);
                 break;
             case 1:
                 cheateditorDpadUp(&prUi->cheateditor);
@@ -910,7 +909,7 @@ static void draw_applet(CEFiveUi *prUi) {
             if (prUi->drawn == 0) {
                 prUi->cheatpanel.dirty = 1;
             }
-            cheatpanelRedraw(&prUi->cheatpanel);
+            cheatpanel_redraw(&prUi->cheatpanel);
             break;
         case 1:
             cheateditorRedraw(&prUi->cheateditor);
@@ -1019,7 +1018,7 @@ static void edit_selected_cheat(CEFiveUi *prUi) {
     if (prUi == NULL) {
         return;
     }
-    int index = cheatpanelGetSelectedIndex(&prUi->cheatpanel);
+    int index = cheatpanel_get_selectedindex(&prUi->cheatpanel);
     cheateditorSelectCheat(&prUi->cheateditor, index);
     prUi->applet = 1;
     prUi->drawn = 0;
@@ -1060,7 +1059,7 @@ static int init_cheatpanel(CEFiveUi *prUi) {
     prConfig = cefiveui_get_appletconfig(prUi);
     prEngine = cefiveui_get_cheatengine(prUi);
     
-    cheatpanelInit(prPanel, prEngine);
+    cheatpanel_init(prPanel, prEngine);
     prPanel->prApCfg = prConfig;
     if (prConfig != NULL) {
         prColor = appletconfig_get_panelcolor(prConfig);

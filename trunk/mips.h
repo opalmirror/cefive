@@ -49,7 +49,15 @@ extern "C" {
     } MipsInstruction;
 
     static void mipsAddOperand(MipsInstruction *prIns, EOperandType otype, char *name, int value);
-    void mipsDecode(char *, unsigned int, unsigned int);
+    
+    /** Decode a value as a MIPS32 instruction into the specified string.
+     * 
+     * @param buffer Pointer to a string to hold the assembly language.
+     * @param i_inst The value to decode.
+     * @param i_addr The address of the value.
+     */
+    void mipsDecode(char *buffer, unsigned int i_inst, unsigned int i_addr);
+    
     SceUInt32 mipsGetBranchDestination(unsigned int i_inst, unsigned int i_addr);
     unsigned char mipsGetFunction(unsigned int i_inst);
     unsigned char mipsGetOpCode(unsigned int);
