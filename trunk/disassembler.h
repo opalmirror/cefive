@@ -85,6 +85,18 @@ extern "C" {
         MemViewPanel memViewPanel;
     } Disassembler;
 
+    void disassembler_circle_button(Disassembler *);
+    
+    void disassembler_cross_button(Disassembler *);
+    
+    void disassembler_cursor_down(Disassembler *prPanel);
+    
+    void disassembler_cursor_left(Disassembler *);
+    
+    void disassembler_cursor_right(Disassembler *);
+    
+    void disassembler_cursor_up(Disassembler *prPanel);
+    
     /** Return a pointer to an AppletConfig struct representing the Applet
      * Configuration.
      * 
@@ -116,15 +128,6 @@ extern "C" {
     void disassembler_attempt_jump(Disassembler *prPanel);
     
     void disassemblerAttemptReturn(Disassembler *);
-    void disassemblerCircleButton(Disassembler *);
-    void disassemblerCrossButton(Disassembler *);
-    
-    void disassembler_cursor_down(Disassembler *prPanel);
-    
-    void disassemblerCursorLeft(Disassembler *);
-    void disassemblerCursorRight(Disassembler *);
-    
-    void disassembler_cursor_up(Disassembler *prPanel);
     
     void disassemblerDpadDown(Disassembler *);
     void disassemblerDpadLeft(Disassembler *);

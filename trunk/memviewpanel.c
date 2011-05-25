@@ -5,6 +5,7 @@ static int render_comment_col(MemViewPanel* prPanel, const int row);
 static int render_row(MemViewPanel* prPanel, const int row);
 static int render_value_col(MemViewPanel* prPanel, const int row);
 static SceUInt32 row_address(MemViewPanel* prPanel, const int row);
+static EValueType row_type(MemViewPanel* prPanel, const int row);
 static SceUInt32 row_value(MemViewPanel* prPanel, const int row);
 
 int memviewpanel_cursor_down(MemViewPanel* prPanel) {
@@ -163,6 +164,7 @@ int memviewpanel_init(MemViewPanel* prPanel) {
     prPanel->minOffset = MEMVIEWPANEL_MINOFF;
     prPanel->maxOffset = MEMVIEWPANEL_MAXOFF;
     prPanel->offset = prPanel->minOffset;
+    prPanel->pointerColor = MEMVIEWPANEL_PTRCOLOR;
     
     if (memviewpanel_invalidate(prPanel) != MEMVIEWPANEL_SUCCESS) {
         return MEMVIEWPANEL_FAILURE;
@@ -175,6 +177,47 @@ int memviewpanel_invalidate(MemViewPanel* prPanel) {
         return MEMVIEWPANEL_NULLPTR;
     }
     prPanel->dirty = 1;
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+int memviewpanel_page_down(MemViewPanel* prPanel) {
+    Dimension* prSize = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prSize = memviewpanel_get_size(prPanel);
+    if (memviewpanel_scroll_down(
+            prPanel, prSize->height) != MEMVIEWPANEL_SUCCESS) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+int memviewpanel_page_up(MemViewPanel* prPanel) {
+    Dimension* prSize = NULL;
+    SceUInt32 pgAmt = 0;
+    
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prSize = memviewpanel_get_size(prPanel);
+    /* Compute the number of bytes per page. */
+    pgAmt = prSize->height * 4;
+    /* If moving by one page would move past minOffset. */
+    if (prPanel->offset - pgAmt < prPanel->minOffset) {
+        /* Move to minOffset instead. */
+        if (memviewpanel_seek(
+                prPanel, prPanel->minOffset) != MEMVIEWPANEL_SUCCESS) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+        return MEMVIEWPANEL_SUCCESS;
+    }
+    if (memviewpanel_scroll_up(
+            prPanel, prSize->height) != MEMVIEWPANEL_SUCCESS) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    
     return MEMVIEWPANEL_SUCCESS;
 }
 
@@ -377,10 +420,17 @@ static int render_row(MemViewPanel* prPanel, const int row) {
 
 static int render_value_col(MemViewPanel* prPanel, const int row) {
     SceUInt32 value = 0;
+    ColorConfig* prColor = NULL;
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
     }
+    prColor = memviewpanel_get_panelcolor(prPanel);
     value = row_value(prPanel, row);
+    pspDebugScreenSetTextColor(prColor->text);
+    /* A Value that lies within the bounds of memory is considered a pointer. */
+    if ((value >= prPanel->minOffset) && (value < prPanel->maxOffset)) {
+        pspDebugScreenSetTextColor(prPanel->pointerColor);
+    }
     pspDebugScreenKprintf("0x%08X  ", value);
     return MEMVIEWPANEL_SUCCESS;
 }
@@ -391,6 +441,18 @@ static SceUInt32 row_address(MemViewPanel* prPanel, const int row) {
         address = prPanel->offset + (row * 4);
     }
     return address;
+}
+
+static EValueType row_type(MemViewPanel* prPanel, const int row) {
+    EValueType rType = VT_None;
+    SceUInt32 value = 0;
+    if (prPanel != NULL) {
+        value = row_value(prPanel, row);
+        if ((value >= prPanel->minOffset) && (value < prPanel->maxOffset)) {
+            rType = VT_Pointer;
+        }
+    }
+    return rType;
 }
 
 static SceUInt32 row_value(MemViewPanel* prPanel, const int row) {
