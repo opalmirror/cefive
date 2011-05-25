@@ -70,7 +70,7 @@ static void button_circle_up(CEFiveUi *prUi) {
         }
         if (prUi->applet == 2) {
             if (prUi->disassembler.editing == 1) {
-                disassemblerCircleButton(&prUi->disassembler);
+                disassembler_circle_button(&prUi->disassembler);
                 return;
             }
         }
@@ -143,7 +143,7 @@ static void button_cross_up(CEFiveUi *prUi) {
                     cheateditorCrossButton(&prUi->cheateditor);
                     break;
                 case 2:
-                    disassemblerCrossButton(&prUi->disassembler);
+                    disassembler_cross_button(&prUi->disassembler);
                     break;
                 case 3:
                     hexeditorCrossButton(&prUi->hexeditor);
