@@ -490,168 +490,37 @@ static void drawCursor(Disassembler *prPanel) {
 }
 
 static void drawValueColumn(Disassembler *prPanel, int iRow) {
-    AppletConfig* prApCfg = NULL;
-    ColorConfig* prColor = NULL;
-
-    if (prPanel == NULL) {
-        return;
-    }
-    prApCfg = &prPanel->prApCfg;
-    DwordColumn *prValue = &(prPanel->rRow.rValue);
-    SceUInt32 *pVal = (SceUInt32 *)(prPanel->offset + (iRow * 4));
-    SceUInt32 base = prPanel->config.base_address;
-    SceUInt32 msz = prPanel->config.max_offset - prPanel->config.min_offset;
-    dwordcolumn_setvalue(prValue, *pVal);
-    prColor = &prApCfg->rPanel.rColor;
-
-    if (iRow == prPanel->cursor.y) {
-        prColor = &prApCfg->rPanel.rCursor;
-    }
-    colorconfig_setcolor(&prValue->color, prColor->background, prColor->text);
-    if (*pVal >= base && *pVal < base + msz) {
-        geelog_log(LOG_DEBUG, "drawValueColumn: Value is a pointer.");
-        prValue->color.text = prPanel->config.pointer_color.text;
-    }
-    dwordcolumn_redraw(prValue);
 }
 
 static SceUInt32 getSelectedAddress(Disassembler *prPanel) {
     SceUInt32 addr = 0;
-    SceUInt32 offset = 0;
-    int amount = 0;
-    if (prPanel != NULL) {
-        offset = getSelectedOffset(prPanel);
-        amount = offset - prPanel->config.min_offset;
-        addr = prPanel->config.base_address + amount;
-    }
     return addr;
 }
 
 static SceUInt32 getSelectedInstructionDest(Disassembler *prPanel) {
     SceUInt32 dest = 0;
-    SceUInt32 value = 0;
-    SceUInt32 addr = 0;
-    int opcode = 0;
-    SceUInt32 base = 0;
-    SceUInt32 offmin = 0;
-    SceUInt32 offmax = 0;
-    int memsz = 0;
-    int func = 0;
-
-    if (prPanel != NULL) {
-        value = getSelectedValue(prPanel);
-        addr = getSelectedAddress(prPanel);
-        opcode = mipsGetOpCode(value);
-        base = prPanel->config.base_address;
-        offmin = prPanel->config.min_offset;
-        offmax = prPanel->config.max_offset;
-        memsz = offmax - offmin;
-        switch (opcode) {
-            case 0x01: // *REGIMM
-                func = mipsGetFunction(value);
-                if ((func >= 0 && func < 3) || (func >= 0x10 && func < 0x13)) {
-                    dest = mipsGetBranchDestination(value, addr);
-                    if (dest < base || dest >= base + memsz) {
-                        dest = 0;
-                    }
-                }
-            case 0x02: // J
-            case 0x03: // JAL
-                dest = mipsGetJumpDestination(value, addr);
-                if (dest < base || dest >= base + memsz) {
-                    dest = 0;
-                }
-                break;
-            case 0x04: // BEQ
-            case 0x05: // BNE
-            case 0x06: // BLEZ
-            case 0x07: // BGTZ
-            case 0x14: // BEQL
-            case 0x15: // BNEL
-            case 0x16: // BLEZL
-            case 0x17: // BGTZL
-                dest = mipsGetBranchDestination(value, addr);
-                if (dest < base || dest >= base + memsz) {
-                    dest = 0;
-                }
-                break;
-        }
-    }
-
     return dest;
 }
 
 static SceUInt32 getSelectedOffset(Disassembler *prPanel) {
     SceUInt32 offset = 0;
-    int iRow = 0;
-    if (prPanel != NULL) {
-        iRow = prPanel->cursor.y;
-        offset = prPanel->offset + (iRow * 4);
-    }
     return offset;
 }
 
 static SceUInt32 getSelectedValue(Disassembler *prPanel) {
     SceUInt32 value = 0;
-    SceUInt32 *prVal = NULL;
-    SceUInt32 offset = 0;
-    if (prPanel != NULL) {
-        offset = getSelectedOffset(prPanel);
-        prVal = (SceUInt32 *)offset;
-        value = *prVal;
-    }
     return value;
 }
 
 static SceUInt32 getSelectedValuePointer(Disassembler *prPanel) {
     SceUInt32 dest = 0;
-    SceUInt32 val = 0;
-    SceUInt32 base = 0;
-    SceUInt32 offmin = 0;
-    SceUInt32 offmax = 0;
-    int memsz = 0;
-
-    if (prPanel != NULL) {
-        val = getSelectedValue(prPanel);
-        base = prPanel->config.base_address;
-        offmin = prPanel->config.min_offset;
-        offmax = prPanel->config.max_offset;
-        memsz = offmax - offmin;
-        if (val >= base && val < base + memsz) {
-            dest = val;
-        }
-    }
     return dest;
 }
 
 static SceUInt32 popAddress(Disassembler *prPanel) {
     SceUInt32 addr = 0;
-    int ct;
-    if (prPanel != NULL) {
-        ct = prPanel->cur_jump;
-        if (ct > 0) {
-            addr = prPanel->jump_stack[ct - 1];
-            prPanel->jump_stack[ct - 1] = 0;
-            prPanel->cur_jump--;
-        }
-    }
     return addr;
 }
 
 static void pushAddress(Disassembler *prPanel, SceUInt32 addr) {
-    int ct = 0;
-    int i = 0;
-
-    if (prPanel != NULL) {
-        ct = prPanel->cur_jump;
-        ct++;
-        if (ct > DISASSEMBLER_JSLEN) {
-            for (i = 0; i < DISASSEMBLER_JSLEN - 1; i++) {
-                prPanel->jump_stack[i] = prPanel->jump_stack[i + 1];
-            }
-            ct = DISASSEMBLER_JSLEN;
-        }
-        prPanel->jump_stack[ct - 1] = addr;
-        prPanel->cur_jump = ct;
-    }
 }
