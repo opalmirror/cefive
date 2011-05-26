@@ -60,8 +60,6 @@
       <in>gapplet.h</in>
       <in>gcheat.c</in>
       <in>gcheat.h</in>
-      <in>gcheatengine.c</in>
-      <in>gcheatengine.h</in>
       <in>gcheatlist.c</in>
       <in>gcheatlist.h</in>
       <in>gclipboard.h</in>
