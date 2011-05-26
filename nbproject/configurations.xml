@@ -43,20 +43,12 @@
       <in>crt0_prx.h</in>
       <in>cursorpos.c</in>
       <in>cursorpos.h</in>
-      <in>dasmconfig.c</in>
-      <in>dasmconfig.h</in>
-      <in>dasmmodel.c</in>
-      <in>dasmmodel.h</in>
       <in>dasmrow.c</in>
       <in>dasmrow.h</in>
-      <in>dasmtable.c</in>
-      <in>dasmtable.h</in>
       <in>dimension.c</in>
       <in>dimension.h</in>
       <in>disassembler.c</in>
       <in>disassembler.h</in>
-      <in>dmodelrow.c</in>
-      <in>dmodelrow.h</in>
       <in>dwordcolumn.c</in>
       <in>dwordcolumn.h</in>
       <in>dwordeditor.c</in>
@@ -73,14 +65,8 @@
       <in>gcheatlist.c</in>
       <in>gcheatlist.h</in>
       <in>gclipboard.h</in>
-      <in>gdasm.c</in>
-      <in>gdasm.h</in>
       <in>geelog.c</in>
       <in>geelog.h</in>
-      <in>geelogmsg.c</in>
-      <in>geelogmsg.h</in>
-      <in>geelogqueue.c</in>
-      <in>geelogqueue.h</in>
       <in>ggame.c</in>
       <in>ggame.h</in>
       <in>hexeditor.c</in>

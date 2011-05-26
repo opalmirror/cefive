@@ -19,7 +19,6 @@
 #include "searchpanel.h"
 #include "searchengine.h"
 #include "cefive.h"
-#include "gdasm.h"
 
 static void button_circle_down(CEFiveUi *prUi);
 static void button_circle_up(CEFiveUi *prUi);

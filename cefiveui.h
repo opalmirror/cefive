@@ -21,7 +21,6 @@
 #include "searchpanel.h"
 #include "searchengine.h"
 #include "geelog.h"
-#include "gdasm.h"
 
 /** Indicates success. */
 #define CEFIVEUI_SUCCESS        (0)
@@ -132,7 +131,6 @@ extern "C" {
         int cross;
         /** Current Button State struct */
         ButtonState buttons;
-        Gdasm rDasm;
     } 
     /** The Cheat Engine of Five User Interface struct. */
     CEFiveUi;
