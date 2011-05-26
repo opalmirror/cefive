@@ -8,6 +8,7 @@ static int render_row(MemViewPanel* prPanel, const int row);
 static int render_value_col(MemViewPanel* prPanel, const int row);
 static SceUInt32 row_address(MemViewPanel* prPanel, const int row);
 static ColorConfig* row_color(MemViewPanel* prPanel, const int row);
+static SceUInt32 row_destination(MemViewPanel* prPanel, const int row);
 static EValueType row_type(MemViewPanel* prPanel, const int row);
 static SceUInt32 row_value(MemViewPanel* prPanel, const int row);
 
@@ -26,14 +27,24 @@ static int attempt_jump(MemViewPanel* prPanel) {
     prCursor = memviewpanel_get_cursorpos(prPanel);
     row = prCursor->y;
     rType = row_type(prPanel, row);
+    address = row_address(prPanel, row);
     if (rType == VT_Pointer) {
         value = row_value(prPanel, row);
-        address = row_address(prPanel, row);
-        if (jumpstack_push(prStack, address) != JUMPSTACK_SUCCESS) {
+        if (jumpstack_push(prStack, address) < 0) {
             return MEMVIEWPANEL_FAILURE;
         }
-        if (memviewpanel_seek(prPanel, value) != MEMVIEWPANEL_SUCCESS) {
+        if (memviewpanel_seek(prPanel, value) < 0) {
             return MEMVIEWPANEL_FAILURE;
+        }
+    } else {
+        value = row_destination(prPanel, row);
+        if (value != 0) {
+            if (jumpstack_push(prStack, address) < 0) {
+                return MEMVIEWPANEL_FAILURE;
+            }
+            if (memviewpanel_seek(prPanel, value) < 0) {
+                return MEMVIEWPANEL_FAILURE;
+            }
         }
     }
     
@@ -538,6 +549,46 @@ static ColorConfig* row_color(MemViewPanel* prPanel, const int row) {
         }
     }
     return prColor;
+}
+
+static SceUInt32 row_destination(MemViewPanel* prPanel, const int row) {
+    SceUInt32 dest = 0;
+    SceUInt32 address = 0;
+    SceUInt32 value = 0;
+    int opcode = 0;
+    int func = 0;
+    
+    if (prPanel != NULL) {
+        address = row_address(prPanel, row);
+        value = row_value(prPanel, row);
+        opcode = mipsGetOpCode(value);
+        switch (opcode) {
+            case 0x01: /* REGIMM */
+                func = mipsGetFunction(value);
+                if ((func >= 0 && func < 3) || (func >= 0x10 && func < 0x13)) {
+                    dest = (SceUInt32) mipsGetBranchDestination(value, address);
+                }
+                break;
+            case 0x02: /* J */
+            case 0x03: /* JAL */
+                dest = (SceUInt32) mipsGetJumpDestination(value, address);
+                break;
+            case 0x04: /* BEQ */
+            case 0x05: /* BNE */
+            case 0x06: /* BLEZ */
+            case 0x07: /* BGTZ */
+            case 0x14: /* BEQL */
+            case 0x15: /* BNEL */
+            case 0x16: /* BLEZL */
+            case 0x17: /* BGTZL */
+                dest = (SceUInt32) mipsGetBranchDestination(value, address);
+                break;
+        }
+        if ((dest < prPanel->minOffset) || (dest >= prPanel->maxOffset)) {
+            dest = 0;
+        }
+    }
+    return dest;
 }
 
 static EValueType row_type(MemViewPanel* prPanel, const int row) {
