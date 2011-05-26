@@ -5,6 +5,7 @@ static int render_comment_col(MemViewPanel* prPanel, const int row);
 static int render_row(MemViewPanel* prPanel, const int row);
 static int render_value_col(MemViewPanel* prPanel, const int row);
 static SceUInt32 row_address(MemViewPanel* prPanel, const int row);
+static ColorConfig* row_color(MemViewPanel* prPanel, const int row);
 static EValueType row_type(MemViewPanel* prPanel, const int row);
 static SceUInt32 row_value(MemViewPanel* prPanel, const int row);
 
@@ -363,6 +364,8 @@ static int render_comment_col(MemViewPanel* prPanel, const int row) {
     SceUInt32 address = 0;
     SceUInt32 value = 0;
     Dimension* prSize = NULL;
+    ColorConfig* prColor = NULL;
+    EValueType rType = VT_None;
     char sFmt[10];
     char sComment[70];
     int cols = 0;
@@ -370,13 +373,22 @@ static int render_comment_col(MemViewPanel* prPanel, const int row) {
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
     }
+    prColor = row_color(prPanel, row);
     prSize = memviewpanel_get_size(prPanel);
     address = row_address(prPanel, row);
     value = row_value(prPanel, row);
+    rType = row_type(prPanel, row);
     cols = prSize->width - 24;
     sprintf(sFmt, "%%-%ds", cols);
-    mipsDecode(sComment, value, address);
-    pspDebugScreenKprintf(sFmt, sComment);
+    pspDebugScreenSetTextColor(prColor->text);
+    switch (rType) {
+        case VT_Pointer:
+            pspDebugScreenKprintf(sFmt, "Pointer");
+            break;
+        default:
+            mipsDecode(sComment, value, address);
+            pspDebugScreenKprintf(sFmt, sComment);
+    }
     return MEMVIEWPANEL_SUCCESS;
 }
 
@@ -396,11 +408,8 @@ static int render_row(MemViewPanel* prPanel, const int row) {
     if ((row < 0) || (row >= prSize->height)) {
         return MEMVIEWPANEL_INVIDX;
     }
-    prColor = memviewpanel_get_panelcolor(prPanel);
+    prColor = row_color(prPanel, row);
     prCursor = memviewpanel_get_cursorpos(prPanel);
-    if (prCursor->y == row) {
-        prColor = memviewpanel_get_cursorcolor(prPanel);
-    }
     x = prPos->x;
     y = prPos->y + row;
     pspDebugScreenSetBackColor(prColor->background);
@@ -424,7 +433,7 @@ static int render_value_col(MemViewPanel* prPanel, const int row) {
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
     }
-    prColor = memviewpanel_get_panelcolor(prPanel);
+    prColor = row_color(prPanel, row);
     value = row_value(prPanel, row);
     pspDebugScreenSetTextColor(prColor->text);
     /* A Value that lies within the bounds of memory is considered a pointer. */
@@ -441,6 +450,20 @@ static SceUInt32 row_address(MemViewPanel* prPanel, const int row) {
         address = prPanel->offset + (row * 4);
     }
     return address;
+}
+
+static ColorConfig* row_color(MemViewPanel* prPanel, const int row) {
+    ColorConfig* prColor = NULL;
+    CursorPos* prCursor = NULL;
+    if (prPanel != NULL) {
+        prCursor = memviewpanel_get_cursorpos(prPanel);
+        if (prCursor->y == row) {
+            prColor = memviewpanel_get_cursorcolor(prPanel);
+        } else {
+            prColor = memviewpanel_get_panelcolor(prPanel);
+        }
+    }
+    return prColor;
 }
 
 static EValueType row_type(MemViewPanel* prPanel, const int row) {
