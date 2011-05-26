@@ -193,31 +193,21 @@ void disassembler_cursor_down(Disassembler *prPanel) {
 }
 
 void disassembler_cursor_left(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
     if (prPanel == NULL) {
         return;
     }
-    int x = prPanel->cursor.x;
-    x--;
-    if (x < 0) {
-        x = 0;
-        disassemblerAttemptReturn(prPanel);
-    }
-    prPanel->rPrev.x = prPanel->cursor.x;
-    prPanel->cursor.x = x;
+    prMemView = disassembler_get_memview(prPanel);
+    memviewpanel_cursor_left(prMemView);
 }
 
 void disassembler_cursor_right(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
     if (prPanel == NULL) {
         return;
     }
-    int x = prPanel->cursor.x;
-    x++;
-    if (x > 1) {
-        x = 1;
-        disassembler_attempt_jump(prPanel);
-    }
-    prPanel->rPrev.x = prPanel->cursor.x;
-    prPanel->cursor.x = x;
+    prMemView = disassembler_get_memview(prPanel);
+    memviewpanel_cursor_right(prMemView);
 }
 
 void disassembler_cursor_up(Disassembler *prPanel) {
