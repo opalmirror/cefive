@@ -1,5 +1,7 @@
 #include "memviewpanel.h"
 
+static int attempt_jump(MemViewPanel* prPanel);
+static int attempt_return(MemViewPanel* prPanel);
 static int render_address_col(MemViewPanel* prPanel, const int row);
 static int render_comment_col(MemViewPanel* prPanel, const int row);
 static int render_row(MemViewPanel* prPanel, const int row);
@@ -8,6 +10,54 @@ static SceUInt32 row_address(MemViewPanel* prPanel, const int row);
 static ColorConfig* row_color(MemViewPanel* prPanel, const int row);
 static EValueType row_type(MemViewPanel* prPanel, const int row);
 static SceUInt32 row_value(MemViewPanel* prPanel, const int row);
+
+static int attempt_jump(MemViewPanel* prPanel) {
+    CursorPos* prCursor = NULL;
+    JumpStack* prStack = NULL;
+    EValueType rType = VT_None;
+    SceUInt32 value = 0;
+    SceUInt32 address = 0;
+    int row = 0;
+    
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prStack = memviewpanel_get_jumpstack(prPanel);
+    prCursor = memviewpanel_get_cursorpos(prPanel);
+    row = prCursor->y;
+    rType = row_type(prPanel, row);
+    if (rType == VT_Pointer) {
+        value = row_value(prPanel, row);
+        address = row_address(prPanel, row);
+        if (jumpstack_push(prStack, address) != JUMPSTACK_SUCCESS) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+        if (memviewpanel_seek(prPanel, value) != MEMVIEWPANEL_SUCCESS) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+static int attempt_return(MemViewPanel* prPanel) {
+    JumpStack *prStack = NULL;
+    SceUInt32 address = 0;
+    
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prStack = memviewpanel_get_jumpstack(prPanel);
+    if (prStack->elements > 0) {
+        address = jumpstack_pop(prStack);
+        if (address != 0) {
+            if (memviewpanel_seek(prPanel, address) < 0) {
+                return MEMVIEWPANEL_FAILURE;
+            }
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;
+}
 
 int memviewpanel_cursor_down(MemViewPanel* prPanel) {
     CursorPos* prCursor = NULL;
@@ -45,6 +95,9 @@ int memviewpanel_cursor_left(MemViewPanel* prPanel) {
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
     }
+    if (attempt_return(prPanel) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
     
     return MEMVIEWPANEL_SUCCESS;
 }
@@ -53,7 +106,9 @@ int memviewpanel_cursor_right(MemViewPanel* prPanel) {
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
     }
-    
+    if (attempt_jump(prPanel) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
     return MEMVIEWPANEL_SUCCESS;
 }
 
@@ -114,6 +169,14 @@ CursorPos* memviewpanel_get_cursorpos(MemViewPanel* prPanel) {
     return prCursor;
 }
 
+JumpStack* memviewpanel_get_jumpstack(MemViewPanel* prPanel) {
+    JumpStack* prStack = NULL;
+    if (prPanel != NULL) {
+        prStack = &prPanel->jumpStack;
+    }
+    return prStack;
+}
+
 ColorConfig* memviewpanel_get_panelcolor(MemViewPanel* prPanel) {
     ColorConfig* prColor = NULL;
     PanelConfig* prConfig = NULL;
@@ -147,6 +210,7 @@ Dimension* memviewpanel_get_size(MemViewPanel* prPanel) {
 int memviewpanel_init(MemViewPanel* prPanel) {
     PanelConfig* prConfig = NULL;
     CursorPos* prCursor = NULL;
+    JumpStack* prStack = NULL;
     
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
@@ -159,6 +223,11 @@ int memviewpanel_init(MemViewPanel* prPanel) {
     
     prCursor = memviewpanel_get_cursorpos(prPanel);
     if (cursorpos_init(prCursor) != CURSORPOS_SUCCESS) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    
+    prStack = memviewpanel_get_jumpstack(prPanel);
+    if (jumpstack_init(prStack) != JUMPSTACK_SUCCESS) {
         return MEMVIEWPANEL_FAILURE;
     }
     
@@ -269,6 +338,7 @@ int memviewpanel_scroll_up(MemViewPanel* prPanel, const int rows) {
 
 int memviewpanel_seek(MemViewPanel* prPanel, SceUInt32 address) {
     Dimension* prSize = NULL;
+    CursorPos* prCursor = NULL;
     int bpp = 0;
     
     if (prPanel == NULL) {
@@ -283,6 +353,10 @@ int memviewpanel_seek(MemViewPanel* prPanel, SceUInt32 address) {
         return MEMVIEWPANEL_BADADDR;
     }
     prPanel->offset = address;
+    prCursor = memviewpanel_get_cursorpos(prPanel);
+    if (cursorpos_set(prCursor, 0, 0) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
     if (memviewpanel_invalidate(prPanel) != MEMVIEWPANEL_SUCCESS) {
         return MEMVIEWPANEL_FAILURE;
     }

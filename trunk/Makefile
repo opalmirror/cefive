@@ -1,41 +1,42 @@
 TARGET = CEFive
-OBJS =  block.o \
-	blockmodel.o \
-	cheat.o \
-	cheatmodel.o \
-	mips.o \
-	cursorpos.o \
-	dimension.o \
-	addresscolumn.o \
+OBJS =  addresscolumn.o \
+	block.o \
+	appletconfig.o \
+	appletmenu.o \
+	appletmenuconfig.o \
 	asciicolumn.o \
+	blockmodel.o \
 	bytecolumn.o \
-	textcolumn.o \
-	dasmrow.o \
-	togglecolumn.o \
-	dwordcolumn.o \
-	dwordeditor.o \
-	memviewpanel.o \
-	disassembler.o \
-	hexeditor.o \
-	searchengine.o \
-	searchpanel.o \
-	cheatpanel.o \
+	cefiveconfig.o \
+	cefiveui.o \
+	cheat.o \
 	cheateditor.o \
 	cheatengine.o \
-	niteprio.o \
-	menumodel.o \
-	appletmenuconfig.o \
-	appletmenu.o \
-	appletconfig.o \
-	panelconfig.o \
-	gameinfo.o \
-	optionspanel.o \
-	cefiveui.o \
+	cheatmodel.o \
+	cheatpanel.o \
 	colorconfig.o \
-	cefiveconfig.o \
-	geelog.o \
 	crt0_prx.o \
-	module.o
+	cursorpos.o \
+	dasmrow.o \
+	dimension.o \
+	disassembler.o \
+	dwordcolumn.o \
+	dwordeditor.o \
+	gameinfo.o \
+	geelog.o \
+	hexeditor.o \
+	jumpstack.o \
+	memviewpanel.o \
+	menumodel.o \
+	mips.o \
+	module.o \
+	niteprio.o \
+	optionspanel.o \
+	panelconfig.o \
+	searchengine.o \
+	searchpanel.o \
+	textcolumn.o \
+	togglecolumn.o
 
 # Define to build this as a prx (instead of a static elf)
 BUILD_PRX=1

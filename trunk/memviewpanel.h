@@ -15,6 +15,7 @@
 #include "colorconfig.h"
 #include "cursorpos.h"
 #include "dimension.h"
+#include "jumpstack.h"
 #include "mips.h"
 
 /** Indicates success. */
@@ -72,6 +73,8 @@ extern "C" {
         SceUInt32 maxOffset;
         /** The text color for values that are pointers. */
         u32 pointerColor;
+        /** The Jump Stack */
+        JumpStack jumpStack;
         /** Indicates whether the Panel needs to be redrawn. */
         int dirty;
     }
@@ -137,6 +140,14 @@ extern "C" {
      */
     CursorPos* memviewpanel_get_cursorpos(MemViewPanel* prPanel);
 
+    /** Return a pointer to a JumpStack struct representing the Jump Stack.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @return A pointer to a JumpStack struct or NULL is returned.
+     */
+    JumpStack* memviewpanel_get_jumpstack(MemViewPanel* prPanel);
+    
     /** Return a pointer to a ColorConfig struct representing the Panel Color
      * Configuration.
      * 
