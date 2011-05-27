@@ -69,7 +69,7 @@ static void button_circle_up(CEFiveUi *prUi) {
         }
         if (prUi->applet == 2) {
             if (prUi->disassembler.editing == 1) {
-                disassembler_circle_button(&prUi->disassembler);
+                disassembler_button_circle(&prUi->disassembler);
                 return;
             }
         }
@@ -142,7 +142,7 @@ static void button_cross_up(CEFiveUi *prUi) {
                     cheateditorCrossButton(&prUi->cheateditor);
                     break;
                 case 2:
-                    disassembler_cross_button(&prUi->disassembler);
+                    disassembler_button_cross(&prUi->disassembler);
                     break;
                 case 3:
                     hexeditorCrossButton(&prUi->hexeditor);
@@ -566,12 +566,6 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     prDasm->config.position.y = 1;
     prDasm->config.tablesize.height = 30;
     prDasm->config.tablepos.y = 2;
-    prDasm->address_editor.background_color = prUi->config.editcursor.background;
-    prDasm->address_editor.edit_color = prUi->config.editcursor.text;
-    prDasm->address_editor.text_color = prUi->config.cursor.text;
-    prDasm->value_editor.background_color = prUi->config.editcursor.background;
-    prDasm->value_editor.edit_color = prUi->config.editcursor.text;
-    prDasm->value_editor.text_color = prUi->config.cursor.text;
 
     geelog_flog(LOG_DEBUG, sFunc, "Initializing Applet Menu.");
     if (init_appletmenu(prUi) != CEFIVEUI_SUCCESS) {
@@ -731,9 +725,9 @@ static void dpad_down_down(CEFiveUi *prUi) {
                 break;
             case 2:
                 if (prUi->buttons.square == 1) {
-                    disassemblerPageDown(&prUi->disassembler);
+                    disassembler_page_down(&prUi->disassembler);
                 } else {
-                    disassemblerDpadDown(&prUi->disassembler);
+                    disassembler_dpad_down(&prUi->disassembler);
                 }
                 break;
             case 3:
@@ -789,7 +783,7 @@ static void dpad_left_down(CEFiveUi *prUi) {
                 cheateditorDpadLeft(&prUi->cheateditor);
                 break;
             case 2:
-                disassemblerDpadLeft(&prUi->disassembler);
+                disassembler_dpad_left(&prUi->disassembler);
                 break;
             case 3:
                 hexeditorDpadLeft(&prUi->hexeditor);
@@ -823,7 +817,7 @@ static void dpad_right_down(CEFiveUi *prUi) {
                 cheateditorDpadRight(&prUi->cheateditor);
                 break;
             case 2:
-                disassemblerDpadRight(&prUi->disassembler);
+                disassembler_dpad_right(&prUi->disassembler);
                 break;
             case 3:
                 hexeditorDpadRight(&prUi->hexeditor);
@@ -861,9 +855,9 @@ static void dpad_up_down(CEFiveUi *prUi) {
                 break;
             case 2:
                 if (prUi->buttons.square == 1) {
-                    disassemblerPageUp(&prUi->disassembler);
+                    disassembler_page_up(&prUi->disassembler);
                 } else {
-                    disassemblerDpadUp(&prUi->disassembler);
+                    disassembler_dpad_up(&prUi->disassembler);
                 }
                 break;
             case 3:
@@ -917,7 +911,7 @@ static void draw_applet(CEFiveUi *prUi) {
             if (prUi->drawn == 0) {
                 prUi->disassembler.dirty = 1;
             }
-            disassemblerRedraw(&prUi->disassembler);
+            disassembler_redraw(&prUi->disassembler);
             break;
         case 3:
             if (prUi->drawn == 0) {

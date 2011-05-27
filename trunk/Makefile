@@ -17,7 +17,6 @@ OBJS =  addresscolumn.o \
 	colorconfig.o \
 	crt0_prx.o \
 	cursorpos.o \
-	dasmrow.o \
 	dimension.o \
 	disassembler.o \
 	dwordcolumn.o \
@@ -25,6 +24,7 @@ OBJS =  addresscolumn.o \
 	gameinfo.o \
 	geelog.o \
 	hexeditor.o \
+	hexpad.o \
 	jumpstack.o \
 	memviewpanel.o \
 	menumodel.o \
