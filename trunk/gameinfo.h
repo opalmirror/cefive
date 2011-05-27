@@ -8,9 +8,11 @@
 #ifndef _GAMEINFO_H
 #define	_GAMEINFO_H
 
+#include <stdio.h>
 #include <pspkerneltypes.h>
 #include <pspmodulemgr.h>
 #include <psploadcore.h>
+#include <pspdebug.h>
 #include "colorconfig.h"
 #include "cursorpos.h"
 #include "appletconfig.h"
@@ -144,17 +146,6 @@ extern "C" {
      * GAMEINFO_SUCCESS is returned if the GameInfo struct is populated.
      */
     int gameinfo_load(GameInfo* prInfo);
-
-    /** Add a log statement to the configured GeeLog of a GameInfo.
-     * 
-     * @param prInfo Pointer to a GameInfo struct representing the Game Info.
-     * @param rLevel ELogLevel value specifying the Log Level of the Message.
-     * @param sMsg const char pointer to the message to add.
-     * @return GAMEINFO_NULLPTR is returned if the prInfo parameter is NULL.
-     * GAMEINFO_FAILURE is returned if the statement could not be added.
-     * GAMEINFO_SUCCESS is returned if the statement is added.
-     */
-    int gameinfo_log(GameInfo* prInfo, ELogLevel rLevel, const char* sMsg);
 
     /** Redraw the Game Info interface screen.
      * 
