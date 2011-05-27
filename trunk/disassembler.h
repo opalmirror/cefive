@@ -78,6 +78,10 @@ extern "C" {
     
     void disassembler_button_cross(Disassembler *);
     
+    int disassembler_button_ltrigger(Disassembler *prPanel);
+    
+    int disassembler_button_rtrigger(Disassembler *prPanel);
+    
     void disassembler_button_square(Disassembler *);
 
     void disassembler_button_triangle(Disassembler *);
@@ -116,7 +120,11 @@ extern "C" {
     
     Dimension* disassembler_get_size(Disassembler* prDasm);
     
+    ColorConfig* disassembler_get_statuscolor(Disassembler* prDasm);
+    
     int disassembler_init(Disassembler *prPanel, AppletConfig *prApCfg);
+    
+    int disassembler_is_editing(Disassembler *prPanel);
     
     void disassembler_page_down(Disassembler *prPanel);
     

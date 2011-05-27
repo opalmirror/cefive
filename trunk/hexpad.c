@@ -1,22 +1,30 @@
 #include "hexpad.h"
 
 static ColorConfig* digit_color(HexPad* prPad, const int x, const int y);
+static int render_cursor(HexPad* prPad);
 static int render_digit(HexPad* prPad, const int x, const int y);
 static int render_value(HexPad* prPad);
 
 static ColorConfig* digit_color(HexPad* prPad, const int x, const int y) {
-    ColorConfig* prColor = NULL;
     CursorPos* prCursor = NULL;
     if (prPad != NULL) {
         prCursor = hexpad_get_cursorpos(prPad);
         if ((prCursor->x == x) && (prCursor->y == y)) {
-            prColor = hexpad_get_cursorcolor(prPad);
+            return hexpad_get_cursorcolor(prPad);
         } else {
-            prColor = hexpad_get_panelcolor(prPad);
+            return hexpad_get_panelcolor(prPad);
         }
     }
-    
-    return prColor;
+    return NULL;
+}
+
+int hexpad_button_circle(HexPad* prPad) {
+    if (prPad == NULL) {
+        return HEXPAD_NULLPTR;
+    }
+    prPad->cancelled = 1;
+    prPad->visible = 0;
+    return HEXPAD_SUCCESS;
 }
 
 int hexpad_button_cross(HexPad* prPad) {
@@ -29,6 +37,17 @@ int hexpad_button_cross(HexPad* prPad) {
     prCursor = hexpad_get_cursorpos(prPad);
     value = (u8)((prCursor->y * 4) + prCursor->x);
     prPad->byteval[prPad->digit] = value;
+    if (hexpad_next_digit(prPad) < 0) {
+        return HEXPAD_FAILURE;
+    }
+    return HEXPAD_SUCCESS;
+}
+
+int hexpad_button_square(HexPad* prPad) {
+    return HEXPAD_SUCCESS;
+}
+
+int hexpad_button_triangle(HexPad* prPad) {
     return HEXPAD_SUCCESS;
 }
 
@@ -58,6 +77,9 @@ int hexpad_next_digit(HexPad* prPad) {
     digit++;
     if (digit > 7) {
         digit = 0;
+        prPad->visible = 0;
+        prPad->cancelled = 0;
+        return HEXPAD_SUCCESS;
     }
     prPad->digit = digit;
     if (hexpad_set_cursordigit(prPad, prPad->byteval[prPad->digit]) < 0) {
@@ -212,7 +234,7 @@ int hexpad_init(HexPad* prPad) {
         return HEXPAD_FAILURE;
     }
     prSize = hexpad_get_size(prPad);
-    if (dimension_set(prSize, 12, 13) < 0) {
+    if (dimension_set(prSize, 12, 14) < 0) {
         return HEXPAD_FAILURE;
     }
     
@@ -236,6 +258,9 @@ int hexpad_redraw(HexPad* prPad) {
         }
     }
     if (render_value(prPad) < 0) {
+        return HEXPAD_FAILURE;
+    }
+    if (render_cursor(prPad) < 0) {
         return HEXPAD_FAILURE;
     }
     
@@ -326,6 +351,31 @@ int hexpad_set_value(HexPad* prPad, const SceUInt32 value) {
     prPad->byteval[5] = (u8)((value & 0x00000F00) >> 8);
     prPad->byteval[6] = (u8)((value & 0x000000F0) >> 4);
     prPad->byteval[7] = (u8)(value & 0x0000000F);
+    return HEXPAD_SUCCESS;
+}
+
+static int render_cursor(HexPad* prPad) {
+    CursorPos* prPos = NULL;
+    ColorConfig* prColor = NULL;
+    int bp = 0;
+    int ap = 0;
+    int x = 0;
+    int y = 0;
+    char sFmt[20];
+    if (prPad == NULL) {
+        return HEXPAD_NULLPTR;
+    }
+    bp = 3 + prPad->digit;
+    ap = 12 - bp - 1;
+    sprintf(sFmt, "%%%ds^%%-%ds", bp, ap);
+    prColor = hexpad_get_panelcolor(prPad);
+    pspDebugScreenSetBackColor(prColor->background);
+    pspDebugScreenSetTextColor(prColor->text);
+    prPos = hexpad_get_position(prPad);
+    x = prPos->x;
+    y = prPos->y + 13;
+    pspDebugScreenSetXY(x, y);
+    pspDebugScreenKprintf(sFmt, "", "");
     return HEXPAD_SUCCESS;
 }
 

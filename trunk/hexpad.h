@@ -46,6 +46,8 @@ extern "C" {
         int digit;
         /** Dialog Visible indicator */
         int visible;
+        /** Dialog cancelled indicator */
+        int cancelled;
     }
     /** The HexPad struct represents a Hex Pad. */
     HexPad;
