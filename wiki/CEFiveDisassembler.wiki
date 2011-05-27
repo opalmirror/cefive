@@ -21,6 +21,10 @@ The Circle Button is used to exit CEFive.  While the user is editing, the Circle
 === Square Button ===
 The Square Button can be used in conjunction with D-Pad Up and Down to act as a Page selector.  Holding the Square Button while pressing the D-Pad Up, will cause the Disassembler to scroll one page up.  The same applies for down.
 
+=== Triangle Button ===
+The Triangle button will pop up a Hex Keypad allowing the user to enter
+a new address to navigate to.
+
 === Left Trigger Button ===
 The Left Trigger Button is used to pop up an Applet Menu allowing the user to select a different applet to invoke.  While the User is editing, the Left Trigger Button has no effect.
 
