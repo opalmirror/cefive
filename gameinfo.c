@@ -95,11 +95,10 @@ int gameinfoconfig_set_cursorpos(GameInfoConfig* prCfg, CursorPos* prPos) {
 }
 
 GameInfoConfig* gameinfo_get_config(GameInfo* prInfo) {
-    GameInfoConfig* prCfg = NULL;
     if (prInfo != NULL) {
-        prCfg = &prInfo->config;
+        return &prInfo->config;
     }
-    return prCfg;
+    return NULL;
 }
 
 int gameinfo_init(GameInfo *prInfo) {

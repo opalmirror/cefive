@@ -116,6 +116,24 @@ static int attempt_return(MemViewPanel* prPanel) {
     return MEMVIEWPANEL_SUCCESS;
 }
 
+static int edit_value(MemViewPanel* prPanel) {
+    CursorPos* prCursor = NULL;
+    SceUInt32 value = 0;
+    HexPad* prPad = NULL;
+    
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    prCursor = memviewpanel_get_cursorpos(prPanel);
+    value = row_value(prPanel, prCursor->y);
+    if (hexpad_set_value(prPad, value) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    
+    return MEMVIEWPANEL_SUCCESS;
+}
+
 static int hexpad_hide(MemViewPanel* prPanel) {
     SceUInt32 value = 0;
     HexPad* prPad = NULL;
