@@ -1,18 +1,91 @@
 #include "disassembler.h"
 
-static void drawAddressColumn(Disassembler *prPanel, int iRow);
-static void drawAssemblyColumn(Disassembler *prPanel, int iRow);
-static void drawCursor(Disassembler *prPanel);
-static void drawTable(Disassembler *prPanel);
-static void drawTableRow(Disassembler *prPanel, int iRow);
-static void drawValueColumn(Disassembler *prPanel, int iRow);
-static SceUInt32 getSelectedAddress(Disassembler *prPanel);
-static SceUInt32 getSelectedInstructionDest(Disassembler *prPanel);
-static SceUInt32 getSelectedOffset(Disassembler *prPanel);
-static SceUInt32 getSelectedValue(Disassembler *prPanel);
-static SceUInt32 getSelectedValuePointer(Disassembler *prPanel);
-static SceUInt32 popAddress(Disassembler *prPanel);
-static void pushAddress(Disassembler *prPanel, SceUInt32 addr);
+static void commit_value_edit(Disassembler *prPanel);
+static SceUInt32 get_selected_offset(Disassembler *prPanel);
+
+static void commit_value_edit(Disassembler *prPanel) {
+    SceUInt32 value = 0;
+    SceUInt32 offset = 0;
+    SceUInt32 *pDest = NULL;
+    if (prPanel == NULL) {
+        return;
+    }
+    //value = prPanel->value_editor.value;
+    offset = get_selected_offset(prPanel);
+    pDest = (SceUInt32 *)offset;
+    *pDest = value;
+    sceKernelDcacheWritebackInvalidateRange(offset, 4);
+    sceKernelIcacheInvalidateRange(offset, 4);
+}
+
+void disassembler_button_circle(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
+    if (prPanel == NULL) {
+        return;
+    }
+    prMemView = disassembler_get_memview(prPanel);
+    
+}
+
+void disassembler_button_cross(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
+    if (prPanel == NULL) {
+        return;
+    }
+    prMemView = disassembler_get_memview(prPanel);
+}
+
+void disassembler_button_square(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
+    if (prPanel == NULL) {
+        return;
+    }
+    prMemView = disassembler_get_memview(prPanel);
+}
+
+void disassembler_button_triangle(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
+    if (prPanel == NULL) {
+        return;
+    }
+    prMemView = disassembler_get_memview(prPanel);
+}
+
+void disassembler_dpad_down(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
+    if (prPanel == NULL) {
+        return;
+    }
+    prMemView = disassembler_get_memview(prPanel);
+    memviewpanel_cursor_down(prMemView);
+}
+
+void disassembler_dpad_left(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
+    if (prPanel == NULL) {
+        return;
+    }
+    prMemView = disassembler_get_memview(prPanel);
+    memviewpanel_cursor_left(prMemView);
+}
+
+void disassembler_dpad_right(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
+    if (prPanel == NULL) {
+        return;
+    }
+    prMemView = disassembler_get_memview(prPanel);
+    memviewpanel_cursor_right(prMemView);
+}
+
+void disassembler_dpad_up(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
+    if (prPanel == NULL) {
+        return;
+    }
+    prMemView = disassembler_get_memview(prPanel);
+    memviewpanel_cursor_up(prMemView);
+}
 
 AppletConfig* disassembler_get_appletconfig(Disassembler* prDasm) {
     AppletConfig* prConfig = NULL;
@@ -33,14 +106,6 @@ ColorConfig* disassembler_get_cursorcolor(Disassembler* prDasm) {
         }
     }
     return prColor;
-}
-
-CursorPos* disassembler_get_cursorpos(Disassembler* prDasm) {
-    CursorPos* prPos = NULL;
-    if (prDasm != NULL) {
-        prPos = &prDasm->cursor;
-    }
-    return prPos;
 }
 
 MemViewPanel* disassembler_get_memview(Disassembler* prDasm) {
@@ -88,207 +153,6 @@ Dimension* disassembler_get_size(Disassembler* prDasm) {
     return prSize;
 }
 
-/* commitValueEdit
- *  Write the current value of the value editor to memory.
- * Parameters:
- *  prPanel - Disassembler pointer
- */
-static void commitValueEdit(Disassembler *prPanel) {
-    SceUInt32 value = 0;
-    SceUInt32 offset = 0;
-    SceUInt32 *pDest = NULL;
-    if (prPanel == NULL) {
-        return;
-    }
-    value = prPanel->value_editor.value;
-    offset = getSelectedOffset(prPanel);
-    pDest = (SceUInt32 *)offset;
-    *pDest = value;
-    sceKernelDcacheWritebackInvalidateRange(offset, 4);
-    sceKernelIcacheInvalidateRange(offset, 4);
-}
-
-void disassembler_attempt_jump(Disassembler *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-    SceUInt32 dest = 0;
-    SceUInt32 valptr = getSelectedValuePointer(prPanel);
-    SceUInt32 insdst = getSelectedInstructionDest(prPanel);
-    if (valptr != 0) {
-        dest = valptr;
-    }
-    if (insdst != 0) {
-        dest = insdst;
-    }
-    if (dest == 0) {
-        return;
-    }
-    dest -= prPanel->config.base_address;
-    dest += prPanel->config.min_offset;
-    pushAddress(prPanel, getSelectedOffset(prPanel));
-    disassemblerSeek(prPanel, dest);
-    prPanel->cursor.y = 0;
-    prPanel->dirty = 1;
-}
-
-void disassemblerAttemptReturn(Disassembler *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-    if (prPanel->cur_jump <= 0) {
-        return;
-    }
-    SceUInt32 dest = popAddress(prPanel);
-    if (dest != 0) {
-        disassemblerSeek(prPanel, dest);
-        prPanel->cursor.y = 0;
-        prPanel->dirty = 1;
-    }
-}
-
-void disassembler_circle_button(Disassembler *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-    if (prPanel->editing == 1) {
-        if (prPanel->cursor.x == 1) {
-            prPanel->value_editor.value = getSelectedValue(prPanel);
-            prPanel->value_editor.editing = 0;
-            prPanel->editing = 0;
-            prPanel->cursordirty = 1;
-        }
-    }
-}
-
-void disassembler_cross_button(Disassembler *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-    int col = prPanel->cursor.x;
-    if (col == 0) {
-        dwordeditorCrossButton(&prPanel->address_editor);
-        if (prPanel->editing == 0) {
-            prPanel->address_editor.value = getSelectedAddress(prPanel);
-        }
-    } else {
-        dwordeditorCrossButton(&prPanel->value_editor);
-        if (prPanel->editing == 0) {
-            prPanel->value_editor.value = getSelectedValue(prPanel);
-        } else {
-            commitValueEdit(prPanel);
-        }
-    }
-    prPanel->editing = (prPanel->editing == 1) ? 0 : 1;
-    prPanel->cursordirty = 1;
-}
-
-void disassembler_cursor_down(Disassembler *prPanel) {
-    MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
-    }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_cursor_down(prMemView);
-}
-
-void disassembler_cursor_left(Disassembler *prPanel) {
-    MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
-    }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_cursor_left(prMemView);
-}
-
-void disassembler_cursor_right(Disassembler *prPanel) {
-    MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
-    }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_cursor_right(prMemView);
-}
-
-void disassembler_cursor_up(Disassembler *prPanel) {
-    MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
-    }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_cursor_up(prMemView);
-}
-
-void disassemblerDpadDown(Disassembler *prPanel) {
-    int amount;
-    if (prPanel == NULL) {
-        return;
-    }
-    if (prPanel->editing == 0) {
-        disassembler_cursor_down(prPanel);
-    } else {
-        if (prPanel->cursor.x == 0) {
-            dwordeditorDpadDown(&prPanel->address_editor);
-            amount = dwordeditorIncrementAmount(&prPanel->address_editor);
-            disassemblerSeek(prPanel, prPanel->offset - amount);
-        } else {
-            dwordeditorDpadDown(&prPanel->value_editor);
-        }
-    }
-    prPanel->cursordirty = 1;
-}
-
-void disassemblerDpadLeft(Disassembler *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-    if (prPanel->editing == 0) {
-        disassembler_cursor_left(prPanel);
-    } else {
-        if (prPanel->cursor.x == 0) {
-            dwordeditorDpadLeft(&prPanel->address_editor);
-        } else {
-            dwordeditorDpadLeft(&prPanel->value_editor);
-        }
-    }
-    prPanel->cursordirty = 1;
-}
-
-void disassemblerDpadRight(Disassembler *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-    if (prPanel->editing == 0) {
-        disassembler_cursor_right(prPanel);
-    } else {
-        if (prPanel->cursor.x == 0) {
-            dwordeditorDpadRight(&prPanel->address_editor);
-        } else {
-            dwordeditorDpadRight(&prPanel->value_editor);
-        }
-    }
-    prPanel->cursordirty = 1;
-}
-
-void disassemblerDpadUp(Disassembler *prPanel) {
-    int amount = 0;
-    if (prPanel == NULL) {
-        return;
-    }
-    if (prPanel->editing == 0) {
-        disassembler_cursor_up(prPanel);
-    } else {
-        if (prPanel->cursor.x == 0) {
-            dwordeditorDpadUp(&prPanel->address_editor);
-            amount = dwordeditorIncrementAmount(&prPanel->address_editor);
-            disassemblerSeek(prPanel, prPanel->offset + amount);
-        } else {
-            dwordeditorDpadUp(&prPanel->value_editor);
-        }
-    }
-    prPanel->cursordirty = 1;
-}
-
 int disassembler_init(Disassembler *prPanel, AppletConfig *prApCfg) {
     MemViewPanel* prMemView = NULL;
     ColorConfig* prColor = NULL;
@@ -312,29 +176,8 @@ int disassembler_init(Disassembler *prPanel, AppletConfig *prApCfg) {
     prPanel->config.tablepos.y = 7;
     prPanel->config.value_color.background = DISASSEMBLER_DEFBGCOLOR;
     prPanel->config.value_color.text = DISASSEMBLER_DEFFGCOLOR;
-    prPanel->offset = 0x48804000;
-    prPanel->cursor.x = 0;
-    prPanel->cursor.y = 0;
     prPanel->editing = 0;
-    dwordeditorInit(&(prPanel->address_editor));
-    prPanel->address_editor.increments[7] = 4;
-    dwordeditorInit(&(prPanel->value_editor));
     prPanel->dirty = 1;
-
-    AddressColumn* prAddr = &(prPanel->rRow.rAddress);
-    addresscolumn_init(prAddr);
-    prAddr->color.background = prPanel->config.address_color.background;
-    prAddr->color.text = prPanel->config.address_color.text;
-
-    DwordColumn* prValue = &(prPanel->rRow.rValue);
-    dwordcolumn_init(prValue);
-    prValue->color.background = prPanel->config.value_color.background;
-    prValue->color.text = prPanel->config.value_color.text;
-
-    TextColumn* prAssembly = &(prPanel->rRow.rAssembly);
-    textcolumn_init(prAssembly);
-    prAssembly->prColor = &(prPanel->config.code_color);
-    prAssembly->prCursor = &(prPanel->config.cursorrow_color);
 
     prPanel->prGameInfo = NULL;
     
@@ -362,10 +205,29 @@ int disassembler_init(Disassembler *prPanel, AppletConfig *prApCfg) {
             return DISASSEMBLER_FAILURE;
         }
     }
+    
     return DISASSEMBLER_SUCCESS;
 }
 
-void disassemblerRedraw(Disassembler *prPanel) {
+void disassembler_page_down(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
+    if (prPanel == NULL) {
+        return;
+    }
+    prMemView = disassembler_get_memview(prPanel);
+    memviewpanel_page_down(prMemView);
+}
+
+void disassembler_page_up(Disassembler *prPanel) {
+    MemViewPanel* prMemView = NULL;
+    if (prPanel == NULL) {
+        return;
+    }
+    prMemView = disassembler_get_memview(prPanel);
+    memviewpanel_page_up(prMemView);
+}
+
+void disassembler_redraw(Disassembler *prPanel) {
     MemViewPanel* prMemView = NULL;
     CursorPos* prPos = NULL;
     Dimension* prSize = NULL;
@@ -394,33 +256,7 @@ void disassemblerRedraw(Disassembler *prPanel) {
     prPanel->dirty = 0;
 }
 
-void disassemblerPageDown(Disassembler *prPanel) {
-    MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
-    }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_page_down(prMemView);
-}
-
-void disassemblerPageUp(Disassembler *prPanel) {
-    MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
-    }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_page_up(prMemView);
-}
-
-void disassemblerScrollDown(Disassembler *prPanel) {
-    /* Scrolling handled through MemViewPanel now. */
-}
-
-void disassemblerScrollUp(Disassembler *prPanel) {
-    /* Scrolling handled through MemViewPanel now. */
-}
-
-int disassemblerSeek(Disassembler *prPanel, SceUInt32 offset) {
+int disassembler_seek(Disassembler *prPanel, SceUInt32 offset) {
     MemViewPanel* prMemView = NULL;
     if (prPanel == NULL) {
         return DISASSEMBLER_NULLPTR;
@@ -432,13 +268,7 @@ int disassemblerSeek(Disassembler *prPanel, SceUInt32 offset) {
     return DISASSEMBLER_SUCCESS;
 }
 
-void disassemblerSquareButton(Disassembler *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-}
-
-SceUInt32 disassemblerTell(Disassembler *prPanel) {
+SceUInt32 disassembler_tell(Disassembler *prPanel) {
     MemViewPanel* prMemView = NULL;
     SceUInt32 pos = 0;
     if (prPanel != NULL) {
@@ -448,79 +278,7 @@ SceUInt32 disassemblerTell(Disassembler *prPanel) {
     return pos;
 }
 
-void disassemblerTriangleButton(Disassembler *prPanel) {
-    if (prPanel == NULL) {
-        return;
-    }
-}
-
-static void drawCursor(Disassembler *prPanel) {
-    DwordEditor* prEditor = NULL;
-    int iRow = 0;
-    int iCol = 0;
-    int tt = 0;
-    
-    if (prPanel == NULL) {
-        return;
-    }
-    iRow = prPanel->cursor.y;
-    iCol = prPanel->cursor.x;
-    SceUInt32 moff = prPanel->offset - prPanel->config.min_offset;
-    SceUInt32 base = prPanel->config.base_address;
-    SceUInt32 vaddr = base + moff + (iRow * 4);
-    SceUInt32 *pVal = (SceUInt32 *)(prPanel->offset + (iRow * 4));
-    tt = prPanel->config.tablepos.y;
-    if (iCol == 0) {
-        prEditor = &prPanel->address_editor;
-        pspDebugScreenSetXY(0, tt + iRow);
-        if (prPanel->editing == 0) {
-            prEditor->value = vaddr;
-        }
-        dwordeditorRedraw(prEditor);
-    }
-    if (iCol == 1) {
-        prEditor = &prPanel->value_editor;
-        pspDebugScreenSetXY(11, tt + iRow);
-        if (prPanel->editing == 0) {
-            prEditor->value = *pVal;
-        }
-        dwordeditorRedraw(prEditor);
-    }
-    prPanel->cursordirty = 0;
-}
-
-static void drawValueColumn(Disassembler *prPanel, int iRow) {
-}
-
-static SceUInt32 getSelectedAddress(Disassembler *prPanel) {
-    SceUInt32 addr = 0;
-    return addr;
-}
-
-static SceUInt32 getSelectedInstructionDest(Disassembler *prPanel) {
-    SceUInt32 dest = 0;
-    return dest;
-}
-
-static SceUInt32 getSelectedOffset(Disassembler *prPanel) {
+static SceUInt32 get_selected_offset(Disassembler *prPanel) {
     SceUInt32 offset = 0;
     return offset;
-}
-
-static SceUInt32 getSelectedValue(Disassembler *prPanel) {
-    SceUInt32 value = 0;
-    return value;
-}
-
-static SceUInt32 getSelectedValuePointer(Disassembler *prPanel) {
-    SceUInt32 dest = 0;
-    return dest;
-}
-
-static SceUInt32 popAddress(Disassembler *prPanel) {
-    SceUInt32 addr = 0;
-    return addr;
-}
-
-static void pushAddress(Disassembler *prPanel, SceUInt32 addr) {
 }

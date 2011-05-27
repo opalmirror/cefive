@@ -17,6 +17,7 @@
 #include "dimension.h"
 #include "jumpstack.h"
 #include "mips.h"
+#include "hexpad.h"
 
 /** Indicates success. */
 #define MEMVIEWPANEL_SUCCESS (0)
@@ -75,12 +76,22 @@ extern "C" {
         u32 pointerColor;
         /** The Jump Stack */
         JumpStack jumpStack;
+        /** The Hex Pad struct */
+        HexPad hexPad;
         /** Indicates whether the Panel needs to be redrawn. */
         int dirty;
     }
     /** The MemViewPanel struct represents a Memory View Panel. */
     MemViewPanel;
 
+    int memviewpanel_button_circle(MemViewPanel* prPanel);
+    
+    int memviewpanel_button_cross(MemViewPanel* prPanel);
+    
+    int memviewpanel_button_square(MemViewPanel* prPanel);
+    
+    int memviewpanel_button_triangle(MemViewPanel* prPanel);
+    
     /** Move the view cursor down by one row.
      * 
      * @param prPanel Pointer to a MemViewPanel struct representing the Memory
@@ -112,7 +123,7 @@ extern "C" {
      * @return 0 indicates success, &lt;0 indicates failure.
      */
     int memviewpanel_cursor_up(MemViewPanel* prPanel);
-
+    
     /** Return a pointer to a PanelConfig struct representing the Panel
      * Configuration.
      * 
@@ -140,6 +151,14 @@ extern "C" {
      */
     CursorPos* memviewpanel_get_cursorpos(MemViewPanel* prPanel);
 
+    /** Return a pointer to a HexPad struct representing the Hex Pad.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @return A pointer to a HexPad struct or NULL is returned.
+     */
+    HexPad* memviewpanel_get_hexpad(MemViewPanel* prPanel);
+    
     /** Return a pointer to a JumpStack struct representing the Jump Stack.
      * 
      * @param prPanel Pointer to a MemViewPanel struct representing the Memory

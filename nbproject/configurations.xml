@@ -43,8 +43,6 @@
       <in>crt0_prx.h</in>
       <in>cursorpos.c</in>
       <in>cursorpos.h</in>
-      <in>dasmrow.c</in>
-      <in>dasmrow.h</in>
       <in>dimension.c</in>
       <in>dimension.h</in>
       <in>disassembler.c</in>
@@ -69,6 +67,8 @@
       <in>ggame.h</in>
       <in>hexeditor.c</in>
       <in>hexeditor.h</in>
+      <in>hexpad.c</in>
+      <in>hexpad.h</in>
       <in>importpanel.h</in>
       <in>jumpstack.c</in>
       <in>jumpstack.h</in>

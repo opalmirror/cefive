@@ -6,10 +6,54 @@ static int render_address_col(MemViewPanel* prPanel, const int row);
 static int render_comment_col(MemViewPanel* prPanel, const int row);
 static int render_row(MemViewPanel* prPanel, const int row);
 static int render_value_col(MemViewPanel* prPanel, const int row);
+
+/** Return the address of the indicated row.
+ * 
+ * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+ * View Panel.
+ * @param row int indicating the row to return the address of.
+ * @return A SceUInt32 is returned.
+ */
 static SceUInt32 row_address(MemViewPanel* prPanel, const int row);
+
+/** Return a pointer to a ColorConfig struct representing the current Color
+ * Configuration for the indicated row.
+ * 
+ * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+ * View Panel.
+ * @param row int indicating the row the return the address of.
+ * @return A pointer to a ColorConfig struct or NULL is returned.
+ */
 static ColorConfig* row_color(MemViewPanel* prPanel, const int row);
+
+/** Return the destination address of the indicated row.  The destination
+ * address is determined by interpreting the value of the indicated row as a
+ * MIPS32 instruction, then determining the destination of that instruction.
+ * If no destination can be determined, 0 is returned.
+ * 
+ * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+ * View Panel.
+ * @param row int indicating the row to return the destination of.
+ * @return A SceUInt32 containing the destination or 0 is returned.
+ */
 static SceUInt32 row_destination(MemViewPanel* prPanel, const int row);
+
+/** Return an EValueType value denoting the type of value in the indicated row.
+ * 
+ * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+ * View Panel.
+ * @return An EValueType value is returned.
+ */
 static EValueType row_type(MemViewPanel* prPanel, const int row);
+
+/** Return a SceInt32 containing the value of memory at the address of the
+ * indicated row.
+ * 
+ * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+ * View Panel.
+ * @param row int indicating the row to return the value of.
+ * @return A SceUInt32 value indicating the value of memory.
+ */
 static SceUInt32 row_value(MemViewPanel* prPanel, const int row);
 
 static int attempt_jump(MemViewPanel* prPanel) {
@@ -180,6 +224,14 @@ CursorPos* memviewpanel_get_cursorpos(MemViewPanel* prPanel) {
     return prCursor;
 }
 
+HexPad* memviewpanel_get_hexpad(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel != NULL) {
+        prPad = &prPanel->hexPad;
+    }
+    return prPad;
+}
+
 JumpStack* memviewpanel_get_jumpstack(MemViewPanel* prPanel) {
     JumpStack* prStack = NULL;
     if (prPanel != NULL) {
@@ -222,6 +274,7 @@ int memviewpanel_init(MemViewPanel* prPanel) {
     PanelConfig* prConfig = NULL;
     CursorPos* prCursor = NULL;
     JumpStack* prStack = NULL;
+    HexPad* prPad = NULL;
     
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
@@ -250,6 +303,12 @@ int memviewpanel_init(MemViewPanel* prPanel) {
     if (memviewpanel_invalidate(prPanel) != MEMVIEWPANEL_SUCCESS) {
         return MEMVIEWPANEL_FAILURE;
     }
+    
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (hexpad_init(prPad) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    
     return MEMVIEWPANEL_SUCCESS;
 }
 
