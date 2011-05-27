@@ -50,6 +50,15 @@
 extern "C" {
 #endif
 
+    typedef enum _EEditMode {
+        EM_None = 0,
+        EM_Address,
+        EM_UInt32
+    }
+    /** The EEditMode enumeration is used to specify the current editing mode. 
+     */
+    EEditMode;
+
     typedef enum _EValueType {
         VT_None = 0, /** Value type unknown. */
         VT_Instruction, /** MIPS32 Instruction. */
@@ -80,18 +89,26 @@ extern "C" {
         HexPad hexPad;
         /** Indicates whether the Panel needs to be redrawn. */
         int dirty;
+        /** Indicates whether the Panel is editing an address or value. */
+        int editing;
+        /** Indicates the current editing mode. */
+        EEditMode editMode;
     }
     /** The MemViewPanel struct represents a Memory View Panel. */
     MemViewPanel;
 
     int memviewpanel_button_circle(MemViewPanel* prPanel);
-    
+
     int memviewpanel_button_cross(MemViewPanel* prPanel);
+
+    int memviewpanel_button_ltrigger(MemViewPanel* prPanel);
+    
+    int memviewpanel_button_rtrigger(MemViewPanel* prPanel);
     
     int memviewpanel_button_square(MemViewPanel* prPanel);
-    
+
     int memviewpanel_button_triangle(MemViewPanel* prPanel);
-    
+
     /** Move the view cursor down by one row.
      * 
      * @param prPanel Pointer to a MemViewPanel struct representing the Memory
@@ -123,6 +140,14 @@ extern "C" {
      * @return 0 indicates success, &lt;0 indicates failure.
      */
     int memviewpanel_cursor_up(MemViewPanel* prPanel);
+
+    int memviewpanel_dpad_down(MemViewPanel* prPanel);
+    
+    int memviewpanel_dpad_left(MemViewPanel* prPanel);
+    
+    int memviewpanel_dpad_right(MemViewPanel* prPanel);
+    
+    int memviewpanel_dpad_up(MemViewPanel* prPanel);
     
     /** Return a pointer to a PanelConfig struct representing the Panel
      * Configuration.
@@ -158,7 +183,7 @@ extern "C" {
      * @return A pointer to a HexPad struct or NULL is returned.
      */
     HexPad* memviewpanel_get_hexpad(MemViewPanel* prPanel);
-    
+
     /** Return a pointer to a JumpStack struct representing the Jump Stack.
      * 
      * @param prPanel Pointer to a MemViewPanel struct representing the Memory
@@ -166,6 +191,15 @@ extern "C" {
      * @return A pointer to a JumpStack struct or NULL is returned.
      */
     JumpStack* memviewpanel_get_jumpstack(MemViewPanel* prPanel);
+
+    /** Return a pointer to a ColorConfig struct representing the Panel Color
+     * of the Hex Pad.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @return A pointer to a ColorConfig struct or NULL is returned.
+     */
+    ColorConfig* memviewpanel_get_padcolor(MemViewPanel* prPanel);
     
     /** Return a pointer to a ColorConfig struct representing the Panel Color
      * Configuration.

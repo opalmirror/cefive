@@ -2,6 +2,8 @@
 
 static int attempt_jump(MemViewPanel* prPanel);
 static int attempt_return(MemViewPanel* prPanel);
+static int hexpad_hide(MemViewPanel* prPanel);
+static int hexpad_show(MemViewPanel* prPanel);
 static int render_address_col(MemViewPanel* prPanel, const int row);
 static int render_comment_col(MemViewPanel* prPanel, const int row);
 static int render_row(MemViewPanel* prPanel, const int row);
@@ -114,6 +116,138 @@ static int attempt_return(MemViewPanel* prPanel) {
     return MEMVIEWPANEL_SUCCESS;
 }
 
+static int hexpad_hide(MemViewPanel* prPanel) {
+    SceUInt32 value = 0;
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPanel->editing == 1) {
+        if (prPanel->editMode == EM_Address) {
+            if (prPad->cancelled == 0) {
+                value = hexpad_get_value(prPad);
+                if ((value < prPanel->minOffset) || 
+                        (value >= prPanel->maxOffset)) {
+                    return MEMVIEWPANEL_BADADDR;
+                }
+                if (memviewpanel_seek(prPanel, value) < 0) {
+                    return MEMVIEWPANEL_FAILURE;
+                }
+            }
+        }
+    }
+    if(memviewpanel_invalidate(prPanel) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    prPad->visible = 0;
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+static int hexpad_show(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPad->visible == 1) {
+        return MEMVIEWPANEL_SUCCESS;
+    }
+    if (hexpad_set_position(prPad, 4, 4) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    prPad->visible = 1;
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+int memviewpanel_button_circle(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPad->visible == 1) {
+        if (hexpad_button_circle(prPad) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+int memviewpanel_button_cross(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPad->visible == 1) {
+        if (hexpad_button_cross(prPad) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+int memviewpanel_button_ltrigger(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPad->visible == 1) {
+        if (hexpad_prev_digit(prPad) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;    
+}
+
+int memviewpanel_button_rtrigger(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPad->visible == 1) {
+        if (hexpad_next_digit(prPad) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;    
+}
+
+int memviewpanel_button_square(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPad->visible == 1) {
+        if (hexpad_button_square(prPad) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+int memviewpanel_button_triangle(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPad->visible == 1) {
+        if (hexpad_button_triangle(prPad) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    } else {
+        if (memviewpanel_jump_to(prPanel) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;
+}
+
 int memviewpanel_cursor_down(MemViewPanel* prPanel) {
     CursorPos* prCursor = NULL;
     Dimension* prSize = NULL;
@@ -197,6 +331,78 @@ int memviewpanel_cursor_up(MemViewPanel* prPanel) {
     return MEMVIEWPANEL_SUCCESS;
 }
 
+int memviewpanel_dpad_down(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPad->visible == 1) {
+        if (hexpad_cursor_down(prPad) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    } else {
+        if (memviewpanel_cursor_down(prPanel) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+int memviewpanel_dpad_left(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPad->visible == 1) {
+        if (hexpad_cursor_left(prPad) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    } else {
+        if (memviewpanel_cursor_left(prPanel) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+int memviewpanel_dpad_right(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPad->visible == 1) {
+        if (hexpad_cursor_right(prPad) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    } else {
+        if (memviewpanel_cursor_right(prPanel) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+int memviewpanel_dpad_up(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (prPad->visible == 1) {
+        if (hexpad_cursor_up(prPad) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    } else {
+        if (memviewpanel_cursor_up(prPanel) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;
+}
+
 PanelConfig* memviewpanel_get_config(MemViewPanel* prPanel) {
     if (prPanel != NULL) {
         return &prPanel->panelConfig;
@@ -231,6 +437,15 @@ HexPad* memviewpanel_get_hexpad(MemViewPanel* prPanel) {
 JumpStack* memviewpanel_get_jumpstack(MemViewPanel* prPanel) {
     if (prPanel != NULL) {
         return &prPanel->jumpStack;
+    }
+    return NULL;
+}
+
+ColorConfig* memviewpanel_get_padcolor(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel != NULL) {
+        prPad = memviewpanel_get_hexpad(prPanel);
+        return hexpad_get_panelcolor(prPad);
     }
     return NULL;
 }
@@ -312,6 +527,23 @@ int memviewpanel_invalidate(MemViewPanel* prPanel) {
     return MEMVIEWPANEL_SUCCESS;
 }
 
+int memviewpanel_jump_to(MemViewPanel* prPanel) {
+    HexPad* prPad = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (hexpad_set_value(prPad, prPanel->offset) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    if (hexpad_show(prPanel) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    prPanel->editing = 1;
+    prPanel->editMode = EM_Address;
+    return MEMVIEWPANEL_SUCCESS;
+}
+
 int memviewpanel_page_down(MemViewPanel* prPanel) {
     Dimension* prSize = NULL;
     if (prPanel == NULL) {
@@ -355,9 +587,23 @@ int memviewpanel_page_up(MemViewPanel* prPanel) {
 
 int memviewpanel_redraw(MemViewPanel* prPanel) {
     Dimension* prSize = NULL;
+    HexPad* prPad = NULL;
     int row = 0;
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
+    }
+    if (prPanel->editing == 1) {
+        prPad = memviewpanel_get_hexpad(prPanel);
+        if (prPad->visible == 1) {
+            if (hexpad_redraw(prPad) < 0) {
+                return MEMVIEWPANEL_FAILURE;
+            }
+        } else {
+            if (hexpad_hide(prPanel) < 0) {
+                return MEMVIEWPANEL_FAILURE;
+            }
+            prPanel->editing = 0;
+        }
     }
     if (prPanel->dirty == 0) {
         return MEMVIEWPANEL_SUCCESS;
@@ -428,12 +674,29 @@ int memviewpanel_seek(MemViewPanel* prPanel, SceUInt32 address) {
 int memviewpanel_set_cursorcolor(MemViewPanel* prPanel,
         const u32 background, const u32 text) {
     ColorConfig* prColor = NULL;
+    HexPad* prPad = NULL;
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
     }
     prColor = memviewpanel_get_cursorcolor(prPanel);
-    if (colorconfig_setcolor(prColor, background, text) != COLORCONFIG_SUCCESS)
-    {
+    if (colorconfig_setcolor(prColor, background, text) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    prPad = memviewpanel_get_hexpad(prPanel);
+    if (hexpad_set_cursorcolor(prPad, background, text) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    return MEMVIEWPANEL_SUCCESS;
+}
+
+int memviewpanel_set_padcolor(MemViewPanel* prPanel,
+        const u32 background, const u32 text) {
+    ColorConfig* prColor = NULL;
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    prColor = memviewpanel_get_padcolor(prPanel);
+    if (colorconfig_setcolor(prColor, background, text) < 0) {
         return MEMVIEWPANEL_FAILURE;
     }
     return MEMVIEWPANEL_SUCCESS;
@@ -446,8 +709,7 @@ int memviewpanel_set_panelcolor(MemViewPanel* prPanel,
         return MEMVIEWPANEL_NULLPTR;
     }
     prColor = memviewpanel_get_panelcolor(prPanel);
-    if (colorconfig_setcolor(prColor, background, text) != COLORCONFIG_SUCCESS)
-    {
+    if (colorconfig_setcolor(prColor, background, text) < 0) {
         return MEMVIEWPANEL_FAILURE;
     }
     return MEMVIEWPANEL_SUCCESS;

@@ -68,7 +68,7 @@ static void button_circle_up(CEFiveUi *prUi) {
             return;
         }
         if (prUi->applet == 2) {
-            if (prUi->disassembler.editing == 1) {
+            if (disassembler_is_editing(&prUi->disassembler)) {
                 disassembler_button_circle(&prUi->disassembler);
                 return;
             }
@@ -181,6 +181,13 @@ static void button_ltrigger_up(CEFiveUi *prUi) {
         }
         /* draw the applet menu */
         if (prMenu->visible == 0) {
+            /* Send ltriggers from the disassembler through if editing. */
+            if (prUi->applet == 2) {
+                if (disassembler_is_editing(&prUi->disassembler)) {
+                    disassembler_button_ltrigger(&prUi->disassembler);
+                    return;
+                }
+            }
             /* Don't pop the applet menu while the Cheat Editor is showing. */
             if (prUi->applet != 1) {
                 cefiveui_log(prUi, LOG_DEBUG,
@@ -200,8 +207,20 @@ static void button_rtrigger_down(CEFiveUi *prUi) {
 }
 
 static void button_rtrigger_up(CEFiveUi *prUi) {
-    if (prUi != NULL) {
-        prUi->buttons.rtrigger = 0;
+    if (prUi == NULL) {
+        return;
+    }
+    prUi->buttons.rtrigger = 0;
+    switch (prUi->applet) {
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            if (disassembler_is_editing(&prUi->disassembler)) {
+                disassembler_button_rtrigger(&prUi->disassembler);
+            }
+            break;
     }
 }
 
@@ -221,6 +240,9 @@ static void button_square_up(CEFiveUi *prUi) {
             case 0:
                 cheatpanel_square_button(&prUi->cheatpanel);
                 break;
+            case 2:
+                disassembler_button_square(&prUi->disassembler);
+                break;
         }
     }
 }
@@ -234,9 +256,13 @@ static void button_triangle_down(CEFiveUi *prUi) {
 static void button_triangle_up(CEFiveUi *prUi) {
     if (prUi != NULL) {
         prUi->buttons.triangle = 0;
-        if (prUi->applet == 0) {
-            edit_selected_cheat(prUi);
-            return;
+        switch (prUi->applet) {
+            case 0:
+                edit_selected_cheat(prUi);
+                break;
+            case 2:
+                disassembler_button_triangle(&prUi->disassembler);
+                break;
         }
     }
 }
@@ -301,69 +327,61 @@ void cefiveui_buttoncallback(int curr, int last, CEFiveUi* prUi) {
 }
 
 AppletConfig* cefiveui_get_appletconfig(CEFiveUi* prUi) {
-    AppletConfig* prCfg = NULL;
     CEFiveConfig* prConfig = NULL;
     if (prUi != NULL) {
         prConfig = cefiveui_get_config(prUi);
-        prCfg = &prConfig->rAppletConfig;
+        return &prConfig->rAppletConfig;
     }
-    return prCfg;
+    return NULL;
 }
 
 AppletMenu* cefiveui_get_appletmenu(CEFiveUi* prUi) {
-    AppletMenu* prMenu = NULL;
     if (prUi != NULL) {
-        prMenu = &prUi->appletmenu;
+        return &prUi->appletmenu;
     }
-    return prMenu;
+    return NULL;
 }
 
 CheatEditor* cefiveui_get_cheateditor(CEFiveUi* prUi) {
-    CheatEditor* prPanel = NULL;
     if (prUi != NULL) {
-        prPanel = &prUi->cheateditor;
+        return &prUi->cheateditor;
     }
-    return prPanel;
+    return NULL;
 }
 
 CheatEngine* cefiveui_get_cheatengine(CEFiveUi* prUi) {
-    CheatEngine* prEngine = NULL;
     if (prUi != NULL) {
-        prEngine = prUi->prEngine;
+        return prUi->prEngine;
     }
-    return prEngine;
+    return NULL;
 }
 
 CheatPanel* cefiveui_get_cheatpanel(CEFiveUi* prUi) {
-    CheatPanel* prPanel = NULL;
     if (prUi != NULL) {
-        prPanel = &prUi->cheatpanel;
+        return &prUi->cheatpanel;
     }
-    return prPanel;
+    return NULL;
 }
 
 CEFiveConfig* cefiveui_get_config(CEFiveUi* prUi) {
-    CEFiveConfig* prCfg = NULL;
     if (prUi != NULL) {
-        prCfg = prUi->prCEConfig;
+        return prUi->prCEConfig;
     }
-    return prCfg;
+    return NULL;
 }
 
 HexEditor* cefiveui_get_hexeditor(CEFiveUi* prUi) {
-    HexEditor* prPanel = NULL;
     if (prUi != NULL) {
-        prPanel = &prUi->hexeditor;
+        return &prUi->hexeditor;
     }
-    return prPanel;
+    return NULL;
 }
 
 CEFiveUiConfig* cefiveui_get_uiconfig(CEFiveUi* prUi) {
-    CEFiveUiConfig * prCfg = NULL;
     if (prUi != NULL) {
-        prCfg = &prUi->config;
+        return &prUi->config;
     }
-    return prCfg;
+    return NULL;
 }
 
 int cefiveuiHandleInput(CEFiveUi *prUi) {
