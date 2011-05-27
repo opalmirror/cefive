@@ -568,22 +568,6 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     geelog_flog(LOG_DEBUG, sFunc, "Initializing Disassembler Applet.");
     Disassembler *prDasm = &prUi->disassembler;
     disassembler_init(prDasm, prAppCfg);
-    prDasm->config.code_color.background = prUi->config.color.background;
-    prDasm->config.code_color.text = prUi->config.color.text;
-    prDasm->config.address_color.background = (u32)0xFFA0A0A0;
-    prDasm->config.address_color.text = prUi->config.color.text;
-    prDasm->config.cursor_color.background = prUi->config.editcursor.background;
-    prDasm->config.cursor_color.text = prUi->config.editcursor.text;
-    prDasm->config.cursorrow_color.background = prUi->config.cursor.background;
-    prDasm->config.cursorrow_color.text = prUi->config.cursor.text;
-    prDasm->config.pointer_color.background = (u32)0xFFB0B0B0;
-    prDasm->config.pointer_color.text = (u32)0xFF000060;
-    prDasm->config.value_color.background = (u32)0xFFB0B0B0;
-    prDasm->config.value_color.text = prUi->config.color.text;
-    prDasm->config.position.x = 0;
-    prDasm->config.position.y = 1;
-    prDasm->config.tablesize.height = 30;
-    prDasm->config.tablepos.y = 2;
 
     geelog_flog(LOG_DEBUG, sFunc, "Initializing Applet Menu.");
     if (init_appletmenu(prUi) != CEFIVEUI_SUCCESS) {

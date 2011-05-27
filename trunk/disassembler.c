@@ -1,23 +1,5 @@
 #include "disassembler.h"
 
-static void commit_value_edit(Disassembler *prPanel);
-static SceUInt32 get_selected_offset(Disassembler *prPanel);
-
-static void commit_value_edit(Disassembler *prPanel) {
-    SceUInt32 value = 0;
-    SceUInt32 offset = 0;
-    SceUInt32 *pDest = NULL;
-    if (prPanel == NULL) {
-        return;
-    }
-    //value = prPanel->value_editor.value;
-    offset = get_selected_offset(prPanel);
-    pDest = (SceUInt32 *)offset;
-    *pDest = value;
-    sceKernelDcacheWritebackInvalidateRange(offset, 4);
-    sceKernelIcacheInvalidateRange(offset, 4);
-}
-
 void disassembler_button_circle(Disassembler *prPanel) {
     MemViewPanel* prMemView = NULL;
     if (prPanel == NULL) {
@@ -193,21 +175,6 @@ int disassembler_init(Disassembler *prPanel, AppletConfig *prApCfg) {
         return DISASSEMBLER_MEMORY;
     }
     prPanel->prApCfg = prApCfg;
-    prPanel->config.address_color.background = DISASSEMBLER_DEFBGCOLOR;
-    prPanel->config.address_color.text = DISASSEMBLER_DEFFGCOLOR;
-    prPanel->config.base_address = 0x08800000;
-    prPanel->config.code_color.background = DISASSEMBLER_DEFBGCOLOR;
-    prPanel->config.code_color.text = DISASSEMBLER_DEFFGCOLOR;
-    prPanel->config.cursor_color.background = DISASSEMBLER_DEFBGCOLOR;
-    prPanel->config.cursor_color.text = DISASSEMBLER_DEFFGCOLOR;
-    prPanel->config.cursorrow_color.background = DISASSEMBLER_DEFBGCOLOR;
-    prPanel->config.cursorrow_color.text = DISASSEMBLER_DEFFGCOLOR;
-    prPanel->config.tablesize.height = 20;
-    prPanel->config.max_offset = 0x49FFFFFF;
-    prPanel->config.min_offset = 0x48800000;
-    prPanel->config.tablepos.y = 7;
-    prPanel->config.value_color.background = DISASSEMBLER_DEFBGCOLOR;
-    prPanel->config.value_color.text = DISASSEMBLER_DEFFGCOLOR;
     prPanel->editing = 0;
     prPanel->dirty = 1;
 
@@ -325,9 +292,4 @@ SceUInt32 disassembler_tell(Disassembler *prPanel) {
         pos = prMemView->offset;
     }
     return pos;
-}
-
-static SceUInt32 get_selected_offset(Disassembler *prPanel) {
-    SceUInt32 offset = 0;
-    return offset;
 }

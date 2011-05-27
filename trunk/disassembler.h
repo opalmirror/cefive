@@ -46,32 +46,12 @@
 extern "C" {
 #endif
 
-    typedef struct _DisassemblerConfig {
-        SceUInt32 base_address;
-        SceUInt32 min_offset;
-        SceUInt32 max_offset;
-        ColorConfig address_color;
-        ColorConfig value_color;
-        ColorConfig code_color;
-        ColorConfig cursorrow_color;
-        ColorConfig cursor_color;
-        ColorConfig pointer_color;
-        CursorPos position;
-        CursorPos tablepos;
-        Dimension tablesize;
-    } DisassemblerConfig;
-
     typedef struct _Disassembler {
-        DisassemblerConfig config;
+        MemViewPanel memViewPanel;
         AppletConfig* prApCfg;
-        SceUInt32 offset;
-        SceUInt32 poffset;
+        GameInfo* prGameInfo;
         int editing;
         int dirty;
-        int cursordirty;
-        int cur_jump;
-        GameInfo* prGameInfo;
-        MemViewPanel memViewPanel;
     } Disassembler;
 
     void disassembler_button_circle(Disassembler *);
