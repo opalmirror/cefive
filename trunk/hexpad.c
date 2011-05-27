@@ -19,11 +19,6 @@ static ColorConfig* digit_color(HexPad* prPad, const int x, const int y) {
 }
 
 int hexpad_button_circle(HexPad* prPad) {
-    if (prPad == NULL) {
-        return HEXPAD_NULLPTR;
-    }
-    prPad->cancelled = 1;
-    prPad->visible = 0;
     return HEXPAD_SUCCESS;
 }
 
@@ -48,7 +43,11 @@ int hexpad_button_square(HexPad* prPad) {
 }
 
 int hexpad_button_triangle(HexPad* prPad) {
-    return HEXPAD_SUCCESS;
+    if (prPad == NULL) {
+        return HEXPAD_NULLPTR;
+    }
+    prPad->cancelled = 0;
+    prPad->visible = 0;
 }
 
 int hexpad_prev_digit(HexPad* prPad) {
