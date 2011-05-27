@@ -36,43 +36,38 @@ int panelconfig_copy(PanelConfig* prDest, PanelConfig* prSrc) {
 }
 
 ColorConfig* panelconfig_get_cursorcolor(PanelConfig* prCfg) {
-    ColorConfig* prColor = NULL;
     if (prCfg != NULL) {
-        prColor = &prCfg->rCursor;
+        return &prCfg->rCursor;
     }
-    return prColor;
+    return NULL;
 }
 
 ColorConfig* panelconfig_get_editcolor(PanelConfig* prCfg) {
-    ColorConfig* prColor = NULL;
     if (prCfg != NULL) {
-        prColor = &prCfg->rEdit;
+        return &prCfg->rEdit;
     }
-    return prColor;
+    return NULL;
 }
 
 ColorConfig* panelconfig_get_panelcolor(PanelConfig* prCfg) {
-    ColorConfig* prColor = NULL;
     if (prCfg != NULL) {
-        prColor = &prCfg->rColor;
+        return &prCfg->rColor;
     }
-    return prColor;
+    return NULL;
 }
 
 CursorPos* panelconfig_get_position(PanelConfig* prCfg) {
-    CursorPos* prPos = NULL;
     if (prCfg != NULL) {
-        prPos = &prCfg->rTop;
+        return &prCfg->rTop;
     }
-    return prPos;
+    return NULL;
 }
 
 Dimension* panelconfig_get_size(PanelConfig* prCfg) {
-    Dimension* prDim = NULL;
     if (prCfg != NULL) {
-        prDim = &prCfg->rSize;
+        return &prCfg->rSize;
     }
-    return prDim;
+    return NULL;
 }
 
 int panelconfig_init(PanelConfig* prCfg) {

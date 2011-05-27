@@ -198,76 +198,68 @@ int memviewpanel_cursor_up(MemViewPanel* prPanel) {
 }
 
 PanelConfig* memviewpanel_get_config(MemViewPanel* prPanel) {
-    PanelConfig* prConfig = NULL;
     if (prPanel != NULL) {
-        prConfig = &prPanel->panelConfig;
+        return &prPanel->panelConfig;
     }
-    return prConfig;
+    return NULL;
 }
 
 ColorConfig* memviewpanel_get_cursorcolor(MemViewPanel* prPanel) {
-    ColorConfig* prColor = NULL;
     PanelConfig* prConfig = NULL;
     if (prPanel != NULL) {
         prConfig = memviewpanel_get_config(prPanel);
-        prColor = panelconfig_get_cursorcolor(prConfig);
+        return panelconfig_get_cursorcolor(prConfig);
     }
     
-    return prColor;
+    return NULL;
 }
 
 CursorPos* memviewpanel_get_cursorpos(MemViewPanel* prPanel) {
-    CursorPos* prCursor = NULL;
     if (prPanel != NULL) {
-        prCursor = &prPanel->cursorPos;
+        return &prPanel->cursorPos;
     }
-    return prCursor;
+    return NULL;
 }
 
 HexPad* memviewpanel_get_hexpad(MemViewPanel* prPanel) {
-    HexPad* prPad = NULL;
     if (prPanel != NULL) {
-        prPad = &prPanel->hexPad;
+        return &prPanel->hexPad;
     }
-    return prPad;
+    return NULL;
 }
 
 JumpStack* memviewpanel_get_jumpstack(MemViewPanel* prPanel) {
-    JumpStack* prStack = NULL;
     if (prPanel != NULL) {
-        prStack = &prPanel->jumpStack;
+        return &prPanel->jumpStack;
     }
-    return prStack;
+    return NULL;
 }
 
 ColorConfig* memviewpanel_get_panelcolor(MemViewPanel* prPanel) {
-    ColorConfig* prColor = NULL;
     PanelConfig* prConfig = NULL;
     if (prPanel != NULL) {
         prConfig = memviewpanel_get_config(prPanel);
-        prColor = panelconfig_get_panelcolor(prConfig);
+        return panelconfig_get_panelcolor(prConfig);
     }
-    return prColor;
+    return NULL;
 }
 
 CursorPos* memviewpanel_get_position(MemViewPanel* prPanel) {
-    CursorPos* prPos = NULL;
     PanelConfig* prConfig = NULL;
     if (prPanel != NULL) {
         prConfig = memviewpanel_get_config(prPanel);
-        prPos = panelconfig_get_position(prConfig);
+        return panelconfig_get_position(prConfig);
     }
-    return prPos;
+    return NULL;
 }
 
 Dimension* memviewpanel_get_size(MemViewPanel* prPanel) {
-    Dimension* prSize = NULL;
     PanelConfig* prConfig = NULL;
     if (prPanel != NULL) {
         prConfig = memviewpanel_get_config(prPanel);
-        prSize = panelconfig_get_size(prConfig);
+        return panelconfig_get_size(prConfig);
     }
-    return prSize;
+    return NULL;
 }
 
 int memviewpanel_init(MemViewPanel* prPanel) {
@@ -597,17 +589,16 @@ static SceUInt32 row_address(MemViewPanel* prPanel, const int row) {
 }
 
 static ColorConfig* row_color(MemViewPanel* prPanel, const int row) {
-    ColorConfig* prColor = NULL;
     CursorPos* prCursor = NULL;
     if (prPanel != NULL) {
         prCursor = memviewpanel_get_cursorpos(prPanel);
         if (prCursor->y == row) {
-            prColor = memviewpanel_get_cursorcolor(prPanel);
+            return memviewpanel_get_cursorcolor(prPanel);
         } else {
-            prColor = memviewpanel_get_panelcolor(prPanel);
+            return memviewpanel_get_panelcolor(prPanel);
         }
     }
-    return prColor;
+    return NULL;
 }
 
 static SceUInt32 row_destination(MemViewPanel* prPanel, const int row) {

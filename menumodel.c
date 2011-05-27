@@ -21,13 +21,12 @@ int menumodel_additem(MenuModel* prModel, const int id, const char* sText) {
 }
 
 MenuItem* menumodel_get(MenuModel* prModel, const int index) {
-    MenuItem* prItem = NULL;
     if (prModel != NULL) {
         if ((index >= 0) && (index < prModel->rowCount)) {
-            prItem = &prModel->items[index];
+            return &prModel->items[index];
         }
     }
-    return prItem;
+    return NULL;
 }
 
 int menumodel_init(MenuModel* prModel) {

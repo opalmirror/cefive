@@ -21,74 +21,66 @@ int appletconfig_copy(AppletConfig* prDest, AppletConfig* prSrc) {
 }
 
 ColorConfig* appletconfig_get_cursorcolor(AppletConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     PanelConfig* prPan = appletconfig_get_panelconfig(prConfig);
     if (prPan != NULL) {
-        prColor = panelconfig_get_cursorcolor(prPan);
+        return panelconfig_get_cursorcolor(prPan);
     }
-    return prColor;
+    return NULL;
 }
 
 ColorConfig* appletconfig_get_editcolor(AppletConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     PanelConfig* prPan = appletconfig_get_panelconfig(prConfig);
     if (prPan != NULL) {
-        prColor = panelconfig_get_editcolor(prPan);
+        return panelconfig_get_editcolor(prPan);
     }
-    return prColor;
+    return NULL;
 }
 
 ColorConfig* appletconfig_get_panelcolor(AppletConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     PanelConfig* prPan = appletconfig_get_panelconfig(prConfig);
     if (prPan != NULL) {
-        prColor = panelconfig_get_panelcolor(prPan);
+        return panelconfig_get_panelcolor(prPan);
     }
-    return prColor;
+    return NULL;
 }
 
 PanelConfig* appletconfig_get_panelconfig(AppletConfig* prConfig) {
-    PanelConfig* prPan = NULL;
     if (prConfig != NULL) {
-        prPan = &prConfig->rPanel;
+        return &prConfig->rPanel;
     }
-    return prPan;
+    return NULL;
 }
 
 CursorPos* appletconfig_get_position(AppletConfig* prConfig) {
-    CursorPos* prPos = NULL;
     PanelConfig* prCfg = NULL;
     if (prConfig != NULL) {
         prCfg = appletconfig_get_panelconfig(prConfig);
-        prPos = panelconfig_get_position(prCfg);
+        return panelconfig_get_position(prCfg);
     }
-    return prPos;
+    return NULL;
 }
 
 Dimension* appletconfig_get_size(AppletConfig* prConfig) {
-    Dimension* prSize = NULL;
     PanelConfig* prCfg = NULL;
     if (prConfig != NULL) {
         prCfg = appletconfig_get_panelconfig(prConfig);
-        prSize = panelconfig_get_size(prCfg);
+        return panelconfig_get_size(prCfg);
     }
-    return prSize;
+    return NULL;
 }
 
 ColorConfig* appletconfig_get_statuscolor(AppletConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     if (prConfig != NULL) {
-        prColor = &prConfig->rStatus;
+        return &prConfig->rStatus;
     }
-    return prColor;
+    return NULL;
 }
 
 ColorConfig* appletconfig_get_titlecolor(AppletConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     if (prConfig != NULL) {
-        prColor = &prConfig->rTitlebar;
+        return &prConfig->rTitlebar;
     }
-    return prColor;
+    return NULL;
 }
 
 int appletconfig_init(AppletConfig* prConfig) {

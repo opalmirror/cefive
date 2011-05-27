@@ -54,6 +54,16 @@ extern "C" {
     /** The AppletMenu struct represents an Applet Menu. */
     AppletMenu;
 
+    /** Add a Menu Item to an Applet Menu.
+     * 
+     * @param prModel Pointer to an AppletMenu struct representing the Applet
+     * Menu.
+     * @param id int containing the id of the item to add.
+     * @param sText string containing the text representation of the Menu Item.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int appletmenu_additem(AppletMenu* prMenu, const int id, const char* text);
+    
     /** Respond to the user pressing the Circle Button.
      * 
      * @param prMenu Pointer to an AppletMenu struct representing the Applet
@@ -216,7 +226,6 @@ extern "C" {
      */
     int appletmenu_set_size(AppletMenu* prMenu, int width, int height);
     
-    void appletmenuCircleButton(AppletMenu* prMenu);
     void appletmenuCrossButton(AppletMenu *prMenu);
     void appletmenuCursorDown(AppletMenu *prMenu);
     void appletmenuCursorUp(AppletMenu *prMenu);

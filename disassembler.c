@@ -88,69 +88,63 @@ void disassembler_dpad_up(Disassembler *prPanel) {
 }
 
 AppletConfig* disassembler_get_appletconfig(Disassembler* prDasm) {
-    AppletConfig* prConfig = NULL;
     if (prDasm != NULL) {
-        prConfig = prDasm->prApCfg;
+        return prDasm->prApCfg;
     }
-    return prConfig;
+    return NULL;
 }
 
 ColorConfig* disassembler_get_cursorcolor(Disassembler* prDasm) {
-    ColorConfig* prColor = NULL;
     AppletConfig* prConfig = NULL;
     
     if (prDasm != NULL) {
         prConfig = disassembler_get_appletconfig(prDasm);
         if (prConfig != NULL) {
-            prColor = appletconfig_get_cursorcolor(prConfig);
+            return appletconfig_get_cursorcolor(prConfig);
         }
     }
-    return prColor;
+    return NULL;
 }
 
 MemViewPanel* disassembler_get_memview(Disassembler* prDasm) {
-    MemViewPanel* prPanel = NULL;
     if (prDasm != NULL) {
-        prPanel = &prDasm->memViewPanel;
+        return &prDasm->memViewPanel;
     }
-    return prPanel;
+    return NULL;
 }
 
 ColorConfig* disassembler_get_panelcolor(Disassembler* prDasm) {
-    ColorConfig* prColor = NULL;
     AppletConfig* prConfig = NULL;
     
     if (prDasm != NULL) {
         prConfig = disassembler_get_appletconfig(prDasm);
         if (prConfig != NULL) {
-            prColor = appletconfig_get_panelcolor(prConfig);
+            return appletconfig_get_panelcolor(prConfig);
         }
     }
-    return prColor;
+    return NULL;
 }
 
 CursorPos* disassembler_get_position(Disassembler* prDasm) {
-    CursorPos* prPos = NULL;
     AppletConfig *prConfig = NULL;
     if (prDasm != NULL) {
         prConfig = disassembler_get_appletconfig(prDasm);
         if (prConfig != NULL) {
-            prPos = appletconfig_get_position(prConfig);
+            return appletconfig_get_position(prConfig);
         }
     }
-    return prPos;
+    return NULL;
 }
 
 Dimension* disassembler_get_size(Disassembler* prDasm) {
-    Dimension* prSize = NULL;
     AppletConfig* prConfig = NULL;
     if (prDasm != NULL) {
         prConfig = disassembler_get_appletconfig(prDasm);
         if (prConfig != NULL) {
-            prSize = appletconfig_get_size(prConfig);
+            return appletconfig_get_size(prConfig);
         }
     }
-    return prSize;
+    return NULL;
 }
 
 int disassembler_init(Disassembler *prPanel, AppletConfig *prApCfg) {
