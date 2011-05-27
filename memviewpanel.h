@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <pspkerneltypes.h>
 #include <pspdebug.h>
+#include <psputils.h>
+#include <psputilsforkernel.h>
 #include "panelconfig.h"
 #include "colorconfig.h"
 #include "cursorpos.h"

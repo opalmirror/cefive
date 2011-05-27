@@ -130,16 +130,25 @@ static int edit_value(MemViewPanel* prPanel) {
     if (hexpad_set_value(prPad, value) < 0) {
         return MEMVIEWPANEL_FAILURE;
     }
-    
+    if (hexpad_show(prPanel) < 0) {
+        return MEMVIEWPANEL_FAILURE;
+    }
+    prPanel->editing = 1;
+    prPanel->editMode = EM_UInt32;
     return MEMVIEWPANEL_SUCCESS;
 }
 
 static int hexpad_hide(MemViewPanel* prPanel) {
+    CursorPos* prCursor = NULL;
+    SceUInt32 address = 0;
     SceUInt32 value = 0;
+    SceUInt32* pMem = NULL;
     HexPad* prPad = NULL;
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
     }
+    prCursor = memviewpanel_get_cursorpos(prPanel);
+    address = row_address(prPanel, prCursor->y);
     prPad = memviewpanel_get_hexpad(prPanel);
     if (prPanel->editing == 1) {
         if (prPanel->editMode == EM_Address) {
@@ -152,6 +161,15 @@ static int hexpad_hide(MemViewPanel* prPanel) {
                 if (memviewpanel_seek(prPanel, value) < 0) {
                     return MEMVIEWPANEL_FAILURE;
                 }
+            }
+        }
+        if (prPanel->editMode == EM_UInt32) {
+            if (prPad->cancelled == 0) {
+                value = hexpad_get_value(prPad);
+                pMem = (SceUInt32*)(address | 0x40000000);
+                *pMem = value;
+                sceKernelDcacheWritebackInvalidateRange(pMem, 4);
+                sceKernelIcacheInvalidateRange(pMem, 4);
             }
         }
     }
@@ -201,6 +219,10 @@ int memviewpanel_button_cross(MemViewPanel* prPanel) {
     prPad = memviewpanel_get_hexpad(prPanel);
     if (prPad->visible == 1) {
         if (hexpad_button_cross(prPad) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    } else {
+        if (edit_value(prPanel) < 0) {
             return MEMVIEWPANEL_FAILURE;
         }
     }
