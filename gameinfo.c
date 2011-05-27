@@ -1,13 +1,3 @@
-#include <pspkerneltypes.h>
-#include <pspmodulemgr.h>
-#include <pspdebug.h>
-#include <stdio.h>
-#include <pspmodulemgr_kernel.h>
-#include <psploadcore.h>
-#include "colorconfig.h"
-#include "appletconfig.h"
-#include "cursorpos.h"
-#include "geelog.h"
 #include "gameinfo.h"
 
 ColorConfig* gameinfoconfig_get_colorconfig(GameInfoConfig* prCfg) {
@@ -108,33 +98,24 @@ int gameinfo_init(GameInfo *prInfo) {
     if (prInfo == NULL) {
         return GAMEINFO_NULLPTR;
     }
-    gameinfo_log(prInfo, LOG_DEBUG, 
-            "gameinfo_init: Initializing Library Arrays.");
     for (i = 0; i < GAMEINFO_MAXSTUBCT; i++) {
         prInfo->aprStubTable[i] = NULL;
         prInfo->arUID[i] = 0;
     }
     prCfg = &prInfo->config;
-    gameinfo_log(prInfo, LOG_DEBUG, 
-            "gameinfo_init: Initializing GameInfoConfig member.");
     r = gameinfoconfig_init(prCfg);
     if (r != GAMEINFO_SUCCESS) {
-        gameinfo_log(prInfo, LOG_WARN, 
-                "gameinfo_init: Failed to initialize GameInfoConfig member.");
         return GAMEINFO_FAILURE;
     }
-    gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_init: Setting counts to 0.");
     prInfo->libEntryCount = 0;
     prInfo->libStubCount = 0;
     prInfo->loaded = 0;
     prInfo->module_count = 0;
-    gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_init: Setting pointers to NULL.");
     prInfo->prApCfg = NULL;
     prInfo->prLibTable = NULL;
     prInfo->prModule = NULL;
     prInfo->sGameId = NULL;
     prInfo->textEnd = NULL;
-    gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_init: GameInfo initialized.");
     return GAMEINFO_SUCCESS;
 }
 
@@ -149,97 +130,46 @@ int gameinfo_load(GameInfo *prInfo) {
     unsigned int tablep = 0;
     int i = 0;
     char sMsg[256];
-    int imodules = 0;
 
     if (prInfo == NULL) {
         return GAMEINFO_NULLPTR;
     }
     if (prInfo->loaded == 1) {
-        gameinfo_log(prInfo, LOG_DEBUG, 
-                "gameinfo_load: GameInfo already loaded.");
         return GAMEINFO_SUCCESS;
     }
 
     prInfo->textEnd = 0x09FFFFFF;
-    imodules = sceKernelModuleCount();
-    sprintf(sMsg, "gameinfo_load: %d Kernel Modules loaded.", imodules);
-    gameinfo_log(prInfo, LOG_DEBUG, sMsg);
-    gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_load: Locating Game Module.");
     prModule = sceKernelFindModuleByAddress(0x08804000);
     if (prModule != NULL) {
-        gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_load: Game Module located.");
         prInfo->prModule = prModule;
-        gameinfo_log(prInfo, LOG_DEBUG, 
-                "gameinfo_load: Locating Library Export Table.");
         prEntTable = (SceLibraryEntryTable*)prModule->ent_top;
         if (prEntTable != NULL) {
-            sprintf(sMsg, "%s: Located Library Export Table at 0x%08X.",
-                    "gameinfo_load", prEntTable);
-            gameinfo_log(prInfo, LOG_DEBUG, sMsg);
             prInfo->prLibTable = prEntTable;
             prInfo->libEntryCount = prModule->ent_size / sizeof(SceLibraryEntryTable);
-            sprintf(sMsg, "%s: %d Libraries Exported",
-                    "gameinfo_load", prInfo->libEntryCount);
-            gameinfo_log(prInfo, LOG_DEBUG, sMsg);
         } else {
-            gameinfo_log(prInfo, LOG_WARN, 
-                    "gameinfo_load: Failed to locate Library Export Table.");
         }
-        gameinfo_log(prInfo, LOG_DEBUG, 
-                "gameinfo_load: Locating Library Import Table.");
         prStubTable = (SceLibraryStubTable*)prModule->stub_top;
         if (prStubTable != NULL) {
-            sprintf(sMsg, "%s: Located Import Table at 0x%08X.",
-                    "gameinfo_load", prStubTable);
-            gameinfo_log(prInfo, LOG_DEBUG, sMsg);
             tablesz = prModule->stub_size;
-            sprintf(sMsg, "%s: Import Table is %d bytes.",
-                    "gameinfo_load", tablesz);
-            gameinfo_log(prInfo, LOG_DEBUG, sMsg);
             while (tablep < tablesz) {
                 prCur = (SceLibraryStubTable*)(prModule->stub_top + tablep);
                 stubsz = prCur->len * 4;
                 prInfo->aprStubTable[stubct] = prCur;
                 stubct++;
                 tablep += stubsz;
-                sprintf(sMsg, "%s: Added Stub %d at 0x%08X.",
-                        "gameinfo_load", stubct, prCur);
-                gameinfo_log(prInfo, LOG_DEBUG, sMsg);
             }
             prInfo->libStubCount = stubct;
         } else {
-            gameinfo_log(prInfo, LOG_WARN, 
-                    "gameinfo_load: Unable to locate Library Import Table.");
         }
-        gameinfo_log(prInfo, LOG_DEBUG, 
-                "gameinfo_load: Locating end of .text segment.");
         for (i = 0; i < prInfo->libStubCount; i++) {
             prCur = prInfo->aprStubTable[i];
             if (prCur->stubtable < prInfo->textEnd) {
                 prInfo->textEnd = prCur->stubtable;
             }
         }
-        sprintf(sMsg, "%s: .text ends at 0x%08X.", 
-                "gameinfo_load", prInfo->textEnd);
-        gameinfo_log(prInfo, LOG_DEBUG, sMsg);
     } else {
-        gameinfo_log(prInfo, LOG_WARN, 
-                "gameinfo_load: Could not locate Game Module.");
     }
     prInfo->loaded = 1;
-    gameinfo_log(prInfo, LOG_DEBUG, "gameinfo_load: Game Info Loaded.");
-    return GAMEINFO_SUCCESS;
-}
-
-int gameinfo_log(GameInfo* prInfo, ELogLevel rLevel, const char* sMsg) {
-    int r = 0;
-    if (prInfo == NULL) {
-        return GAMEINFO_NULLPTR;
-    }
-    r = geelog_log(rLevel, sMsg);
-    if (r != GEELOG_SUCCESS) {
-        return GAMEINFO_FAILURE;
-    }
     return GAMEINFO_SUCCESS;
 }
 

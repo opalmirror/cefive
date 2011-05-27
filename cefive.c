@@ -29,12 +29,9 @@ static CEFive krCe;
 static SceUID kThreadId;
 
 static int cefive_flog(ELogLevel rLevel, const char* sFunc, const char* sMsg) {
-    char sLine[GEELOG_LINE_LEN + 1];
     if ((sFunc == NULL) || (sMsg == NULL)) {
         return CEFIVE_NULLPTR;
     }
-    sprintf(sLine, "%s: %s", sFunc, sMsg);
-    return cefive_log(rLevel, sLine);
 }
 
 CheatEngine* cefive_get_cheatengine() {
@@ -154,14 +151,11 @@ int cefive_stop() {
 static int load_config() {
     CEFiveConfig* prCfg = NULL;
     char sPath[CEFIVE_PATH_LEN + 1];
-    char sLine[GEELOG_LINE_LEN + 1];
     int r = 0;
     
     /* Initialize and load the Configuration */
     prCfg = cefive_get_config();
     sprintf(sPath, "%s/%s", CEFIVE_PLUGIN_PATH, CEFIVE_CONFIG_FILE);
-    sprintf(sLine, "load_config: Loading Config from '%s'.", sPath);
-    cefive_log(LOG_DEBUG, sLine);
 
     r = cefiveconfig_load(prCfg, sPath);
     if (r != CEFIVECONFIG_SUCCESS) {
@@ -212,7 +206,6 @@ static int start_cheatengine() {
                 "start_cheatengine: Failed to initialize Cheat Engine.");
         return CEFIVE_FAILURE;
     }
-    cheatengineSetLogger(prEng, krCe.prLogger);
     cefive_log(LOG_INFO,
             "start_cheatengine: Cheat Engine started.");
     return CEFIVE_SUCCESS;
@@ -228,7 +221,6 @@ static int start_interface() {
     prEngine = cefive_get_cheatengine();
     prSearch = cefive_get_searchengine();
     prConfig = cefive_get_config();
-    cefiveui_set_logger(prUi, krCe.prLogger);
     prUi->prCEConfig = prConfig;
     cefiveuiInit(prUi, prEngine, prSearch);
     
