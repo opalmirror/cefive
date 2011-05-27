@@ -2,6 +2,18 @@
 
 static int render_row(AppletMenu* prMenu, const int row);
 
+int appletmenu_additem(AppletMenu* prMenu, const int id, const char* text) {
+    MenuModel *prModel = NULL;
+    if (prMenu == NULL) {
+        return APPLETMENU_NULLPTR;
+    }
+    prModel = appletmenu_get_model(prMenu);
+    if (menumodel_additem(prModel, id, text) < 0) {
+        return APPLETMENU_FAILURE;
+    }
+    return APPLETMENU_SUCCESS;
+}
+
 int appletmenu_circle_button(AppletMenu* prMenu) {
     if (prMenu == NULL) {
         return APPLETMENU_NULLPTR;
@@ -74,73 +86,66 @@ int appletmenu_cursor_up(AppletMenu* prMenu) {
 }
 
 AppletConfig* appletmenu_get_appletconfig(AppletMenu* prMenu) {
-    AppletConfig* prConfig = NULL;
     if (prMenu != NULL) {
-        prConfig = prMenu->prApCfg;
+        return prMenu->prApCfg;
     }
-    return prConfig;
+    return NULL;
 }
 
 AppletMenuConfig* appletmenu_get_config(AppletMenu* prMenu) {
-    AppletMenuConfig* prConfig = NULL;
     if (prMenu != NULL) {
-        prConfig = &prMenu->config;
+        return &prMenu->config;
     }
-    return prConfig;
+    return NULL;
 }
 
 ColorConfig* appletmenu_get_cursorcolor(AppletMenu* prMenu) {
-    ColorConfig* prColor = NULL;
     AppletConfig* prApCfg = NULL;
     
     if (prMenu != NULL) {
         prApCfg = appletmenu_get_appletconfig(prMenu);
         if (prApCfg != NULL) {
-            prColor = appletconfig_get_cursorcolor(prApCfg);
+            return appletconfig_get_cursorcolor(prApCfg);
         }
     }
-    return prColor;
+    return NULL;
 }
 
 CursorPos* appletmenu_get_cursorpos(AppletMenu* prMenu) {
-    CursorPos* prPos = NULL;
     if (prMenu != NULL) {
-        prPos = &prMenu->cursor;
+        return &prMenu->cursor;
     }
-    return prPos;
+    return NULL;
 }
 
 MenuModel* appletmenu_get_model(AppletMenu* prMenu) {
-    MenuModel* prModel = NULL;
     if (prMenu != NULL) {
-        prModel = &prMenu->model;
+        return &prMenu->model;
     }
-    return prModel;
+    return NULL;
 }
 
 ColorConfig* appletmenu_get_panelcolor(AppletMenu* prMenu) {
-    ColorConfig* prColor = NULL;
     AppletConfig* prApCfg = NULL;
     
     if (prMenu != NULL) {
         prApCfg = appletmenu_get_appletconfig(prMenu);
         if (prApCfg != NULL) {
-            prColor = appletconfig_get_statuscolor(prApCfg);
+            return appletconfig_get_statuscolor(prApCfg);
         }
     }
-    return prColor;
+    return NULL;
 }
 
 CursorPos* appletmenu_get_position(AppletMenu* prMenu) {
-    CursorPos* prPos = NULL;
     AppletMenuConfig* prConfig = NULL;
     
     if (prMenu != NULL) {
         prConfig = appletmenu_get_config(prMenu);
-        prPos = appletmenuconfig_get_position(prConfig);
+        return appletmenuconfig_get_position(prConfig);
     }
     
-    return prPos;
+    return NULL;
 }
 
 int appletmenu_get_selectedindex(AppletMenu* prMenu) {
@@ -156,15 +161,14 @@ int appletmenu_get_selectedindex(AppletMenu* prMenu) {
 }
 
 Dimension* appletmenu_get_size(AppletMenu* prMenu) {
-    Dimension* prSize = NULL;
     AppletMenuConfig* prConfig = NULL;
     
     if (prMenu != NULL) {
         prConfig = appletmenu_get_config(prMenu);
-        prSize = appletmenuconfig_get_size(prConfig);
+        return appletmenuconfig_get_size(prConfig);
     }
     
-    return prSize;
+    return NULL;
 }
 
 int appletmenu_init(AppletMenu* prMenu) {
@@ -259,10 +263,6 @@ int appletmenu_set_size(AppletMenu* prMenu, int width, int height) {
         return APPLETMENU_FAILURE;
     }
     return APPLETMENU_SUCCESS;
-}
-
-void appletmenuCircleButton(AppletMenu* prMenu) {
-    appletmenu_circle_button(prMenu);
 }
 
 void appletmenuCrossButton(AppletMenu *prMenu) {

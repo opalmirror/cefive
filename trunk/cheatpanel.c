@@ -100,83 +100,75 @@ int cheatpanel_dpad_up(CheatPanel* prPanel) {
 }
 
 AppletConfig* cheatpanel_get_appletconfig(CheatPanel* prPanel) {
-    AppletConfig* prConfig = NULL;
     if (prPanel != NULL) {
-        prConfig = prPanel->prApCfg;
+        return prPanel->prApCfg;
     }
-    return prConfig;
+    return NULL;
 }
 
 CheatEngine* cheatpanel_get_cheatengine(CheatPanel* prPanel) {
-    CheatEngine* prEngine = NULL;
     if (prPanel != NULL) {
-        prEngine = prPanel->prEngine;
+        return prPanel->prEngine;
     }
-    return prEngine;
+    return NULL;
 }
 
 CheatPanelConfig* cheatpanel_get_config(CheatPanel* prPanel) {
-    CheatPanelConfig* prConfig = NULL;
     if (prPanel != NULL) {
-        prConfig = &prPanel->config;
+        return &prPanel->config;
     }
-    return prConfig;
+    return NULL;
 }
 
 ColorConfig* cheatpanel_get_constantcolor(CheatPanel* prPanel) {
-    ColorConfig* prColor = NULL;
     CheatPanelConfig* prConfig = NULL;
     if (prPanel != NULL) {
         prConfig = cheatpanel_get_config(prPanel);
         if (prConfig != NULL) {
-            prColor = &prConfig->constantcolor;
+            return &prConfig->constantcolor;
         }
     }
-    return prColor;
+    return NULL;
 }
 
 ColorConfig* cheatpanel_get_cursorcolor(CheatPanel* prPanel) {
-    ColorConfig* prColor = NULL;
     AppletConfig* prConfig = NULL;
     if (prPanel != NULL) {
         prConfig = cheatpanel_get_appletconfig(prPanel);
         if (prConfig != NULL) {
-            prColor = appletconfig_get_cursorcolor(prConfig);
+            return appletconfig_get_cursorcolor(prConfig);
         }
     }
-    return prColor;
+    return NULL;
 }
 
 CursorPos* cheatpanel_get_cursorpos(CheatPanel* prPanel) {
-    CursorPos* prPos = NULL;
     if (prPanel != NULL) {
-        prPos = &prPanel->cursor;
+        return &prPanel->cursor;
     }
-    return prPos;
+    return NULL;
 }
 
 ColorConfig* cheatpanel_get_panelcolor(CheatPanel* prPanel) {
-    ColorConfig* prColor = NULL;
     AppletConfig* prConfig = NULL;
     if (prPanel != NULL) {
         prConfig = cheatpanel_get_appletconfig(prPanel);
         if (prConfig != NULL) {
-            prColor = appletconfig_get_panelcolor(prConfig);
+            return appletconfig_get_panelcolor(prConfig);
         }
     }
-    return prColor;
+    return NULL;
 }
 
 ColorConfig* cheatpanel_get_selectedcolor(CheatPanel* prPanel) {
-    ColorConfig* prColor = NULL;
     CheatPanelConfig* prConfig = NULL;
     if (prPanel != NULL) {
         prConfig = cheatpanel_get_config(prPanel);
         if (prConfig != NULL) {
-            prColor = &prConfig->selectedcolor;
+            return &prConfig->selectedcolor;
         }
     }
-    return prColor;
+    return NULL;
 }
 
 int cheatpanel_get_selectedindex(CheatPanel *prPanel) {

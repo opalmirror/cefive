@@ -131,59 +131,53 @@ int hexpad_cursor_up(HexPad* prPad) {
 }
 
 PanelConfig* hexpad_get_config(HexPad* prPad) {
-    PanelConfig* prConfig = NULL;
     if (prPad != NULL) {
-        prConfig = &prPad->panelConfig;
+        return &prPad->panelConfig;
     }
-    return prConfig;
+    return NULL;
 }
 
 ColorConfig* hexpad_get_cursorcolor(HexPad* prPad) {
-    ColorConfig* prColor = NULL;
     PanelConfig* prConfig = NULL;
     if (prPad != NULL) {
         prConfig = hexpad_get_config(prPad);
-        prColor = panelconfig_get_cursorcolor(prConfig);
+        return panelconfig_get_cursorcolor(prConfig);
     }
-    return prColor;
+    return NULL;
 }
 
 CursorPos* hexpad_get_cursorpos(HexPad* prPad) {
-    CursorPos* prCursor = NULL;
     if (prPad != NULL) {
-        prCursor = &prPad->cursorPos;
+        return &prPad->cursorPos;
     }
-    return prCursor;
+    return NULL;
 }
 
 ColorConfig* hexpad_get_panelcolor(HexPad* prPad) {
-    ColorConfig* prColor = NULL;
     PanelConfig* prConfig = NULL;
     if (prPad != NULL) {
         prConfig = hexpad_get_config(prPad);
-        prColor = panelconfig_get_panelcolor(prConfig);
+        return panelconfig_get_panelcolor(prConfig);
     }
-    return prColor;
+    return NULL;
 }
 
 CursorPos* hexpad_get_position(HexPad* prPad) {
-    CursorPos* prPos = NULL;
     PanelConfig* prConfig = NULL;
     if (prPad != NULL) {
         prConfig = hexpad_get_config(prPad);
-        prPos = panelconfig_get_position(prConfig);
+        return panelconfig_get_position(prConfig);
     }
-    return prPos;
+    return NULL;
 }
 
 Dimension* hexpad_get_size(HexPad* prPad) {
-    Dimension* prSize = NULL;
     PanelConfig* prConfig = NULL;
     if (prPad != NULL) {
         prConfig = hexpad_get_config(prPad);
-        prSize = panelconfig_get_size(prConfig);
+        return panelconfig_get_size(prConfig);
     }
-    return prSize;
+    return NULL;
 }
 
 SceUInt32 hexpad_get_value(HexPad* prPad) {

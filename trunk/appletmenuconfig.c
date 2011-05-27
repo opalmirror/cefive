@@ -1,35 +1,31 @@
 #include "appletmenuconfig.h"
 
 ColorConfig* appletmenuconfig_get_cursorcolor(AppletMenuConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     if (prConfig != NULL) {
-        prColor = &prConfig->cursor;
+        return &prConfig->cursor;
     }
-    return prColor;
+    return NULL;
 }
 
 ColorConfig* appletmenuconfig_get_panelcolor(AppletMenuConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     if (prConfig != NULL) {
-        prColor = &prConfig->color;
+        return &prConfig->color;
     }
-    return prColor;
+    return NULL;
 }
 
 CursorPos* appletmenuconfig_get_position(AppletMenuConfig* prConfig) {
-    CursorPos* prPos = NULL;
     if (prConfig != NULL) {
-        prPos = &prConfig->top;
+        return &prConfig->top;
     }
-    return prPos;
+    return NULL;
 }
 
 Dimension* appletmenuconfig_get_size(AppletMenuConfig* prConfig) {
-    Dimension* prSize = NULL;
     if (prConfig != NULL) {
-        prSize = &prConfig->size;
+        return &prConfig->size;
     }
-    return prSize;
+    return NULL;
 }
 
 int appletmenuconfig_init(AppletMenuConfig* prConfig) {

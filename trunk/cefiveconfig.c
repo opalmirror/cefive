@@ -49,11 +49,10 @@ int cefiveconfig_copy(CEFiveConfig* prDest, CEFiveConfig* prSrc) {
  *   A pointer to an AppletConfig struct.
  */
 AppletConfig* cefiveconfig_get_appletconfig(CEFiveConfig* prConfig) {
-    AppletConfig* prAp = NULL;
     if (prConfig != NULL) {
-        prAp = &prConfig->rAppletConfig;
+        return &prConfig->rAppletConfig;
     }
-    return prAp;
+    return NULL;
 }
 
 /* Copy the full path to the current cheat file into the specified destination
@@ -83,30 +82,27 @@ int cefiveconfig_get_cheatfilename(char* sDest, CEFiveConfig* prConfig) {
 }
 
 ColorConfig* cefiveconfig_get_cursorcolor(CEFiveConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     PanelConfig* prPanel = cefiveconfig_get_panelconfig(prConfig);
     if (prPanel != NULL) {
-        prColor = panelconfig_get_cursorcolor(prPanel);
+        return panelconfig_get_cursorcolor(prPanel);
     }
-    return prColor;
+    return NULL;
 }
 
 ColorConfig* cefiveconfig_get_editcolor(CEFiveConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     PanelConfig* prPanel = cefiveconfig_get_panelconfig(prConfig);
     if (prPanel != NULL) {
-        prColor = panelconfig_get_editcolor(prPanel);
+        return panelconfig_get_editcolor(prPanel);
     }
-    return prColor;
+    return NULL;
 }
 
 ColorConfig* cefiveconfig_get_panelcolor(CEFiveConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     PanelConfig* prPanel = cefiveconfig_get_panelconfig(prConfig);
     if (prPanel != NULL) {
-        prColor = panelconfig_get_panelcolor(prPanel);
+        return panelconfig_get_panelcolor(prPanel);
     }
-    return prColor;
+    return NULL;
 }
 
 /* Return a pointer to the member PanelConfig struct containing Panel
@@ -119,30 +115,27 @@ ColorConfig* cefiveconfig_get_panelcolor(CEFiveConfig* prConfig) {
  *   Pointer to a PanelConfig struct.
  */
 PanelConfig* cefiveconfig_get_panelconfig(CEFiveConfig* prConfig) {
-    PanelConfig* prPanel = NULL;
     AppletConfig* prApp = cefiveconfig_get_appletconfig(prConfig);
     if (prApp != NULL) {
-        prPanel = appletconfig_get_panelconfig(prApp);
+        return appletconfig_get_panelconfig(prApp);
     }
-    return prPanel;
+    return NULL;
 }
 
 ColorConfig* cefiveconfig_get_statuscolor(CEFiveConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     AppletConfig* prApp = cefiveconfig_get_appletconfig(prConfig);
     if (prApp != NULL) {
-        prColor = appletconfig_get_statuscolor(prApp);
+        return appletconfig_get_statuscolor(prApp);
     }
-    return prColor;
+    return NULL;
 }
 
 ColorConfig* cefiveconfig_get_titlecolor(CEFiveConfig* prConfig) {
-    ColorConfig* prColor = NULL;
     AppletConfig* prApp = cefiveconfig_get_appletconfig(prConfig);
     if (prApp != NULL) {
-        prColor = appletconfig_get_titlecolor(prApp);
+        return appletconfig_get_titlecolor(prApp);
     }
-    return prColor;
+    return NULL;
 }
 
 int cefiveconfig_init(CEFiveConfig* prConfig) {

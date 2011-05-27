@@ -11,19 +11,17 @@
 #include "gameinfo.h"
 
 ColorConfig* gameinfoconfig_get_colorconfig(GameInfoConfig* prCfg) {
-    ColorConfig* prColor = NULL;
     if (prCfg != NULL) {
-        prColor = &prCfg->color;
+        return &prCfg->color;
     }
-    return prColor;
+    return NULL;
 }
 
 CursorPos* gameinfoconfig_get_cursorpos(GameInfoConfig* prCfg) {
-    CursorPos* prPos = NULL;
     if (prCfg != NULL) {
-        prPos = &prCfg->position;
+        return &prCfg->position;
     }
-    return prPos;
+    return NULL;
 }
 
 int gameinfoconfig_init(GameInfoConfig* prCfg) {
