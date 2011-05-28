@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <pspkerneltypes.h>
-#include <pspiofilemgr.h>
 #include "cursorpos.h"
 
 int cursorpos_copy(CursorPos* prDest, CursorPos* prSrc) {

@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <pspkerneltypes.h>
-#include <pspiofilemgr.h>
 #include "dimension.h"
 
 int dimension_copy(Dimension* prDest, Dimension* prSrc) {

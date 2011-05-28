@@ -5,8 +5,8 @@
  * Created on October 3, 2010, 1:35 PM
  */
 
-#ifndef _APPLETCONFIG_H
-#define	_APPLETCONFIG_H
+#ifndef APPLETCONFIG_H
+#define	APPLETCONFIG_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -233,5 +233,5 @@ extern "C" {
 }
 #endif
 
-#endif	/* _APPLETCONFIG_H */
+#endif	/* APPLETCONFIG_H */
 

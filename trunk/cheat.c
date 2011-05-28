@@ -1,12 +1,4 @@
-/* cheat.c
- *   Adapted from crt0_prx.c
- * Author:
- *   Sir Gee of Five
- */
-
-#include <stdio.h>
 #include "cheat.h"
-
 
 int cheat_clear_flags(Cheat* prCheat) {
     if (prCheat == NULL) {
