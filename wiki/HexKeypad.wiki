@@ -1,5 +1,3 @@
-# The Hex Keypad allows editing of Hexadecimal values.
-
 = Introduction =
 
 The Hex Keypad is a pop up dialog that is used to edit addresses and values in Base-16 or Hexadecimal.
