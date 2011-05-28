@@ -1,99 +1,123 @@
 #include "disassembler.h"
 
-void disassembler_button_circle(Disassembler *prPanel) {
+int disassembler_button_circle(Disassembler* prDasm) {
     MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
-    }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_button_circle(prMemView);
-}
-
-void disassembler_button_cross(Disassembler *prPanel) {
-    MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
-    }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_button_cross(prMemView);
-}
-
-int disassembler_button_ltrigger(Disassembler *prPanel) {
-    MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
+    if (prDasm == NULL) {
         return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
+    prMemView = disassembler_get_memview(prDasm);
+    if (memviewpanel_button_circle(prMemView) < 0) {
+        return DISASSEMBLER_FAILURE;
+    }
+    return DISASSEMBLER_SUCCESS;
+}
+
+int disassembler_button_cross(Disassembler *prDasm) {
+    MemViewPanel* prMemView = NULL;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
+    }
+    prMemView = disassembler_get_memview(prDasm);
+    if (memviewpanel_button_cross(prMemView) < 0) {
+        return DISASSEMBLER_FAILURE;
+    }
+    return DISASSEMBLER_SUCCESS;
+}
+
+int disassembler_button_ltrigger(Disassembler *prDasm) {
+    MemViewPanel* prMemView = NULL;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
+    }
+    prMemView = disassembler_get_memview(prDasm);
     if (memviewpanel_button_ltrigger(prMemView) < 0) {
         return DISASSEMBLER_FAILURE;
     }
     return DISASSEMBLER_SUCCESS;
 }
 
-int disassembler_button_rtrigger(Disassembler *prPanel) {
+int disassembler_button_rtrigger(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
+    if (prDasm == NULL) {
         return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
+    prMemView = disassembler_get_memview(prDasm);
     if (memviewpanel_button_rtrigger(prMemView) < 0) {
         return DISASSEMBLER_FAILURE;
     }
     return DISASSEMBLER_SUCCESS;
 }
 
-void disassembler_button_square(Disassembler *prPanel) {
+int disassembler_button_square(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_button_square(prMemView);
+    prMemView = disassembler_get_memview(prDasm);
+    if (memviewpanel_button_square(prMemView) < 0) {
+        return DISASSEMBLER_FAILURE;
+    }
+    return DISASSEMBLER_SUCCESS;
 }
 
-void disassembler_button_triangle(Disassembler *prPanel) {
+int disassembler_button_triangle(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_button_triangle(prMemView);
+    prMemView = disassembler_get_memview(prDasm);
+    if (memviewpanel_button_triangle(prMemView) < 0) {
+        return DISASSEMBLER_FAILURE;
+    }
+    return DISASSEMBLER_SUCCESS;
 }
 
-void disassembler_dpad_down(Disassembler *prPanel) {
+int disassembler_dpad_down(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_dpad_down(prMemView);
+    prMemView = disassembler_get_memview(prDasm);
+    if (memviewpanel_dpad_down(prMemView) < 0) {
+        return DISASSEMBLER_FAILURE;
+    }
+    return DISASSEMBLER_SUCCESS;
 }
 
-void disassembler_dpad_left(Disassembler *prPanel) {
+int disassembler_dpad_left(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_dpad_left(prMemView);
+    prMemView = disassembler_get_memview(prDasm);
+    if (memviewpanel_dpad_left(prMemView) < 0) {
+        return DISASSEMBLER_FAILURE;
+    }
+    return DISASSEMBLER_SUCCESS;
 }
 
-void disassembler_dpad_right(Disassembler *prPanel) {
+int disassembler_dpad_right(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_dpad_right(prMemView);
+    prMemView = disassembler_get_memview(prDasm);
+    if (memviewpanel_dpad_right(prMemView) < 0) {
+        return DISASSEMBLER_FAILURE;
+    }
+    return DISASSEMBLER_SUCCESS;
 }
 
-void disassembler_dpad_up(Disassembler *prPanel) {
+int disassembler_dpad_up(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_dpad_up(prMemView);
+    prMemView = disassembler_get_memview(prDasm);
+    if (memviewpanel_dpad_up(prMemView) < 0) {
+        return DISASSEMBLER_FAILURE;
+    }
+    return DISASSEMBLER_SUCCESS;
 }
 
 AppletConfig* disassembler_get_appletconfig(Disassembler* prDasm) {
@@ -167,20 +191,20 @@ ColorConfig* disassembler_get_statuscolor(Disassembler* prDasm) {
     return NULL;
 }
 
-int disassembler_init(Disassembler *prPanel, AppletConfig *prApCfg) {
+int disassembler_init(Disassembler *prDasm, AppletConfig *prApCfg) {
     MemViewPanel* prMemView = NULL;
     ColorConfig* prColor = NULL;
     
-    if (prPanel == NULL) {
-        return DISASSEMBLER_MEMORY;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
     }
-    prPanel->prApCfg = prApCfg;
-    prPanel->editing = 0;
-    prPanel->dirty = 1;
+    prDasm->prApCfg = prApCfg;
+    prDasm->editing = 0;
+    prDasm->dirty = 1;
 
-    prPanel->prGameInfo = NULL;
+    prDasm->prGameInfo = NULL;
     
-    prMemView = disassembler_get_memview(prPanel);
+    prMemView = disassembler_get_memview(prDasm);
     if (memviewpanel_init(prMemView) != MEMVIEWPANEL_SUCCESS) {
         return DISASSEMBLER_FAILURE;
     }
@@ -190,21 +214,21 @@ int disassembler_init(Disassembler *prPanel, AppletConfig *prApCfg) {
     if (memviewpanel_set_position(prMemView, 0, 2) != MEMVIEWPANEL_SUCCESS) {
         return DISASSEMBLER_FAILURE;
     }
-    prColor = disassembler_get_panelcolor(prPanel);
+    prColor = disassembler_get_panelcolor(prDasm);
     if (prColor != NULL) {
         if (memviewpanel_set_panelcolor(prMemView, 
                 prColor->background, prColor->text) != MEMVIEWPANEL_SUCCESS) {
             return DISASSEMBLER_FAILURE;
         }
     }
-    prColor = disassembler_get_cursorcolor(prPanel);
+    prColor = disassembler_get_cursorcolor(prDasm);
     if (prColor != NULL) {
         if (memviewpanel_set_cursorcolor(prMemView,
                 prColor->background, prColor->text) != MEMVIEWPANEL_SUCCESS) {
             return DISASSEMBLER_FAILURE;
         }
     }
-    prColor = disassembler_get_statuscolor(prPanel);
+    prColor = disassembler_get_statuscolor(prDasm);
     if (prColor != NULL) {
         if (memviewpanel_set_padcolor(prMemView, 
                 prColor->background, prColor->text) < 0) {
@@ -215,80 +239,87 @@ int disassembler_init(Disassembler *prPanel, AppletConfig *prApCfg) {
     return DISASSEMBLER_SUCCESS;
 }
 
-int disassembler_is_editing(Disassembler *prPanel) {
+int disassembler_is_editing(Disassembler *prDasm) {
     int editing = 0;
     MemViewPanel* prMemView = NULL;
-    if (prPanel != NULL) {
-        prMemView = disassembler_get_memview(prPanel);
+    if (prDasm != NULL) {
+        prMemView = disassembler_get_memview(prDasm);
         editing = (prMemView->editing == 1);
     }
     return editing;
 }
 
-void disassembler_page_down(Disassembler *prPanel) {
+int disassembler_page_down(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_page_down(prMemView);
+    prMemView = disassembler_get_memview(prDasm);
+    if (memviewpanel_page_down(prMemView) < 0) {
+        return DISASSEMBLER_FAILURE;
+    }
+    return DISASSEMBLER_SUCCESS;
 }
 
-void disassembler_page_up(Disassembler *prPanel) {
+int disassembler_page_up(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
-        return;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
-    memviewpanel_page_up(prMemView);
+    prMemView = disassembler_get_memview(prDasm);
+    if (memviewpanel_page_up(prMemView) < 0) {
+        return DISASSEMBLER_FAILURE;
+    }
+    return DISASSEMBLER_SUCCESS;
 }
 
-void disassembler_redraw(Disassembler *prPanel) {
+int disassembler_redraw(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
     CursorPos* prPos = NULL;
     Dimension* prSize = NULL;
     ColorConfig* prColor = NULL;
     char sFmt[10];
     
-    if (prPanel == NULL) {
-        return;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
+    prMemView = disassembler_get_memview(prDasm);
     if (memviewpanel_redraw(prMemView) != MEMVIEWPANEL_SUCCESS) {
-        return;
+        return DISASSEMBLER_FAILURE;
     }
-    if (prPanel->dirty == 0) {
-        return;
+    if (prDasm->dirty == 0) {
+        return DISASSEMBLER_SUCCESS;
     }
-    prPos = disassembler_get_position(prPanel);
+    prPos = disassembler_get_position(prDasm);
     pspDebugScreenSetXY(prPos->x, prPos->y + 1);
-    prColor = disassembler_get_panelcolor(prPanel);
+    prColor = disassembler_get_panelcolor(prDasm);
     pspDebugScreenSetBackColor(prColor->background);
     pspDebugScreenSetTextColor(prColor->text);
-    prSize = disassembler_get_size(prPanel);
+    prSize = disassembler_get_size(prDasm);
     sprintf(sFmt, "%%-%ds", prSize->width);
     pspDebugScreenKprintf(sFmt, "Disassembler");
     memviewpanel_invalidate(prMemView);
-    prPanel->dirty = 0;
+    prDasm->dirty = 0;
+    return DISASSEMBLER_SUCCESS;
 }
 
-int disassembler_seek(Disassembler *prPanel, SceUInt32 offset) {
+int disassembler_seek(Disassembler *prDasm, SceUInt32 offset) {
     MemViewPanel* prMemView = NULL;
-    if (prPanel == NULL) {
+    if (prDasm == NULL) {
         return DISASSEMBLER_NULLPTR;
     }
-    prMemView = disassembler_get_memview(prPanel);
+    prMemView = disassembler_get_memview(prDasm);
     if (memviewpanel_seek(prMemView, offset) != MEMVIEWPANEL_SUCCESS) {
         return DISASSEMBLER_FAILURE;
     }
     return DISASSEMBLER_SUCCESS;
 }
 
-SceUInt32 disassembler_tell(Disassembler *prPanel) {
+SceUInt32 disassembler_tell(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
     SceUInt32 pos = 0;
-    if (prPanel != NULL) {
-        prMemView = disassembler_get_memview(prPanel);
+    if (prDasm != NULL) {
+        prMemView = disassembler_get_memview(prDasm);
         pos = prMemView->offset;
     }
     return pos;
