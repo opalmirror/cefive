@@ -13,7 +13,7 @@ The D-Pad is used to select the previous or next line in the Disassembler.  Whil
 The D-pad is used to select the Address or Value column in the Disassembler.  On lines containing *branch* instructions or *jump* instructions, pressing right while in the Value column will cause the Disassembler to jump to the destination of the instruction.  After jumping, pressing Left in the Address column will cause the Disassembler to jump back to the last address.  There is a stack of 10 addresses kept as history.  While the User is editing and Address or Value, the D-pad is used to select the previous or next digit in the Address or Value.
 
 === Cross Button ===
-The Cross Button is used to start editing the selected Address or Value.  While the user is editing, the Cross Button is used to commit the Address or Value being edited to memory.
+The Cross Button is used to start editing the value of the currently selected row.  Pressing the Cross button will cause a Hex Key Pad to pop up allowing the value to be changed.
 
 === Circle Button ===
 The Circle Button is used to exit CEFive.  While the user is editing, the Circle Button is used to cancel the Address or Value being edited and return it to its original value.
