@@ -1,4 +1,4 @@
-#The Hex Keypad allows editing of Hexadecimal values.
+# The Hex Keypad allows editing of Hexadecimal values.
 
 = Introduction =
 
