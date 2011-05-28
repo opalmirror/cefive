@@ -99,16 +99,52 @@ extern "C" {
     /** The MemViewPanel struct represents a Memory View Panel. */
     MemViewPanel;
 
+    /** Respond to the user pressing the Circle Button.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @return 0 indicates success, &lt;0 indicates success.
+     */
     int memviewpanel_button_circle(MemViewPanel* prPanel);
 
+    /** Respond to the user pressing the Cross Button.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @return 0 indicates success, &lt;0 indicates success.
+     */
     int memviewpanel_button_cross(MemViewPanel* prPanel);
 
+    /** Respond to the user pressing the Left Trigger.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @return 0 indicates success, &lt;0 indicates success.
+     */
     int memviewpanel_button_ltrigger(MemViewPanel* prPanel);
     
+    /** Respond to the user pressing the Right Trigger.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @return 0 indicates success, &lt;0 indicates success.
+     */
     int memviewpanel_button_rtrigger(MemViewPanel* prPanel);
     
+    /** Respond to the user pressing the Square Button.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @return 0 indicates success, &lt;0 indicates success.
+     */
     int memviewpanel_button_square(MemViewPanel* prPanel);
 
+    /** Respond to the user pressing the Triangle Button.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @return 0 indicates success, &lt;0 indicates success.
+     */
     int memviewpanel_button_triangle(MemViewPanel* prPanel);
 
     /** Move the view cursor down by one row.

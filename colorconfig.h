@@ -4,8 +4,8 @@
  * 
  */
 
-#ifndef _COLORCONFIG_H
-#define _COLORCONFIG_H
+#ifndef COLORCONFIG_H
+#define COLORCONFIG_H
 
 #include <pspkerneltypes.h>
 
@@ -87,4 +87,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _COLORCONFIG_H */
+#endif /* COLORCONFIG_H */

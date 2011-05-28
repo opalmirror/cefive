@@ -5,8 +5,10 @@
  * Author: Sir Gee of Five
  */
 
-#ifndef _CHEAT_H
-#define _CHEAT_H
+#ifndef CHEAT_H
+#define CHEAT_H
+
+#include <stdio.h>
 
 /** Indicates Cheat is selected. */
 #define CHEAT_FLAG_SELECTED (1<<0)

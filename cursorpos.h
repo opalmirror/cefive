@@ -6,12 +6,24 @@
 #ifndef CURSORPOS_H
 #define CURSORPOS_H
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <pspkerneltypes.h>
+#include <pspiofilemgr.h>
     
+/** Indicates success. */
 #define CURSORPOS_SUCCESS       (0)
+
+/** Indicates failure. */
 #define CURSORPOS_FAILURE       (-1)
+
+/** Indicates a memory error. */
 #define CURSORPOS_MEMORY        (-2)
+
+/** Indicates a NULL pointer. */
 #define CURSORPOS_NULLPTR       (-3)
+
+/** Indicates an I/O error. */
 #define CURSORPOS_IOERROR       (-4)
     
 #ifdef	__cplusplus
@@ -19,9 +31,13 @@ extern "C" {
 #endif
 
     typedef struct _CursorPos {
+        /** The horizontal position or column. */
         int x;
+        /** The vertical position or row. */
         int y;
-    } CursorPos;
+    }
+    /** The CursorPos struct is used to represent a Cursor Position. */
+    CursorPos;
 
     /** Copy a CursorPos struct.
      * 

@@ -49,7 +49,11 @@ extern "C" {
         /** Dialog cancelled indicator */
         int cancelled;
     }
-    /** The HexPad struct represents a Hex Pad. */
+    /** The HexPad struct represents a Hex Pad. 
+     * A Hex Pad is a Panel that can be displayed as a dialog over Applets.
+     * The Hex Pad is used to edit 32-bit Addresses and Values and contains
+     * functions to allow user interaction.
+     */
     HexPad;
 
     /** Respond to the circle button being pressed.
@@ -155,8 +159,18 @@ extern "C" {
      */
     Dimension* hexpad_get_size(HexPad* prPad);
     
+    /** Return the current value of a Hex Pad.
+     * 
+     * @param prPad Pointer to a HexPad struct representing the Hex Pad.
+     * @return A SceUInt32 is returned containing the current value.
+     */
     SceUInt32 hexpad_get_value(HexPad* prPad);
     
+    /** Initialize a Hex Pad.
+     * 
+     * @param prPad Pointer to the HexPad struct to initialize.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int hexpad_init(HexPad* prPad);
     
     /** Select the next digit as active.
@@ -173,20 +187,66 @@ extern "C" {
      */
     int hexpad_prev_digit(HexPad* prPad);
     
+    /** Redraw a Hex Pad on the Debug Screen.
+     * 
+     * @param prPad Pointer to a HexPad struct representing the Hex Pad.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int hexpad_redraw(HexPad* prPad);
-    
+
+    /** Assign the Cursor Color Configuration of a Hex Pad.
+     * 
+     * @param prPad Pointer to a HexPad struct representing the Hex Pad.
+     * @param background u32 containing the background color.
+     * @param text u32 containing the text color.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int hexpad_set_cursorcolor(HexPad* prPad, 
             const u32 background, const u32 text);
     
+    /** Assign the currently selected digit of a Hex Pad.
+     * 
+     * @param prPad Pointer to a HexPad struct representing the Hex Pad.
+     * @param digit int containing the digit to select.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int hexpad_set_cursordigit(HexPad* prPad, const int digit);
     
+    /** Assign the current Cursor Position of a Hex Pad.
+     * 
+     * @param prPad Pointer to a HexPad struct representing the Hex Pad.
+     * @param x int containing the column to assign.
+     * @param y int containing the row to assign.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int hexpad_set_cursorpos(HexPad* prPad, const int x, const int y);
     
+    /** Assign the Panel Color Configuration of a Hex Pad.
+     * 
+     * @param prPad Pointer to a HexPad struct representing the Hex Pad.
+     * @param background u32 containing the background color.
+     * @param text u32 containing the text color.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int hexpad_set_panelcolor(HexPad* prPad, 
             const u32 background, const u32 text);
     
+    /** Assign the position of a Hex Pad on the Debug Screen by specifying the
+     * Top and Left corner.
+     * 
+     * @param prPad Pointer to a HexPad struct representing the Hex Pad.
+     * @param x int containing the column to assign.
+     * @param y int containing the row to assign.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int hexpad_set_position(HexPad* prPad, const int x, const int y);
     
+    /** Assign the current value of a Hex Pad.
+     * 
+     * @param prPad Pointer to a HexPad struct representing the Hex Pad.
+     * @param value SceUInt32 containing the value to assign.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
     int hexpad_set_value(HexPad* prPad, const SceUInt32 value);
 
 #ifdef	__cplusplus

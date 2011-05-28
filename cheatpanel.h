@@ -3,8 +3,8 @@
  * Author: Sir Gee of Five
  * 
  */
-#ifndef _CHEATPANEL_H
-#define _CHEATPANEL_H
+#ifndef CHEATPANEL_H
+#define CHEATPANEL_H
 
 #include <pspkerneltypes.h>
 #include <pspdebug.h>
@@ -304,4 +304,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _CHEATPANEL_H */
+#endif /* CHEATPANEL_H */

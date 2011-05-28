@@ -5,8 +5,8 @@
  * Created on September 20, 2010, 9:39 AM
  */
 
-#ifndef _APPLETMENU_H
-#define	_APPLETMENU_H
+#ifndef APPLETMENU_H
+#define	APPLETMENU_H
 
 #include <pspdebug.h>
 #include "colorconfig.h"
@@ -236,5 +236,4 @@ extern "C" {
 }
 #endif
 
-#endif	/* _APPLETMENU_H */
-
+#endif	/* APPLETMENU_H */
