@@ -6,15 +6,19 @@
 #ifndef DISASSEMBLER_H
 #define DISASSEMBLER_H
 
+#include <stdio.h>
 #include <pspkerneltypes.h>
 #include <pspdebug.h>
-#include <stdio.h>
+#include <psploadcore.h>
 #include "appletconfig.h"
 #include "colorconfig.h"
 #include "cursorpos.h"
 #include "dimension.h"
 #include "gameinfo.h"
 #include "geelog.h"
+#include "ggame.h"
+#include "gsegmap.h"
+#include "gsegment.h"
 #include "memviewpanel.h"
 #include "mips.h"
 
@@ -53,10 +57,14 @@ extern "C" {
         AppletConfig* prApCfg;
         /** Game Info struct pointer */
         GameInfo* prGameInfo;
+        /** Game struct pointer */
+        GGame* game;
         /** Editing indicator */
         int editing;
         /** Indicates that Disassembler needs redrawing. */
         int dirty;
+        /** Indicates that the GGame has been loaded. */
+        int gameLoaded;
     } 
     /** The Disassembler struct represents the CeFive Disassembler Applet. */
     Disassembler;
@@ -158,6 +166,14 @@ extern "C" {
      * @return A pointer to a ColorConfig struct or NULL is returned.
      */
     ColorConfig* disassembler_get_cursorcolor(Disassembler* prDasm);
+    
+    /** Return a pointer to a GGame struct representing the Game.
+     * 
+     * @param prDasm Pointer to a Disassembler struct representing the
+     * Disassembler Applet.
+     * @return A pointer to a GGame struct or NULL is returned.
+     */
+    GGame* disassembler_get_game(Disassembler* prDasm);
     
     /** Return a pointer to a MemViewPanel struct representing the Memory View
      * Panel.

@@ -5,19 +5,7 @@
  *  PSP_Lord
  */
 
-#include <pspkerneltypes.h>
-#include <pspdebug.h>
-#include <pspctrl.h>
 #include "cefiveui.h"
-#include "cheatpanel.h"
-#include "cheateditor.h"
-#include "disassembler.h"
-#include "cheatengine.h"
-#include "hexeditor.h"
-#include "gameinfo.h"
-#include "optionspanel.h"
-#include "searchpanel.h"
-#include "searchengine.h"
 #include "cefive.h"
 
 static void button_circle_down(CEFiveUi *prUi);
@@ -512,6 +500,7 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     ColorConfig* prSrc = NULL;
     CheatEditor* prEd = NULL;
     HexEditor* prHex = NULL;
+    GGame* prGame = NULL;
 
     if (prUi == NULL) {
         return;
@@ -640,6 +629,14 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     gameinfo_set_colorconfig(prInfo, prColor);
     gameinfo_set_cursor(prInfo, 0, 1);
 
+    geelog_flog(LOG_DEBUG, sFunc, "Initializing Game.");
+    prGame = &prUi->game;
+    if (ggame_init(prGame) < 0) {
+        geelog_flog(LOG_ERROR, sFunc, "Failed to initialize Game.");
+    }
+    geelog_flog(LOG_DEBUG, sFunc, "Assigning Game to Disassembler.");
+    prDasm->game = prGame;
+    
     geelog_flog(LOG_INFO, sFunc, "User Interface Initialized.");
 }
 

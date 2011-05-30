@@ -509,6 +509,16 @@ CursorPos* memviewpanel_get_position(MemViewPanel* prPanel) {
     return NULL;
 }
 
+SceUInt32 memviewpanel_get_seladdr(MemViewPanel* prPanel) {
+    CursorPos* prCursor = NULL;
+    SceUInt32 address = 0;
+    if (prPanel != NULL) {
+        prCursor = memviewpanel_get_cursorpos(prPanel);
+        address = prPanel->offset + (prCursor->y * 4);
+    }
+    return address;
+}
+
 Dimension* memviewpanel_get_size(MemViewPanel* prPanel) {
     PanelConfig* prConfig = NULL;
     if (prPanel != NULL) {
