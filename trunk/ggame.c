@@ -1,6 +1,23 @@
 #include "ggame.h"
 #include "geelog.h"
 
+int ggame_add_label(GGame* prGame, const SceUInt32 address, const char* name) {
+    GlabelMap* prMap = NULL;
+    Glabel* prLabel = NULL;
+    if (prGame == NULL) {
+        return GGAME_NULLPTR;
+    }
+    prMap = ggame_get_labelmap(prGame);
+    prLabel = glabelmap_add(prMap);
+    if (prLabel == NULL) {
+        return GGAME_FAILURE;
+    }
+    if (glabel_set(prLabel, address, name) < 0) {
+        return GGAME_FAILURE;
+    }
+    return GGAME_SUCCESS;
+}
+
 Gsegment* ggame_find_segment(GGame* prGame, const SceUInt32 address) {
     GsegMap* prMap = NULL;
     if (prGame == NULL) {
@@ -42,6 +59,13 @@ SceLibraryStubTable* ggame_get_importtable(GGame* prGame) {
         }
     }
     return NULL;
+}
+
+GlabelMap* ggame_get_labelmap(GGame* prGame) {
+    if (prGame == NULL) {
+        return NULL;
+    }
+    return &prGame->labelMap;
 }
 
 SceModule* ggame_get_module(GGame* prGame) {
@@ -88,6 +112,8 @@ GstubMap* ggame_get_stubmap(GGame* prGame) {
 int ggame_init(GGame* prGame) {
     GsegMap* prMap = NULL;
     GstubMap* prStubs = NULL;
+    GlabelMap* prLabels = NULL;
+    
     if (prGame == NULL) {
         return GGAME_NULLPTR;
     }
@@ -100,6 +126,10 @@ int ggame_init(GGame* prGame) {
     }
     prStubs = ggame_get_stubmap(prGame);
     if (gstubmap_init(prStubs) < 0) {
+        return GGAME_FAILURE;
+    }
+    prLabels = ggame_get_labelmap(prGame);
+    if (glabelmap_init(prLabels) < 0) {
         return GGAME_FAILURE;
     }
     return GGAME_SUCCESS;
@@ -148,9 +178,11 @@ int ggame_load_exports(GGame* prGame) {
             sName = NULL;
             if (nId == GGAME_NID_MODSTART) {
                 sName = "module_start";
+                ggame_add_label(prGame, pvStub, sName);
             }
             if (nId == GGAME_NID_MODSTOP) {
                 sName = "module_stop";
+                ggame_add_label(prGame, pvStub, sName);
             }
             if (modstub_set(prStub, MST_Function, nId, pvStub, sName, 
                     prModule->modname) < 0) {
@@ -170,6 +202,7 @@ int ggame_load_exports(GGame* prGame) {
             sName = NULL;
             if (nId == GGAME_NID_MODINFO) {
                 sName = "module_info";
+                ggame_add_label(prGame, pvStub, sName);
             }
             if (modstub_set(prStub, MST_Variable, nId, pvStub, sName,
                     prModule->modname) < 0) {
@@ -221,6 +254,7 @@ int ggame_load_imports(GGame* prGame) {
     unsigned int uiStubRead = 0;
     int i = 0;
     char sSegName[64];
+    char sLabel[GLABEL_TEXT_LEN + 1];
 
     if (prGame == NULL) {
         return GGAME_NULLPTR;
@@ -249,6 +283,8 @@ int ggame_load_imports(GGame* prGame) {
                         prTable->libname) < 0) {
                     return GGAME_FAILURE;
                 }
+                sprintf(sLabel, "%s_%08X", prTable->libname, nId);
+                ggame_add_label(prGame, pvStub, sLabel);
             }
         }
         prSegment = gsegmap_add(prMap);

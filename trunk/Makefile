@@ -24,6 +24,8 @@ OBJS =  addresscolumn.o \
 	gameinfo.o \
 	geelog.o \
 	ggame.o \
+	glabel.o \
+	glabelmap.o \
 	gsegmap.o \
 	gsegment.o \
 	gstubmap.o \
