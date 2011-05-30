@@ -14,8 +14,6 @@
       <in>asciicolumn.h</in>
       <in>block.c</in>
       <in>block.h</in>
-      <in>blocklist.c</in>
-      <in>blocklist.h</in>
       <in>blockmodel.c</in>
       <in>blockmodel.h</in>
       <in>buttonstate.h</in>
@@ -56,15 +54,14 @@
       <in>gameinfo.c</in>
       <in>gameinfo.h</in>
       <in>gapplet.h</in>
-      <in>gcheat.c</in>
-      <in>gcheat.h</in>
-      <in>gcheatlist.c</in>
-      <in>gcheatlist.h</in>
-      <in>gclipboard.h</in>
       <in>geelog.c</in>
       <in>geelog.h</in>
       <in>ggame.c</in>
       <in>ggame.h</in>
+      <in>glabel.c</in>
+      <in>glabel.h</in>
+      <in>glabelmap.c</in>
+      <in>glabelmap.h</in>
       <in>gsegmap.c</in>
       <in>gsegmap.h</in>
       <in>gsegment.c</in>
@@ -110,13 +107,10 @@
       <in>searchpanel.h</in>
       <in>searchquery.h</in>
       <in>searchsize.h</in>
-      <in>segmentmap.h</in>
-      <in>segmentpanel.h</in>
       <in>textcolumn.c</in>
       <in>textcolumn.h</in>
       <in>togglecolumn.c</in>
       <in>togglecolumn.h</in>
-      <in>watchpanel.h</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -190,10 +184,6 @@
             <Elem>_PSP_FW_VERSION=150</Elem>
           </preprocessorList>
         </cTool>
-      </item>
-      <item path="blocklist.c" ex="true" tool="0" flavor="0">
-      </item>
-      <item path="blocklist.h" ex="true" tool="3" flavor="0">
       </item>
       <item path="bytecolumn.c" ex="false" tool="0" flavor="2">
         <cTool>
@@ -352,16 +342,6 @@
           </preprocessorList>
         </cTool>
       </item>
-      <item path="gcheat.c" ex="true" tool="0" flavor="0">
-      </item>
-      <item path="gcheat.h" ex="true" tool="3" flavor="0">
-      </item>
-      <item path="gcheatlist.c" ex="true" tool="0" flavor="0">
-      </item>
-      <item path="gcheatlist.h" ex="true" tool="3" flavor="0">
-      </item>
-      <item path="gclipboard.h" ex="true" tool="3" flavor="0">
-      </item>
       <item path="geelog.c" ex="false" tool="0" flavor="2">
         <cTool>
           <incDir>
@@ -442,10 +422,6 @@
           </preprocessorList>
         </cTool>
       </item>
-      <item path="segmentmap.h" ex="true" tool="3" flavor="0">
-      </item>
-      <item path="segmentpanel.h" ex="true" tool="3" flavor="0">
-      </item>
       <item path="textcolumn.c" ex="false" tool="0" flavor="2">
         <cTool>
           <incDir>
@@ -465,8 +441,6 @@
             <Elem>_PSP_FW_VERSION=150</Elem>
           </preprocessorList>
         </cTool>
-      </item>
-      <item path="watchpanel.h" ex="true" tool="3" flavor="0">
       </item>
     </conf>
   </confs>
