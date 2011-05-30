@@ -3,6 +3,15 @@
 = Disassembler =
 The Disassembler is a real-time MIPS32 instruction decoder and disassembler for Cheat Engine of Five.  The Disassembler views current memory as MIPS32 Assembly Language.
 
+== Appearance ==
+The Disassembler Applet is comprised of a Disassembler Panel with a Status Line underneath.
+
+=== Disassembler Panel ===
+The Disassembler Panel is a Table with three columns.  The Columns, from left to right are: the address, the value and the comment column.  The Address column always shows the "real" address that is being viewed.  The Value column shows the memory value that is being viewed.  Depending on several different criteria, the Comment column will show a variety of information.  If the row is a MIPS 32 instruction, the comment column will show an assembly language version of the instruction.  If the row contains a pointer, the comment column will show the word "Pointer" and possibly more information.
+
+=== Status Line ===
+Directly beneath the Disassembler Panel is a status line.  This status line will occasionally show information about the area of memory being viewed.  This information includes the memory segment and any applicable labels for the address being viewed.
+
 == Controls ==
 The Disassembler uses the following controls.
 
