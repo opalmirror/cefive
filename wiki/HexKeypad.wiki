@@ -1,4 +1,6 @@
-= Introduction =
+#summary Pop-up Hexadecimal Key Pad
+
+= Hex Keypad =
 
 The Hex Keypad is a pop up dialog that is used to edit addresses and values in Base-16 or Hexadecimal.
 
