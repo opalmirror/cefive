@@ -351,6 +351,8 @@ static int render_status(Disassembler* prDasm) {
     GGame* prGame = NULL;
     GsegMap* prMap = NULL;
     Gsegment* prSeg = NULL;
+    GlabelMap* prLmap = NULL;
+    Glabel* prLabel = NULL;
     SceUInt32 address = 0;
     char sFmt[10];
     char sLine[71];
@@ -375,10 +377,22 @@ static int render_status(Disassembler* prDasm) {
     prGame = disassembler_get_game(prDasm);
     if (prGame != NULL) {
         prMap = ggame_get_segmap(prGame);
+        prLmap = ggame_get_labelmap(prGame);
         address = memviewpanel_get_seladdr(prPanel);
         prSeg = gsegmap_find(prMap, address);
+        prLabel = glabelmap_find(prLmap, address);
+        if ((prLabel != NULL) && (prSeg != NULL)) {
+            sprintf(sLine, "Segment: %s Label: %s", prSeg->name, prLabel->text);
+            pspDebugScreenKprintf(sFmt, sLine);
+            return DISASSEMBLER_SUCCESS;
+        }
         if (prSeg != NULL) {
             sprintf(sLine, "Segment: %s", prSeg->name);
+            pspDebugScreenKprintf(sFmt, sLine);
+            return DISASSEMBLER_SUCCESS;
+        }
+        if (prLabel != NULL) {
+            sprintf(sLine, "Label: %s", prLabel->text);
             pspDebugScreenKprintf(sFmt, sLine);
             return DISASSEMBLER_SUCCESS;
         }

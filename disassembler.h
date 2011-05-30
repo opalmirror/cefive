@@ -17,6 +17,8 @@
 #include "gameinfo.h"
 #include "geelog.h"
 #include "ggame.h"
+#include "glabel.h"
+#include "glabelmap.h"
 #include "gsegmap.h"
 #include "gsegment.h"
 #include "memviewpanel.h"
