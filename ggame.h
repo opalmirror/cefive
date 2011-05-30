@@ -97,6 +97,15 @@ extern "C" {
      */
     int ggame_add_label(GGame* prGame, const SceUInt32 address, 
             const char* name);
+
+    /** Return a pointer to a Glabel struct representing the Label for the
+     * indicated address, if one exists.
+     * 
+     * @param prGame Pointer to a GGame struct representing a Game.
+     * @param address SceUInt32 indicating the address to return a Label for.
+     * @return A pointer to a Glabel struct or NULL is returned.
+     */
+    Glabel* ggame_find_label(GGame* prGame, const SceUInt32 address);
     
     /** Return a pointer to a Gsegment struct representing the segment that the
      * specified address falls within.

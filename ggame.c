@@ -18,6 +18,15 @@ int ggame_add_label(GGame* prGame, const SceUInt32 address, const char* name) {
     return GGAME_SUCCESS;
 }
 
+Glabel* ggame_find_label(GGame* prGame, const SceUInt32 address) {
+    GlabelMap* prMap = NULL;
+    if (prGame == NULL) {
+        return NULL;
+    }
+    prMap = ggame_get_labelmap(prGame);
+    return glabelmap_find(prMap, address);
+}
+
 Gsegment* ggame_find_segment(GGame* prGame, const SceUInt32 address) {
     GsegMap* prMap = NULL;
     if (prGame == NULL) {

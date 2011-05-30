@@ -272,6 +272,15 @@ extern "C" {
      */
     int disassembler_seek(Disassembler* prDasm, SceUInt32 offset);
     
+    /** Assign a Game to a Disassembler.
+     * 
+     * @param prDasm Pointer to a Dissasembler struct representing the
+     * Disassembler Applet.
+     * @param prGame Pointer to a GGame struct representing the Game.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int disassembler_set_game(Disassembler* prDasm, GGame* prGame);
+    
     /** Return the current address of a Disassembler Applet.
      * 
      * @param prDasm Pointer to a Disassembler struct representing the

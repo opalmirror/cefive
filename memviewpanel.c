@@ -468,6 +468,13 @@ CursorPos* memviewpanel_get_cursorpos(MemViewPanel* prPanel) {
     return NULL;
 }
 
+GGame* memviewpanel_get_game(MemViewPanel* prPanel) {
+    if (prPanel == NULL) {
+        return NULL;
+    }
+    return prPanel->game;
+}
+
 HexPad* memviewpanel_get_hexpad(MemViewPanel* prPanel) {
     if (prPanel != NULL) {
         return &prPanel->hexPad;
@@ -566,6 +573,8 @@ int memviewpanel_init(MemViewPanel* prPanel) {
     if (hexpad_init(prPad) < 0) {
         return MEMVIEWPANEL_FAILURE;
     }
+    
+    prPanel->game = NULL;
     
     return MEMVIEWPANEL_SUCCESS;
 }
@@ -815,6 +824,8 @@ static int render_comment_col(MemViewPanel* prPanel, const int row) {
     Dimension* prSize = NULL;
     ColorConfig* prColor = NULL;
     EValueType rType = VT_None;
+    GGame* prGame = NULL;
+    Glabel* prLabel = NULL;
     char sFmt[10];
     char sComment[70];
     int cols = 0;
@@ -822,6 +833,7 @@ static int render_comment_col(MemViewPanel* prPanel, const int row) {
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
     }
+    prGame = memviewpanel_get_game(prPanel);
     prColor = row_color(prPanel, row);
     prSize = memviewpanel_get_size(prPanel);
     address = row_address(prPanel, row);
@@ -832,7 +844,16 @@ static int render_comment_col(MemViewPanel* prPanel, const int row) {
     pspDebugScreenSetTextColor(prColor->text);
     switch (rType) {
         case VT_Pointer:
-            pspDebugScreenKprintf(sFmt, "Pointer");
+            if (prGame != NULL) {
+                prLabel = ggame_find_label(prGame, value);
+                if (prLabel != NULL) {
+                    sprintf(sComment, "Pointer (%s)", prLabel->text);
+                    pspDebugScreenKprintf(sFmt, sComment);
+                    break;
+                }
+            }
+            sprintf(sComment, "Pointer (0x%08X)", value);
+            pspDebugScreenKprintf(sFmt, sComment);
             break;
         default:
             mipsDecode(sComment, value, address);

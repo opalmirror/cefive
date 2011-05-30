@@ -333,6 +333,18 @@ int disassembler_seek(Disassembler *prDasm, SceUInt32 offset) {
     return DISASSEMBLER_SUCCESS;
 }
 
+int disassembler_set_game(Disassembler* prDasm, GGame* prGame) {
+    MemViewPanel* prPanel = NULL;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
+    }
+    prDasm->game = prGame;
+    prPanel = disassembler_get_memview(prDasm);
+    prPanel->game = prGame;
+    
+    return DISASSEMBLER_SUCCESS;
+}
+
 SceUInt32 disassembler_tell(Disassembler *prDasm) {
     MemViewPanel* prMemView = NULL;
     SceUInt32 pos = 0;

@@ -13,13 +13,15 @@
 #include <pspdebug.h>
 #include <psputils.h>
 #include <psputilsforkernel.h>
-#include "panelconfig.h"
 #include "colorconfig.h"
 #include "cursorpos.h"
 #include "dimension.h"
+#include "ggame.h"
+#include "glabel.h"
+#include "hexpad.h"
 #include "jumpstack.h"
 #include "mips.h"
-#include "hexpad.h"
+#include "panelconfig.h"
 
 /** Indicates success. */
 #define MEMVIEWPANEL_SUCCESS (0)
@@ -89,6 +91,8 @@ extern "C" {
         JumpStack jumpStack;
         /** The Hex Pad struct */
         HexPad hexPad;
+        /** Pointer to the Game struct. */
+        GGame* game;
         /** Indicates whether the Panel needs to be redrawn. */
         int dirty;
         /** Indicates whether the Panel is editing an address or value. */
@@ -214,6 +218,14 @@ extern "C" {
      */
     CursorPos* memviewpanel_get_cursorpos(MemViewPanel* prPanel);
 
+    /** Return a pointer to a GGame struct representing the Game.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @return A pointer to a GGame struct or NULL is returned.
+     */
+    GGame* memviewpanel_get_game(MemViewPanel* prPanel);
+    
     /** Return a pointer to a HexPad struct representing the Hex Pad.
      * 
      * @param prPanel Pointer to a MemViewPanel struct representing the Memory
