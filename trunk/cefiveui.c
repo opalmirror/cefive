@@ -635,7 +635,9 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
         geelog_flog(LOG_ERROR, sFunc, "Failed to initialize Game.");
     }
     geelog_flog(LOG_DEBUG, sFunc, "Assigning Game to Disassembler.");
-    prDasm->game = prGame;
+    if (disassembler_set_game(prDasm, prGame) < 0) {
+        geelog_flog(LOG_ERROR, sFunc, "Failed to assign Game to Disassembler.");
+    }
     
     geelog_flog(LOG_INFO, sFunc, "User Interface Initialized.");
 }
