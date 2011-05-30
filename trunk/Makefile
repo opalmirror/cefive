@@ -23,12 +23,17 @@ OBJS =  addresscolumn.o \
 	dwordeditor.o \
 	gameinfo.o \
 	geelog.o \
+	ggame.o \
+	gsegmap.o \
+	gsegment.o \
+	gstubmap.o \
 	hexeditor.o \
 	hexpad.o \
 	jumpstack.o \
 	memviewpanel.o \
 	menumodel.o \
 	mips.o \
+	modstub.o \
 	module.o \
 	niteprio.o \
 	optionspanel.o \

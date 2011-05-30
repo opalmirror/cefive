@@ -266,6 +266,15 @@ extern "C" {
      */
     Dimension* memviewpanel_get_size(MemViewPanel* prPanel);
 
+    /** Return the currently selected address in a Memory View Panel.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @return A SceUInt32 containing the currently selected address or 0 is
+     * returned.
+     */
+    SceUInt32 memviewpanel_get_seladdr(MemViewPanel* prPanel);
+    
     /** Initialize a Memory View Panel.
      * 
      * @param prPanel Pointer to the MemViewPanel struct to initialize.

@@ -8,7 +8,6 @@
 #ifndef DIMENSION_H
 #define	DIMENSION_H
 
-#include <stdlib.h>
 #include <stdio.h>
 #include <pspkerneltypes.h>
 #include <pspiofilemgr.h>

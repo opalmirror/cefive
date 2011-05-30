@@ -6,21 +6,26 @@
 #ifndef _CEFIVEUI_H
 #define _CEFIVEUI_H
 
+#include <stdio.h>
 #include <pspctrl.h>
-#include "cheateditor.h"
-#include "cheatpanel.h"
-#include "disassembler.h"
-#include "colorconfig.h"
-#include "cheatengine.h"
+#include <pspdebug.h>
+#include <pspkerneltypes.h>
+
 #include "appletmenu.h"
 #include "buttonstate.h"
-#include "hexeditor.h"
-#include "gameinfo.h"
-#include "optionspanel.h"
 #include "cefiveconfig.h"
-#include "searchpanel.h"
-#include "searchengine.h"
+#include "cheateditor.h"
+#include "cheatengine.h"
+#include "cheatpanel.h"
+#include "colorconfig.h"
+#include "disassembler.h"
+#include "gameinfo.h"
 #include "geelog.h"
+#include "ggame.h"
+#include "hexeditor.h"
+#include "optionspanel.h"
+#include "searchengine.h"
+#include "searchpanel.h"
 
 /** Indicates success. */
 #define CEFIVEUI_SUCCESS        (0)
@@ -131,6 +136,8 @@ extern "C" {
         int cross;
         /** Current Button State struct */
         ButtonState buttons;
+        /** Game struct */
+        GGame game;
     } 
     /** The Cheat Engine of Five User Interface struct. */
     CEFiveUi;

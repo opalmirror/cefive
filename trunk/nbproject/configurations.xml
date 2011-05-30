@@ -65,6 +65,12 @@
       <in>geelog.h</in>
       <in>ggame.c</in>
       <in>ggame.h</in>
+      <in>gsegmap.c</in>
+      <in>gsegmap.h</in>
+      <in>gsegment.c</in>
+      <in>gsegment.h</in>
+      <in>gstubmap.c</in>
+      <in>gstubmap.h</in>
       <in>hexeditor.c</in>
       <in>hexeditor.h</in>
       <in>hexpad.c</in>
@@ -79,6 +85,8 @@
       <in>mips.c</in>
       <in>mips.h</in>
       <in>modcefive.c</in>
+      <in>modstub.c</in>
+      <in>modstub.h</in>
       <in>module.c</in>
       <in>module.h</in>
       <in>niteprio.c</in>
@@ -87,12 +95,21 @@
       <in>optionspanel.h</in>
       <in>panelconfig.c</in>
       <in>panelconfig.h</in>
+      <in>queryview.c</in>
+      <in>queryview.h</in>
+      <in>resultmodel.c</in>
+      <in>resultmodel.h</in>
+      <in>resultview.c</in>
+      <in>resultview.h</in>
       <in>savedata.h</in>
       <in>screenshot.h</in>
       <in>searchengine.c</in>
       <in>searchengine.h</in>
+      <in>searchmode.h</in>
       <in>searchpanel.c</in>
       <in>searchpanel.h</in>
+      <in>searchquery.h</in>
+      <in>searchsize.h</in>
       <in>segmentmap.h</in>
       <in>segmentpanel.h</in>
       <in>textcolumn.c</in>
