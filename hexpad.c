@@ -36,7 +36,19 @@ int hexpad_button_cross(HexPad* prPad) {
     }
     prCursor = hexpad_get_cursorpos(prPad);
     value = (u8)((prCursor->y * 4) + prCursor->x);
-    prPad->byteval[prPad->digit] = value;
+    /* address is kept in range 0x08800000 - 0x09FFFFFF */
+    switch(prPad->digit) {
+        case 1: 
+            prPad->byteval[1] = (value <= 8) ? 8 : 9; 
+            prPad->byteval[2] = (prPad->byteval[1] == 8) ? 
+                (prPad->byteval[2] < 8) ? 8 : prPad->byteval[2] : prPad->byteval[2]; break;
+            
+        case 2:
+            prPad->byteval[2] = (prPad->byteval[1] == 8) ? (value <= 8) ? 8 : value : value; break;
+            
+        default:
+            prPad->byteval[prPad->digit] = value; break;
+    }
     if (hexpad_next_digit(prPad) < 0) {
         return HEXPAD_FAILURE;
     }
@@ -63,7 +75,7 @@ int hexpad_prev_digit(HexPad* prPad) {
     }
     digit = prPad->digit;
     digit--;
-    if (digit < 0) {
+    if (digit < 1) {
         digit = 7;
     }
     prPad->digit = digit;
@@ -81,7 +93,7 @@ int hexpad_next_digit(HexPad* prPad) {
     digit = prPad->digit;
     digit++;
     if (digit > 7) {
-        digit = 0;
+        digit = 1;
         prPad->visible = 0;
         prPad->cancelled = 0;
         return HEXPAD_SUCCESS;
@@ -348,7 +360,7 @@ int hexpad_set_value(HexPad* prPad, const SceUInt32 value) {
     if (prPad == NULL) {
         return HEXPAD_NULLPTR;
     }
-    prPad->byteval[0] = (u8)((value & 0xF0000000) >> 28);
+    prPad->byteval[0] = 0; //(u8)((value & 0xF0000000) >> 28);
     prPad->byteval[1] = (u8)((value & 0x0F000000) >> 24);
     prPad->byteval[2] = (u8)((value & 0x00F00000) >> 20);
     prPad->byteval[3] = (u8)((value & 0x000F0000) >> 16);
