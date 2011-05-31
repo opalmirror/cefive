@@ -348,7 +348,7 @@ int hexpad_set_value(HexPad* prPad, const SceUInt32 value) {
     if (prPad == NULL) {
         return HEXPAD_NULLPTR;
     }
-    prPad->byteval[0] = 0; //(u8)((value & 0xF0000000) >> 28);
+    prPad->byteval[0] = (u8)((value & 0xF0000000) >> 28);
     prPad->byteval[1] = (u8)((value & 0x0F000000) >> 24);
     prPad->byteval[2] = (u8)((value & 0x00F00000) >> 20);
     prPad->byteval[3] = (u8)((value & 0x000F0000) >> 16);
