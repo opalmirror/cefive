@@ -36,19 +36,7 @@ int hexpad_button_cross(HexPad* prPad) {
     }
     prCursor = hexpad_get_cursorpos(prPad);
     value = (u8)((prCursor->y * 4) + prCursor->x);
-    /* address is kept in range 0x08800000 - 0x09FFFFFF */
-    switch(prPad->digit) {
-        case 1: 
-            prPad->byteval[1] = (value <= 8) ? 8 : 9; 
-            prPad->byteval[2] = (prPad->byteval[1] == 8) ? 
-                (prPad->byteval[2] < 8) ? 8 : prPad->byteval[2] : prPad->byteval[2]; break;
-            
-        case 2:
-            prPad->byteval[2] = (prPad->byteval[1] == 8) ? (value <= 8) ? 8 : value : value; break;
-            
-        default:
-            prPad->byteval[prPad->digit] = value; break;
-    }
+    prPad->byteval[prPad->digit] = value;
     if (hexpad_next_digit(prPad) < 0) {
         return HEXPAD_FAILURE;
     }
