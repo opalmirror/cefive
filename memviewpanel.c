@@ -590,13 +590,15 @@ int memviewpanel_invalidate(MemViewPanel* prPanel) {
 int memviewpanel_jump_to(MemViewPanel* prPanel) {
     HexPad* prPad = NULL;
     CursorPos* prCursor = NULL;
+    SceUInt32 address = 0;
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
     }
     prPad = memviewpanel_get_hexpad(prPanel);
     prCursor = memviewpanel_get_cursorpos(prPanel);
+    address = memviewpanel_get_seladdr(prPanel);
     /* display the current marked address in previously called hexpad */
-    if (hexpad_set_value(prPad, prPanel->offset + prCursor->y * 4) < 0) {
+    if (hexpad_set_value(prPad, address) < 0) {
         return MEMVIEWPANEL_FAILURE;
     }
     if (hexpad_show(prPanel) < 0) {
