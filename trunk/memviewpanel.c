@@ -192,7 +192,7 @@ static int hexpad_show(MemViewPanel* prPanel) {
     if (hexpad_set_position(prPad, 4, 4) < 0) {
         return MEMVIEWPANEL_FAILURE;
     }
-    prPad->digit = 1;
+    prPad->digit = 0;
     prPad->visible = 1;
     return MEMVIEWPANEL_SUCCESS;
 }
