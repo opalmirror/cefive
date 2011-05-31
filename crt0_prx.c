@@ -1224,7 +1224,7 @@ int module_start(SceSize args, void *argp) {
 
     /* Start the Logger. */
     geelog_init("ms0:/seplugins/CEFive.log");
-    geelog_start(LOG_DEBUG);
+    geelog_start(LOG_ERROR);
     
     //Create thread
     sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, thread_buf_start,

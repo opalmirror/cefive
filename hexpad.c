@@ -63,7 +63,7 @@ int hexpad_prev_digit(HexPad* prPad) {
     }
     digit = prPad->digit;
     digit--;
-    if (digit < 1) {
+    if (digit < 0) {
         digit = 7;
     }
     prPad->digit = digit;
@@ -81,7 +81,7 @@ int hexpad_next_digit(HexPad* prPad) {
     digit = prPad->digit;
     digit++;
     if (digit > 7) {
-        digit = 1;
+        digit = 0;
         prPad->visible = 0;
         prPad->cancelled = 0;
         return HEXPAD_SUCCESS;
