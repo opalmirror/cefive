@@ -192,7 +192,7 @@ static int hexpad_show(MemViewPanel* prPanel) {
     if (hexpad_set_position(prPad, 4, 4) < 0) {
         return MEMVIEWPANEL_FAILURE;
     }
-    prPad->digit = 0;
+    prPad->digit = 1;
     prPad->visible = 1;
     return MEMVIEWPANEL_SUCCESS;
 }
@@ -589,11 +589,14 @@ int memviewpanel_invalidate(MemViewPanel* prPanel) {
 
 int memviewpanel_jump_to(MemViewPanel* prPanel) {
     HexPad* prPad = NULL;
+    CursorPos* prCursor = NULL;
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
     }
     prPad = memviewpanel_get_hexpad(prPanel);
-    if (hexpad_set_value(prPad, prPanel->offset) < 0) {
+    prCursor = memviewpanel_get_cursorpos(prPanel);
+    /* display the current marked address in previously called hexpad */
+    if (hexpad_set_value(prPad, prPanel->offset + prCursor->y * 4) < 0) {
         return MEMVIEWPANEL_FAILURE;
     }
     if (hexpad_show(prPanel) < 0) {
