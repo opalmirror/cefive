@@ -72,6 +72,8 @@
       <in>hexeditor.h</in>
       <in>hexpad.c</in>
       <in>hexpad.h</in>
+      <in>hexview.c</in>
+      <in>hexview.h</in>
       <in>importpanel.h</in>
       <in>jumpstack.c</in>
       <in>jumpstack.h</in>
@@ -111,8 +113,6 @@
       <in>searchsize.h</in>
       <in>textcolumn.c</in>
       <in>textcolumn.h</in>
-      <in>togglecolumn.c</in>
-      <in>togglecolumn.h</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -425,16 +425,6 @@
         </cTool>
       </item>
       <item path="textcolumn.c" ex="false" tool="0" flavor="2">
-        <cTool>
-          <incDir>
-            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>_PSP_FW_VERSION=150</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="togglecolumn.c" ex="false" tool="0" flavor="2">
         <cTool>
           <incDir>
             <pElem>/opt/pspsdk/psp/sdk/include</pElem>

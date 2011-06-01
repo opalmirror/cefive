@@ -659,7 +659,7 @@ static int render_cursorcolor_row(OptionsPanel* prPanel) {
         }
     }
     pspDebugScreenKprintf("0x%08X", prCcolor->text);
-    cr = prSize->width - strlen(OPTIONSPANEL_L_CURSORC) - 21;
+    cr = prSize->width - strlen(OPTIONSPANEL_L_CURSORC) - 22;
     sprintf(sFmt, "%%-%ds", cr);
     if (prPcolor != NULL) {
         pspDebugScreenSetBackColor(prPcolor->background);
@@ -723,7 +723,7 @@ static int render_editcolor_row(OptionsPanel* prPanel) {
         }
     }
     pspDebugScreenKprintf("0x%08X", prColor->text);
-    cr = prSize->width - strlen(OPTIONSPANEL_L_EDITC) - 21;
+    cr = prSize->width - strlen(OPTIONSPANEL_L_EDITC) - 22;
     sprintf(sFmt, "%%-%ds", cr);
     if (prPcolor != NULL) {
         pspDebugScreenSetBackColor(prPcolor->background);
@@ -781,7 +781,7 @@ static int render_panelcolor_row(OptionsPanel* prPanel) {
         }
     }
     pspDebugScreenKprintf("0x%08X", prPcolor->text);
-    cr = prSize->width - strlen(OPTIONSPANEL_L_PANELC) - 21;
+    cr = prSize->width - strlen(OPTIONSPANEL_L_PANELC) - 22;
     sprintf(sFmt, "%%-%ds", cr);
     if (prPcolor != NULL) {
         pspDebugScreenSetBackColor(prPcolor->background);
@@ -882,7 +882,7 @@ static int render_row(OptionsPanel* prPanel, const int row) {
             prPos = get_position(prPanel);
             prSize = get_size(prPanel);
             prColor = get_panelcolor(prPanel);
-            sprintf(sFmt, "%%-%ds", prSize->width);
+            sprintf(sFmt, "%%-%ds", prSize->width - 1);
             pspDebugScreenSetXY(prPos->x, prPos->y + 2 + row);
             pspDebugScreenSetBackColor(prColor->background);
             pspDebugScreenSetTextColor(prColor->text);
@@ -945,7 +945,7 @@ static int render_statuscolor_row(OptionsPanel* prPanel) {
         }
     }
     pspDebugScreenKprintf("0x%08X", prColor->text);
-    cr = prSize->width - strlen(OPTIONSPANEL_L_EDITC) - 21;
+    cr = prSize->width - strlen(OPTIONSPANEL_L_EDITC) - 22;
     sprintf(sFmt, "%%-%ds", cr);
     if (prPcolor != NULL) {
         pspDebugScreenSetBackColor(prPcolor->background);
@@ -1009,7 +1009,7 @@ static int render_titlecolor_row(OptionsPanel* prPanel) {
         }
     }
     pspDebugScreenKprintf("0x%08X", prColor->text);
-    cr = prSize->width - strlen(OPTIONSPANEL_L_TITLEC) - 21;
+    cr = prSize->width - strlen(OPTIONSPANEL_L_TITLEC) - 22;
     sprintf(sFmt, "%%-%ds", cr);
     if (prPcolor != NULL) {
         pspDebugScreenSetBackColor(prPcolor->background);
