@@ -40,6 +40,10 @@ OBJS =  addresscolumn.o \
 	niteprio.o \
 	optionspanel.o \
 	panelconfig.o \
+	queryview.o \
+	resultmodel.o \
+	resultview.o \
+	searchapplet.o \
 	searchengine.o \
 	searchpanel.o \
 	textcolumn.o \

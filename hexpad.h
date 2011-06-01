@@ -194,6 +194,13 @@ extern "C" {
      */
     int hexpad_redraw(HexPad* prPad);
 
+    /** Reset a Hex Pad to the default state.
+     * 
+     * @param prPad Pointer to a HexPad struct representing the Hex Pad.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int hexpad_reset(HexPad* prPad);
+    
     /** Assign the Cursor Color Configuration of a Hex Pad.
      * 
      * @param prPad Pointer to a HexPad struct representing the Hex Pad.
