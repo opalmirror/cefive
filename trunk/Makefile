@@ -45,8 +45,7 @@ OBJS =  addresscolumn.o \
 	resultview.o \
 	searchapplet.o \
 	searchengine.o \
-	searchpanel.o \
-	textcolumn.o
+	searchpanel.o
 
 # Define to build this as a prx (instead of a static elf)
 BUILD_PRX=1
