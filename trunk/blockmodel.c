@@ -4,7 +4,6 @@ static unsigned int kuiBlockId = 0;
 
 Block* blockmodel_add(BlockModel* prModel) {
     int elemCt = 0;
-    Block* prBlock = NULL;
     if (prModel != NULL) {
         elemCt = prModel->rowCount;
         if (elemCt > prModel->capacity) {
@@ -13,9 +12,9 @@ Block* blockmodel_add(BlockModel* prModel) {
             }
         }
         prModel->rowCount++;
-        prBlock = blockmodel_get(prModel, elemCt);
+        return blockmodel_get(prModel, elemCt);
     }
-    return prBlock;
+    return NULL;
 }
 
 int blockmodel_allocate(BlockModel* prModel, const int elements) {
@@ -83,16 +82,15 @@ int blockmodel_expand(BlockModel* prModel) {
 }
 
 Block* blockmodel_get(BlockModel* prModel, const int index) {
-    Block* prBlock = NULL;
     if (prModel != NULL) {
         if (prModel->blockList != NULL) {
             if ((index >= 0) && (index < prModel->rowCount)) {
-                prBlock = (Block*)(prModel->blockList + 
+                return (Block*)(prModel->blockList + 
                         (index * sizeof(Block)));
             }
         }
     }
-    return prBlock;
+    return NULL;
 }
 
 int blockmodel_init(BlockModel* prModel, const int rowCount) {

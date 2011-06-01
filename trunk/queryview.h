@@ -9,6 +9,7 @@
 #define	QUERYVIEW_H
 
 #include <stdio.h>
+#include <string.h>
 #include <pspdebug.h>
 #include <psptypes.h>
 #include "colorconfig.h"
@@ -33,6 +34,7 @@ extern "C" {
         CursorPos cursorPos;
         SearchQuery searchQuery;
         HexPad hexPad;
+        int editing;
     }
     QueryView;
 

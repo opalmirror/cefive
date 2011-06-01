@@ -61,14 +61,14 @@ extern "C" {
 #endif
 
     typedef enum _ECEApplet {
-        CEA_CheatPanel, /** Cheat Panel Applet */
-        CEA_CheatEditor, /** Cheat Editor Applet */
-        CEA_Disassembler, /** Disassembler Applet */
-        CEA_HexEditor, /** Hex Editor Applet */
-        CEA_SearchPanel, /** Search Panel Applet */
-        CEA_Options, /** Options Panel Applet */
-        CEA_GameInfo /** Game Information Applet */
-    } 
+        CEA_CheatPanel = 0, /** Cheat Panel Applet */
+        CEA_CheatEditor = 1, /** Cheat Editor Applet */
+        CEA_Disassembler = 2, /** Disassembler Applet */
+        CEA_HexEditor = 3, /** Hex Editor Applet */
+        CEA_SearchPanel = 4, /** Search Panel Applet */
+        CEA_GameInfo = 5, /** Game Information Applet */
+        CEA_Options = 6 /** Options Panel Applet */
+    }
     /** Enumeration specifying an Applet Id. */
     ECEApplet;
 

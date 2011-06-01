@@ -61,13 +61,17 @@ static void button_circle_up(CEFiveUi *prUi) {
                 return;
             }
         }
-        
         if (prUi->applet == 4) {
             if (searchpanel_circle_button(&prUi->searchpanel) == SEARCHPANEL_SUCCESS) {
                 return;
             }        
         }
-        
+        if (prUi->applet == 6) {
+            if (prUi->optionspanel.editing == 1) {
+                optionspanel_button_circle(&prUi->optionspanel);
+                return;
+            }
+        }
         if (prUi->appletmenu.visible == 1) {
             appletmenu_circle_button(&prUi->appletmenu);
             return;
@@ -139,7 +143,7 @@ static void button_cross_up(CEFiveUi *prUi) {
                     searchpanel_cross_button(&prUi->searchpanel);
                     break;
                 case 6:
-                    optionspanel_cross_button(&prUi->optionspanel);
+                    optionspanel_button_cross(&prUi->optionspanel);
                     break;
             }
         }
@@ -176,6 +180,13 @@ static void button_ltrigger_up(CEFiveUi *prUi) {
                     return;
                 }
             }
+            /* Send ltriggers for the Options Panel through if editing. */
+            if (prUi->applet == 6) {
+                if (prUi->optionspanel.editing == 1) {
+                    optionspanel_button_ltrigger(&prUi->optionspanel);
+                    return;
+                }
+            }
             /* Don't pop the applet menu while the Cheat Editor is showing. */
             if (prUi->applet != 1) {
                 cefiveui_log(prUi, LOG_DEBUG,
@@ -200,13 +211,22 @@ static void button_rtrigger_up(CEFiveUi *prUi) {
     }
     prUi->buttons.rtrigger = 0;
     switch (prUi->applet) {
-        case 0:
+        case 0: /* Cheat Panel */
             break;
-        case 1:
+        case 1: /* Cheat Editor */
             break;
-        case 2:
+        case 2: /* Disassembler */
             if (disassembler_is_editing(&prUi->disassembler)) {
                 disassembler_button_rtrigger(&prUi->disassembler);
+            }
+            break;
+        case 3: /* Hex Editor */
+            break;
+        case 4: /* Search Panel */
+            break;
+        case 6: /* Options Panel */
+            if (prUi->optionspanel.editing == 1) {
+                optionspanel_button_rtrigger(&prUi->optionspanel);
             }
             break;
     }
@@ -231,6 +251,9 @@ static void button_square_up(CEFiveUi *prUi) {
             case 2:
                 disassembler_button_square(&prUi->disassembler);
                 break;
+            case 6:
+                optionspanel_button_square(&prUi->optionspanel);
+                break;
         }
     }
 }
@@ -250,6 +273,9 @@ static void button_triangle_up(CEFiveUi *prUi) {
                 break;
             case 2:
                 disassembler_button_triangle(&prUi->disassembler);
+                break;
+            case 6:
+                optionspanel_button_triangle(&prUi->optionspanel);
                 break;
         }
     }
@@ -610,16 +636,6 @@ void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
     geelog_flog(LOG_DEBUG, sFunc, "Initializing Options Panel Applet.");
     OptionsPanel* prOp = &prUi->optionspanel;
     optionspanel_init(prOp, prUi->prCEConfig);
-    prOp->config.color.background = prUi->config.color.background;
-    prOp->config.color.text = prUi->config.color.text;
-    prOp->config.cursor.background = prUi->config.cursor.background;
-    prOp->config.cursor.text = prUi->config.cursor.text;
-    prOp->config.edit.background = prUi->config.editcursor.background;
-    prOp->config.edit.text = prUi->config.editcursor.text;
-    prOp->config.position.x = 0;
-    prOp->config.position.y = 1;
-    prOp->cursor.x = 0;
-    prOp->cursor.y = 0;
 
     geelog_flog(LOG_DEBUG, sFunc, "Initializing Game Info Applet.");
     GameInfo* prInfo = &prUi->gameinfo;

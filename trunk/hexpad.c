@@ -272,6 +272,18 @@ int hexpad_redraw(HexPad* prPad) {
     return HEXPAD_SUCCESS;
 }
 
+int hexpad_reset(HexPad* prPad) {
+    if (prPad == NULL) {
+        return HEXPAD_NULLPTR;
+    }
+    prPad->cancelled = 0;
+    prPad->digit = 0;
+    if (hexpad_set_value(prPad, 0) < 0) {
+        return HEXPAD_FAILURE;
+    }
+    return HEXPAD_SUCCESS;
+}
+
 int hexpad_set_cursorcolor(HexPad* prPad, const u32 background, const u32 text)
 {
     ColorConfig* prColor = NULL;

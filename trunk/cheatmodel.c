@@ -4,7 +4,6 @@ static unsigned int kuiBlockId = 0;
 
 Cheat* cheatmodel_add(CheatModel* prModel) {
     int elemCt = 0;
-    Cheat* prCheat = NULL;
     if (prModel != NULL) {
         elemCt = prModel->rowCount;
         if (elemCt > prModel->capacity) {
@@ -13,9 +12,9 @@ Cheat* cheatmodel_add(CheatModel* prModel) {
             }
         }
         prModel->rowCount++;
-        prCheat = cheatmodel_get(prModel, elemCt);
+        return cheatmodel_get(prModel, elemCt);
     }
-    return prCheat;
+    return NULL;
 }
 
 int cheatmodel_allocate(CheatModel* prModel, const int elements) {
@@ -83,13 +82,12 @@ int cheatmodel_expand(CheatModel* prModel) {
 }
 
 Cheat* cheatmodel_get(CheatModel* prModel, int index) {
-    Cheat* prCheat = NULL;
     if (prModel != NULL) {
         if ((index >= 0) && (index < prModel->rowCount)) {
-            prCheat = (Cheat*)(prModel->cheatList + (index * sizeof(Cheat)));
+            return (Cheat*)(prModel->cheatList + (index * sizeof(Cheat)));
         }
     }
-    return prCheat;
+    return NULL;
 }
 
 int cheatmodel_get_name(char* sDest, CheatModel* prModel, int index) {
