@@ -7,6 +7,9 @@
 #ifndef COLORCONFIG_H
 #define COLORCONFIG_H
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <pspiofilemgr.h>
 #include <pspkerneltypes.h>
 
 /** Indicates success. */

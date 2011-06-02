@@ -1,7 +1,3 @@
-#include <psptypes.h>
-#include <pspdebug.h>
-#include <stdio.h>
-#include "colorconfig.h"
 #include "addresscolumn.h"
 
 unsigned int addresscolumn_commit(AddressColumn *prCol) {

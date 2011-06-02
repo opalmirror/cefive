@@ -1,19 +1,4 @@
-/* cheateditor.c
- *   Cheat Editor for Cheat Engine of Five
- * Author:
- *   Sir Gee of Five
- */
-
-#include <pspkerneltypes.h>
-#include <pspdebug.h>
-#include <string.h>
 #include "cheateditor.h"
-#include "cheat.h"
-#include "block.h"
-#include "dwordeditor.h"
-#include "mips.h"
-#include "cefiveconfig.h"
-#include "colorconfig.h"
 
 static void drawBlankRow(CheatEditor *);
 static void drawBlockRow(CheatEditor *, Block *);

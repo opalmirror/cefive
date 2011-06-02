@@ -3,8 +3,8 @@
  * Author: Sir Gee of Five
  */
 
-#ifndef CHEATENGINE_H_
-#define CHEATENGINE_H_
+#ifndef CHEATENGINE_H
+#define CHEATENGINE_H
 
 #include <stdio.h>
 #include <pspkerneltypes.h>

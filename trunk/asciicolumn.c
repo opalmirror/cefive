@@ -1,7 +1,3 @@
-#include <pspkerneltypes.h>
-#include <pspdebug.h>
-#include <string.h>
-#include "colorconfig.h"
 #include "asciicolumn.h"
 
 char asciicolumn_commit(AsciiColumn* prCol) {

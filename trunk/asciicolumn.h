@@ -8,6 +8,8 @@
 #ifndef _ASCIICOLUMN_H
 #define	_ASCIICOLUMN_H
 
+#include <string.h>
+#include <pspdebug.h>
 #include <pspkerneltypes.h>
 #include "colorconfig.h"
 

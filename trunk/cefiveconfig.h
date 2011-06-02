@@ -5,13 +5,18 @@
  * Created on September 26, 2010, 2:36 PM
  */
 
-#ifndef _CEFIVECONFIG_H
-#define	_CEFIVECONFIG_H
+#ifndef CEFIVECONFIG_H
+#define	CEFIVECONFIG_H
 
+#include <stdio.h>
+#include <string.h>
+#include <pspiofilemgr.h>
 #include <pspkerneltypes.h>
-#include "colorconfig.h"
-#include "panelconfig.h"
 #include "appletconfig.h"
+#include "colorconfig.h"
+#include "cursorpos.h"
+#include "dimension.h"
+#include "panelconfig.h"
 
 /** Indicates success. */
 #define CEFIVECONFIG_SUCCESS    (0)
@@ -123,4 +128,4 @@ extern "C" {
 }
 #endif
 
-#endif	/* _CEFIVECONFIG_H */
+#endif	/* CEFIVECONFIG_H */
