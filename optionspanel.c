@@ -833,7 +833,7 @@ static int render_pause_row(OptionsPanel* prPanel) {
         pspDebugScreenSetTextColor(prPcolor->text);
     }
     prSize = get_size(prPanel);
-    sprintf(sFmt, "%%-%ds", prSize->width - strlen(sLabel) - strlen(sYes));
+    sprintf(sFmt, "%%-%ds", prSize->width - strlen(sLabel) - strlen(sYes) - 1);
     pspDebugScreenKprintf(sFmt, "");
     return OPTIONSPANEL_SUCCESS;
 }

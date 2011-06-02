@@ -292,7 +292,62 @@ int ggame_load_imports(GGame* prGame) {
                         prTable->libname) < 0) {
                     return GGAME_FAILURE;
                 }
-                sprintf(sLabel, "%s_%08X", prTable->libname, nId);
+                switch (nId) {
+                    case 0x05572A5F:
+                        sprintf(sLabel, "sceKernelExitGame");
+                        break;
+                    case 0x090CCB3F:
+                        sprintf(sLabel, "sceKernelPowerTick");
+                        break;
+                    case 0x172D316E:
+                        sprintf(sLabel, "sceKernelStdin");
+                        break;
+                    case 0x20E911AA:
+                        sprintf(sLabel, "sceKernelUnloadModule");
+                        break;
+                    case 0x3AEE7261:
+                        sprintf(sLabel, "sceKernelPowerUnlock");
+                        break;
+                    case 0x4AC57943:
+                        sprintf(sLabel, "sceKernelRegisterExitCallback");
+                        break;
+                    case 0x50F0C1EC:
+                        sprintf(sLabel, "sceKernelStartModule");
+                        break;
+                    case 0x977DE386:
+                        sprintf(sLabel, "sceKernelLoadModule");
+                        break;
+                    case 0xA14F40B2:
+                        sprintf(sLabel, "sceKernelVolatileMemTryLock");
+                        break;
+                    case 0xA569E425:
+                        sprintf(sLabel, "sceKernelVolatileMemUnlock");
+                        break;
+                    case 0xA6BAB2E9:
+                        sprintf(sLabel, "sceKernelStdout");
+                        break;
+                    case 0xBD2F1094:
+                        sprintf(sLabel, "sceKernelLoadExec");
+                        break;
+                    case 0xD1FF982A:
+                        sprintf(sLabel, "sceKernelStopModule");
+                        break;
+                    case 0xD8B73127:
+                        sprintf(sLabel, "sceKernelGetModuleIdByAddress");
+                        break;
+                    case 0xEADB1BD7:
+                        sprintf(sLabel, "sceKernelPowerLock");
+                        break;
+                    case 0xF0A26395:
+                        sprintf(sLabel, "sceKernelGetModuleId");
+                        break;
+                    case 0xF78BA90A:
+                        sprintf(sLabel, "sceKernelStderr");
+                        break;
+                    default:
+                        sprintf(sLabel, "%s_%08X", prTable->libname, nId);
+                }
+                
                 ggame_add_label(prGame, pvStub, sLabel);
             }
         }

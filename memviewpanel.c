@@ -834,6 +834,8 @@ static int render_comment_col(MemViewPanel* prPanel, const int row) {
     char sFmt[10];
     char sComment[70];
     int cols = 0;
+    int opcode = 0;
+    SceUInt32 jdest = 0;
     
     if (prPanel == NULL) {
         return MEMVIEWPANEL_NULLPTR;
@@ -861,6 +863,21 @@ static int render_comment_col(MemViewPanel* prPanel, const int row) {
             pspDebugScreenKprintf(sFmt, sComment);
             break;
         default:
+            opcode = mipsGetOpCode(value);
+            if ((opcode == 0x03) || (opcode == 0x02)) {
+                jdest = mipsGetJumpDestination(value, address);
+                prLabel = ggame_find_label(prGame, jdest);
+                if (prLabel != NULL) {
+                    if (opcode == 0x02) {
+                        sprintf(sComment, "j %s", prLabel->text);
+                    }
+                    if (opcode == 0x03) {
+                        sprintf(sComment, "jal %s", prLabel->text);
+                    }
+                    pspDebugScreenKprintf(sFmt, sComment);
+                    return MEMVIEWPANEL_SUCCESS;
+                }
+            }
             mipsDecode(sComment, value, address);
             pspDebugScreenKprintf(sFmt, sComment);
     }
