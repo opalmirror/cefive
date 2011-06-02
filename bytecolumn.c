@@ -1,6 +1,3 @@
-#include <pspkerneltypes.h>
-#include <pspdebug.h>
-#include <stdio.h>
 #include "bytecolumn.h"
 
 unsigned int bytecolumn_commit(ByteColumn *prCol) {

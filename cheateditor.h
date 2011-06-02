@@ -4,18 +4,22 @@
  * 
  */
 
-#ifndef _CHEATEDITOR_H
-#define _CHEATEDITOR_H
+#ifndef CHEATEDITOR_H
+#define CHEATEDITOR_H
 
+#include <stdio.h>
+#include <string.h>
+#include <pspdebug.h>
 #include <pspkerneltypes.h>
-#include "cheat.h"
 #include "block.h"
-#include "dwordeditor.h"
+#include "cefiveconfig.h"
+#include "cheat.h"
+#include "cheatengine.h"
 #include "colorconfig.h"
 #include "cursorpos.h"
 #include "dimension.h"
-#include "cefiveconfig.h"
-#include "cheatengine.h"
+#include "dwordeditor.h"
+#include "mips.h"
 
 #define CHEATEDITOR_SUCCESS (0)
 
@@ -120,4 +124,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _CHEATEDITOR_H */
+#endif /* CHEATEDITOR_H */

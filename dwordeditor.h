@@ -1,6 +1,14 @@
+/* dwordeditor
+ *  The DWord Editor for NitePr G5
+ * Author:
+ *  Sir Gee of Five
+ */
+
 #ifndef _DWORDEDITOR_H
 #define _DWORDEDITOR_H
 
+#include <stdio.h>
+#include <pspdebug.h>
 #include <pspkerneltypes.h>
 
 #ifdef	__cplusplus

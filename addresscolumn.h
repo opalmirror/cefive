@@ -13,7 +13,9 @@
 #ifndef _ADDRESSCOLUMN_H
 #define	_ADDRESSCOLUMN_H
 
+#include <stdio.h>
 #include <psptypes.h>
+#include <pspdebug.h>
 #include "colorconfig.h"
 
 /** Indicates success. */

@@ -1,10 +1,3 @@
-/* dwordeditor
- *  The DWord Editor for NitePr G5
- * Author:
- *  Sir Gee of Five
- */
-#include <pspkerneltypes.h>
-#include <pspdebug.h>
 #include "dwordeditor.h"
 
 void dwordeditorCrossButton(DwordEditor *prEditor) {

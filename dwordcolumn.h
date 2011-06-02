@@ -5,9 +5,11 @@
  * Created on September 25, 2010, 11:20 AM
  */
 
-#ifndef _DWORDCOLUMN_H
-#define	_DWORDCOLUMN_H
+#ifndef DWORDCOLUMN_H
+#define	DWORDCOLUMN_H
 
+#include <pspkerneltypes.h>
+#include <pspdebug.h>
 #include "colorconfig.h"
 
 /** Indicates success. */
@@ -256,5 +258,5 @@ extern "C" {
 }
 #endif
 
-#endif	/* _DWORDCOLUMN_H */
+#endif	/* DWORDCOLUMN_H */
 

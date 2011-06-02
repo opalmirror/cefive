@@ -8,6 +8,9 @@
 #ifndef _BYTECOLUMN_H
 #define	_BYTECOLUMN_H
 
+#include <stdio.h>
+#include <pspkerneltypes.h>
+#include <pspdebug.h>
 #include "colorconfig.h"
 
 #ifdef	__cplusplus

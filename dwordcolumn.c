@@ -1,6 +1,3 @@
-#include <pspkerneltypes.h>
-#include <pspdebug.h>
-#include "colorconfig.h"
 #include "dwordcolumn.h"
 
 unsigned int dwordcolumn_commit(DwordColumn *prCol) {

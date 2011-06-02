@@ -1,12 +1,3 @@
-#include <pspkerneltypes.h>
-#include <pspiofilemgr.h>
-#include <stdlib.h>
-#include <string.h>
-#include "appletconfig.h"
-#include "panelconfig.h"
-#include "colorconfig.h"
-#include "dimension.h"
-#include "cursorpos.h"
 #include "cefiveconfig.h"
 #include "cefive.h"
 

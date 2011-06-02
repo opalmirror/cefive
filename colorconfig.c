@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <pspkerneltypes.h>
-#include <pspiofilemgr.h>
 #include "colorconfig.h"
 
 int colorconfig_copy(ColorConfig* prDest, ColorConfig* prSrc) {

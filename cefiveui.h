@@ -3,8 +3,8 @@
  * Author: Sir Gee of Five
  * 
  */
-#ifndef _CEFIVEUI_H
-#define _CEFIVEUI_H
+#ifndef CEFIVEUI_H
+#define CEFIVEUI_H
 
 #include <stdio.h>
 #include <pspctrl.h>
@@ -258,5 +258,5 @@ extern "C" {
 }
 #endif
 
-#endif /* _CEFIVEUI_H */
+#endif /* CEFIVEUI_H */
 
