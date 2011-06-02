@@ -1,12 +1,4 @@
-/* mips.c
- *  MIPSr4 Instruction Decoding
- * Author:
- *  Sir Gee of Five
- */
-
 #include "mips.h"
-#include <stdio.h>
-#include <pspkerneltypes.h>
 
 unsigned char mipsNum[16];
 static const char *mipsRegisterArray[]={
@@ -32,6 +24,20 @@ static const char *mipsControlRegister[]={
     "Config", "WatchLO", "XContext", "$22", 
     "Debug", "ECC", "TagLo", "ErrorEPC"};
 
+static void decodeBSHFL(char *, unsigned int, unsigned int);
+static void decodeCOP0(char *, unsigned int, unsigned int);
+static void decodeCOP1(char *, unsigned int, unsigned int);
+static void decodeCOP1D(char *, unsigned int, unsigned int);
+static void decodeCOP1L(char *, unsigned int, unsigned int);
+static void decodeCOP1PS(char *, unsigned int, unsigned int);
+static void decodeCOP1S(char *, unsigned int, unsigned int);
+static void decodeCOP1W(char *, unsigned int, unsigned int);
+static void decodeCOP1X(char *, unsigned int, unsigned int);
+static void decodeCOP2(char *, unsigned int, unsigned int);
+static void decodeREGIMM(char *, unsigned int, unsigned int);
+static void decodeSPECIAL(char *, unsigned int, unsigned int);
+static void decodeSPECIAL2(char *, unsigned int, unsigned int);
+static void decodeSPECIAL3(char *, unsigned int, unsigned int);
 static void decodeVCOP(char* buffer, unsigned int i_inst, unsigned int i_addr);
 static char* mipsGetFormat(int fmt);
 static short mipsGetImmediate(unsigned int i_inst);
@@ -77,70 +83,6 @@ static void mipsTypeVrdVrsScale(char* buffer, const char* mnem,
         int iRd, int iRs, int scale);
 static void mipsTypeVrdVrsVrt(char* buffer, const char* mnem,
         int iRd, int iRs, int iRt);
-
-static void mipsAddOperand(MipsInstruction *prIns, EOperandType otype, char *name, int value) {
-    if (prIns == NULL) {
-        return;
-    }
-    MipsOperand *opnd = &(prIns->operands[prIns->operand_count]);
-    opnd->operandtype = otype;
-    opnd->name = name;
-    opnd->value = value;
-    prIns->operand_count++;
-}
-
-/* mips_decode_type_i
- *  Decode a MIPS Type "I" (Immediate) Instruction.
- *  [---- --][-- ---][- ----][---- ---- ---- ----]
- *  [opcode ][rs    ][rt    ][immediate          ]
- */
-void mips_decode_type_i(MipsInstruction* prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    prIns->opcode = (int)mipsGetOpCode(prIns->value);
-    int rs = (int)mipsGetOperand0(prIns->value);
-    int rt = (int)mipsGetOperand1(prIns->value);
-    int imm = (int)mipsGetImmediate(prIns->value);
-    mipsAddOperand(prIns, MOT_GPREG, "rs", rs);
-    mipsAddOperand(prIns, MOT_GPREG, "rt", rt);
-    mipsAddOperand(prIns, MOT_IMMEDIATE, "immediate", imm);
-}
-
-/* mips_decode_type_j
- *  Decode a MIPS Type "J" (Jump) Instruction.
- *  [---- --][-- ---- ---- ---- ---- ---- ----]
- *  [opcode ][instr_index                     ]
- */
-void mips_decode_type_j(MipsInstruction* prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    prIns->opcode = (int)mipsGetOpCode(prIns->value);
-    int instrindex = mipsGetInstrIndex(prIns->value);
-    mipsAddOperand(prIns, MOT_INSTRINDEX, "instr_index", instrindex);
-}
-
-/* mips_decode_type_r
- *  Decode a MIPS Type "R" (Register) Instruction.
- *  [---- --][-- ---][- ----][---- -][--- --][-- ----]
- *  [opcode ][rs    ][rt    ][rd    ][sa    ][function]
- */
-void mips_decode_type_r(MipsInstruction* prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    prIns->opcode = (int)mipsGetOpCode(prIns->value);
-    int rs = (int)mipsGetOperand0(prIns->value);
-    int rt = (int)mipsGetOperand1(prIns->value);
-    int rd = (int)mipsGetOperand2(prIns->value);
-    int sa = (int)mipsGetOperand3(prIns->value);
-    int func = (int)mipsGetFunction(prIns->value);
-    mipsAddOperand(prIns, MOT_GPREG, "rs", rs);
-    mipsAddOperand(prIns, MOT_GPREG, "rt", rt);
-    mipsAddOperand(prIns, MOT_GPREG, "rd", rd);
-    mipsAddOperand(prIns, MOT_SA, "sa", sa);
-}
 
 SceUInt32 mipsGetBranchDestination(unsigned int i_inst, unsigned int i_addr) {
     SceUInt32 dest = 0;
@@ -294,29 +236,6 @@ static void mipsInABSfmt(char *buffer, unsigned int i_inst) {
     mipsTypeFdFs(buffer, mnem, fd, fs);
 }
 
-/* decodeABSfmt
- *  Floating Point Absolute Value
- *  ABS.S fd, fs
- *  ABS.D fd, fs
- *  [010001][-----][00000][-----][-----][000101]
- *  [COP1  ][fmt  ][0    ][fs   ][fd   ][ABS   ]
- */
-static void decodeABSfmt(MipsInstruction *prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    int fmt = (int)mipsGetOperand0(prIns->value);
-    int fs = (int)mipsGetOperand2(prIns->value);
-    int fd = (int)mipsGetOperand3(prIns->value);
-    char mnem[9];
-    char *sfmt = mipsGetFormat(fmt);
-    sprintf(mnem, "abs.%s", sfmt);
-    prIns->mnemonic = mnem;
-    prIns->description = "Floating Point Absolute Value";
-    mipsAddOperand(prIns, MOT_FPREG, "fd", fd);
-    mipsAddOperand(prIns, MOT_FPREG, "fs", fs);
-}
-
 /* mipsInADD
  *  Add Word
  *  ADD rd, rs, rt
@@ -329,26 +248,6 @@ static void mipsInADD(char *buffer, unsigned int i_inst) {
     int rt = (int)mipsGetOperand1(i_inst);
     int rd = (int)mipsGetOperand2(i_inst);
     mipsType4(buffer, mnem, rd, rs, rt);
-}
-
-/* decodeADD
- *  Add Word
- *  ADD rd, rs, rt
- *  [000000][-----][-----][-----][00000][100000]
- * [SPECIAL][rs   ][rt   ][rd   ][0    ][ADD   ]
- */
-static void decodeADD(MipsInstruction *prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    int rs = (int)mipsGetOperand0(prIns->value);
-    int rt = (int)mipsGetOperand1(prIns->value);
-    int rd = (int)mipsGetOperand2(prIns->value);
-    prIns->mnemonic = "add";
-    prIns->description = "Add Word";
-    mipsAddOperand(prIns, MOT_GPREG, "rd", rd);
-    mipsAddOperand(prIns, MOT_GPREG, "rs", rs);
-    mipsAddOperand(prIns, MOT_GPREG, "rt", rt);
 }
 
 /* mipsInADDfmt
@@ -370,32 +269,6 @@ static void mipsInADDfmt(char *buffer, unsigned int i_inst) {
     mipsTypeFdFsFt(buffer, mnem, fd, fs, ft);
 }
 
-/* decodeADDfmt
- *  Floating Point Add
- *  ADD.S fd, fs, ft
- *  ADD.D fd, fs, ft
- *  ADD.PS fd, fs, ft
- *  [010001][-----][-----][-----][-----][000000]
- *  [COP1  ][fmt  ][ft   ][fs   ][fd   ][AND   ]
- */
-static void decodeADDfmt(MipsInstruction *prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    int fmt = (int)mipsGetOperand0(prIns->value);
-    int ft = (int)mipsGetOperand1(prIns->value);
-    int fs = (int)mipsGetOperand2(prIns->value);
-    int fd = (int)mipsGetOperand3(prIns->value);
-    char mnem[9];
-    char *sfmt = mipsGetFormat(fmt);
-    sprintf(mnem, "add.%s", sfmt);
-    prIns->mnemonic = mnem;
-    prIns->description = "Floating Point Add";
-    mipsAddOperand(prIns, MOT_FPREG, "fd", fd);
-    mipsAddOperand(prIns, MOT_FPREG, "fs", fs);
-    mipsAddOperand(prIns, MOT_FPREG, "ft", ft);
-}
-
 /* mipsInADDI
  *  Add Immediate Word
  *  ADDI rt, rs, immediate
@@ -408,26 +281,6 @@ static void mipsInADDI(char *buffer, unsigned int i_inst) {
     int rt = (int)mipsGetOperand1(i_inst);
     unsigned short imm = mipsGetUnsignedImmediate(i_inst);
     mipsType3(buffer, mnem, rs, rt, imm);
-}
-
-/* decodeADDI
- *  Add Immediate Word
- *  ADDI rt, rs, immediate
- *  [001000][-----][-----][----------------]
- *  [ADDI  ][rs   ][rt   ][immediate       ]
- */
-static void decodeADDI(MipsInstruction* prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    int rs = (int)mipsGetOperand0(prIns->value);
-    int rt = (int)mipsGetOperand1(prIns->value);
-    short imm = mipsGetImmediate(prIns->value);
-    prIns->mnemonic = "addi";
-    prIns->description = "Add Immediate Word";
-    mipsAddOperand(prIns, MOT_GPREG, "rt", rt);
-    mipsAddOperand(prIns, MOT_GPREG, "rs", rs);
-    mipsAddOperand(prIns, MOT_IMMEDIATE, "immediate", imm);
 }
 
 /* mipsInADDIU
@@ -444,26 +297,6 @@ static void mipsInADDIU(char *buffer, unsigned int i_inst) {
     mipsType3(buffer, mnem, rs, rt, imm);
 }
 
-/* decodeADDIU
- *  Add Immediate Unsigned Word
- *  ADDIU rt, rs, immediate
- *  [001001][-----][-----][----------------]
- *  [ADDIU ][rs   ][rt   ][immediate       ]
- */
-static void decodeADDIU(MipsInstruction* prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    int rs = (int)mipsGetOperand0(prIns->value);
-    int rt = (int)mipsGetOperand1(prIns->value);
-    short imm = mipsGetImmediate(prIns->value);
-    prIns->mnemonic = "addiu";
-    prIns->description = "Add Immediate Unsigned Word";
-    mipsAddOperand(prIns, MOT_GPREG, "rt", rt);
-    mipsAddOperand(prIns, MOT_GPREG, "rs", rs);
-    mipsAddOperand(prIns, MOT_IMMEDIATE, "immediate", imm);
-}
-
 /* mipsInADDU
  *  Add Unsigned Word
  *  ADDU rd, rs, rt
@@ -476,26 +309,6 @@ static void mipsInADDU(char *buffer, unsigned int i_inst) {
     int rt = (int)mipsGetOperand1(i_inst);
     int rd = (int)mipsGetOperand2(i_inst);
     mipsType4(buffer, mnem, rd, rs, rt);
-}
-
-/* decodeADDU
- *  Add Unsigned Word
- *  ADDU rd, rs, rt
- *  [000000][-----][-----][-----][00000][100001]
- * [SPECIAL][rs   ][rt   ][rd   ][0    ][ADDU  ]
- */
-static void decodeADDU(MipsInstruction* prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    int rs = (int)mipsGetOperand0(prIns->value);
-    int rt = (int)mipsGetOperand1(prIns->value);
-    int rd = (int)mipsGetOperand2(prIns->value);
-    prIns->mnemonic = "addu";
-    prIns->description = "Add Unsigned Word";
-    mipsAddOperand(prIns, MOT_GPREG, "rd", rd);
-    mipsAddOperand(prIns, MOT_GPREG, "rt", rt);
-    mipsAddOperand(prIns, MOT_GPREG, "rs", rs);
 }
 
 /* mipsInALNVPS
@@ -513,28 +326,6 @@ static void mipsInALNVPS(char *buffer, unsigned int i_inst) {
     mipsTypeFdFsFtRs(buffer, mnem, fd, fs, ft, rs);
 }
 
-/* decodeALNVPS
- *  Floating Point Align Variable
- *  ALNV.PS fd, fs, ft, rs
- *  [010011][-----][-----][-----][-----][011110]
- *  [COP1X ][rs   ][ft   ][fs   ][fd   ][ALNV.PS]
- */
-static void decodeALNVPS(MipsInstruction* prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    int rs = (int)mipsGetOperand0(prIns->value);
-    int ft = (int)mipsGetOperand1(prIns->value);
-    int fs = (int)mipsGetOperand2(prIns->value);
-    int fd = (int)mipsGetOperand3(prIns->value);
-    prIns->mnemonic = "alnv.ps";
-    prIns->description = "Floating Point Align Variable";
-    mipsAddOperand(prIns, MOT_FPREG, "fd", fd);
-    mipsAddOperand(prIns, MOT_FPREG, "fs", fs);
-    mipsAddOperand(prIns, MOT_FPREG, "ft", ft);
-    mipsAddOperand(prIns, MOT_GPREG, "rs", rs);
-}
-
 /* mipsInAND
  *  And
  *  AND rd, rs, rt
@@ -549,26 +340,6 @@ static void mipsInAND(char *buffer, unsigned int i_inst) {
     mipsType4(buffer, mnem, rd, rs, rt);
 }
 
-/* decodeAND
- *  And
- *  AND rd, rs, rt
- *  [000000][-----][-----][-----][00000][100100]
- * [SPECIAL][rs   ][rt   ][rd   ][0    ][AND   ]
- */
-static void decodeAND(MipsInstruction* prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    int rs = (int)mipsGetOperand0(prIns->value);
-    int rt = (int)mipsGetOperand1(prIns->value);
-    int rd = (int)mipsGetOperand2(prIns->value);
-    prIns->mnemonic = "and";
-    prIns->description = "And";
-    mipsAddOperand(prIns, MOT_GPREG, "rd", rd);
-    mipsAddOperand(prIns, MOT_GPREG, "rt", rt);
-    mipsAddOperand(prIns, MOT_GPREG, "rs", rs);
-}
-
 /* mipsInANDI
  *  And Immediate
  *  ANDI rt, rs, immediate
@@ -581,26 +352,6 @@ static void mipsInANDI(char *buffer, unsigned int i_inst) {
     int rt = (int)mipsGetOperand1(i_inst);
     short imm = mipsGetImmediate(i_inst);
     mipsType3(buffer, mnem, rs, rt, imm);
-}
-
-/* decodeANDI
- *  And Immediate
- *  ANDI rt, rs, immediate
- *  [001100][-----][-----][----------------]
- *  [ANDI  ][rs   ][rt   ][immediate       ]
- */
-static void decodeANDI(MipsInstruction* prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    int rs = (int)mipsGetOperand0(prIns->value);
-    int rt = (int)mipsGetOperand1(prIns->value);
-    short imm = mipsGetImmediate(prIns->value);
-    prIns->mnemonic = "andi";
-    prIns->description = "And Immediate";
-    mipsAddOperand(prIns, MOT_GPREG, "rt", rt);
-    mipsAddOperand(prIns, MOT_GPREG, "rs", rs);
-    mipsAddOperand(prIns, MOT_IMMEDIATE, "immediate", imm);
 }
 
 /* mipsInBC1
@@ -700,22 +451,6 @@ static void mipsInBEQ(char *buffer, unsigned int i_inst, unsigned int i_addr) {
     mipsType11(buffer, mnem, i_rs, i_rt, dest);
 }
 
-/* decodeBEQ
- *  Branch on Equal
- *  BEQ rs, rt, offset
- *  [000100][-----][-----][----------------]
- *  [BEQ   ][rs   ][rt   ][offset          ]
- */
-static void decodeBEQ(MipsInstruction* prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    mips_decode_type_i(prIns);
-    prIns->operands[2].operandtype = MOT_OFFSET;
-    prIns->mnemonic = "beq";
-    prIns->description = "Branch on Equal";
-}
-
 /* mipsInBEQL
  *  Branch on Equal Likely
  *  BEQL rs, rt, offset
@@ -729,22 +464,6 @@ static void mipsInBEQL(char *buffer, unsigned int i_inst, unsigned int i_addr) {
     short offset = mipsGetImmediate(i_inst);
     unsigned int dest = (i_addr & 0x0FFFFFFF) + 4 + (offset << 2);
     mipsType11(buffer, mnem, i_rs, i_rt, dest);
-}
-
-/* decodeBEQL
- *  Branch on Equal Likely
- *  BEQL rs, rt, offset
- *  [010100][-----][-----][----------------]
- *  [BEQ   ][rs   ][rt   ][offset          ]
- */
-static void decodeBEQL(MipsInstruction* prIns) {
-    if (prIns == NULL) {
-        return;
-    }
-    mips_decode_type_i(prIns);
-    prIns->operands[2].operandtype = MOT_OFFSET;
-    prIns->mnemonic = "beql";
-    prIns->description = "Branch on Equal Likely";
 }
 
 /* mipsInBGEZ
@@ -3908,7 +3627,7 @@ static void mipsType1(char *buffer, const char *mnem, int i_base, int i_rt,
         short offset) {
     const char *base = mipsRegisterArray[i_base];
     const char *rt = mipsRegisterArray[i_rt];
-    sprintf(buffer, "%-8s $%s, 0x%X($%s)", mnem, rt, offset, base);
+    sprintf(buffer, "%s $%s, 0x%X($%s)", mnem, rt, offset, base);
 }
 
 /* mipsType1c
@@ -3918,7 +3637,7 @@ static void mipsType1(char *buffer, const char *mnem, int i_base, int i_rt,
 static void mipsType1c(char *buffer, const char *mnem, int i_base, int i_op,
         short offset) {
     const char *base = mipsRegisterArray[i_base];
-    sprintf(buffer, "%-8s 0x%X, 0x%X($%s)", mnem, i_op, offset, base);
+    sprintf(buffer, "%s 0x%X, 0x%X($%s)", mnem, i_op, offset, base);
 }
 
 /* mipsType1f
@@ -3929,7 +3648,7 @@ static void mipsType1f(char *buffer, const char *mnem, int i_base, int i_rt,
         short offset) {
     const char *base = mipsRegisterArray[i_base];
     const char *rt = mipsFpRegNames[i_rt];
-    sprintf(buffer, "%-8s $%s, 0x%X($%s)", mnem, rt, offset, base);
+    sprintf(buffer, "%s $%s, 0x%X($%s)", mnem, rt, offset, base);
 }
 
 /* mipsType2
@@ -3939,7 +3658,7 @@ static void mipsType1f(char *buffer, const char *mnem, int i_base, int i_rt,
 static void mipsType2(char *buffer, const char *mnem, int i_rs, int i_rt) {
     const char *rs = mipsRegisterArray[i_rs];
     const char *rt = mipsRegisterArray[i_rt];
-    sprintf(buffer, "%-8s $%s, $%s", mnem, rs, rt);
+    sprintf(buffer, "%s $%s, $%s", mnem, rs, rt);
 }
 
 /* mipsType2f
@@ -3949,7 +3668,7 @@ static void mipsType2(char *buffer, const char *mnem, int i_rs, int i_rt) {
 static void mipsType2f(char *buffer, const char *mnem, int i_rt, int i_fs) {
     const char *rt = mipsRegisterArray[i_rt];
     const char *fs = mipsFpRegNames[i_fs];
-    sprintf(buffer, "%-8s $%s, $%s", mnem, rt, fs);
+    sprintf(buffer, "%s $%s, $%s", mnem, rt, fs);
 }
 
 /* mipsType3
@@ -3960,7 +3679,7 @@ static void mipsType3(char *buffer, const char *mnem, int i_rs, int i_rt,
         short imm) {
     const char *rs = mipsRegisterArray[i_rs];
     const char *rt = mipsRegisterArray[i_rt];
-    sprintf(buffer, "%-8s $%s, $%s, 0x%04X", mnem, rs, rt, (unsigned short)imm);
+    sprintf(buffer, "%s $%s, $%s, 0x%04X", mnem, rs, rt, (unsigned short)imm);
 }
 
 /* mipsType4
@@ -3971,7 +3690,7 @@ static void mipsType4(char *buffer, const char *mnem, int i_rd, int i_rs, int i_
     const char *rd = mipsRegisterArray[i_rd];
     const char *rs = mipsRegisterArray[i_rs];
     const char *rt = mipsRegisterArray[i_rt];
-    sprintf(buffer, "%-8s $%s, $%s, $%s", mnem, rd, rs, rt);
+    sprintf(buffer, "%s $%s, $%s, $%s", mnem, rd, rs, rt);
 }
 
 /* mipsType5
@@ -3980,7 +3699,7 @@ static void mipsType4(char *buffer, const char *mnem, int i_rd, int i_rs, int i_
  */
 static void mipsType5(char *buffer, const char *mnem, int i_rs, short n_imm) {
     const char *rs = mipsRegisterArray[i_rs];
-    sprintf(buffer, "%-8s $%s, 0x%X", mnem, rs, (unsigned short)n_imm);
+    sprintf(buffer, "%s $%s, 0x%X", mnem, rs, (unsigned short)n_imm);
 }
 
 /* mipsType6
@@ -3989,7 +3708,7 @@ static void mipsType5(char *buffer, const char *mnem, int i_rs, short n_imm) {
  */
 static void mipsType6(char *buffer, const char *mnem, short offset, int i_base) {
     const char *base = mipsRegisterArray[i_base];
-    sprintf(buffer, "%-8s 0x%X($%s)", mnem, offset, base);
+    sprintf(buffer, "%s 0x%X($%s)", mnem, offset, base);
 }
 
 /* mipsType7
@@ -3999,7 +3718,7 @@ static void mipsType6(char *buffer, const char *mnem, short offset, int i_base) 
 static void mipsType7(char *buffer, const char *mnem, int i_rd, int i_rt, int sa) {
     const char *rd = mipsRegisterArray[i_rd];
     const char *rt = mipsRegisterArray[i_rt];
-    sprintf(buffer, "%-8s $%s, $%s, 0x%X", mnem, rd, rt, sa);
+    sprintf(buffer, "%s $%s, $%s, 0x%X", mnem, rd, rt, sa);
 }
 
 /* mipsType8
@@ -4008,7 +3727,7 @@ static void mipsType7(char *buffer, const char *mnem, int i_rd, int i_rt, int sa
  */
 static void mipsType8(char *buffer, const char *mnem, int i_rs) {
     const char *rs = mipsRegisterArray[i_rs];
-    sprintf(buffer, "%-8s $%s", mnem, rs);
+    sprintf(buffer, "%s $%s", mnem, rs);
 }
 
 /* mipsType9
@@ -4018,7 +3737,7 @@ static void mipsType8(char *buffer, const char *mnem, int i_rs) {
 static void mipsType9(char *buffer, const char *mnem, int i_rd, int i_rs, int i_cc) {
     const char *rd = mipsRegisterArray[i_rd];
     const char *rs = mipsRegisterArray[i_rs];
-    sprintf(buffer, "%-8s $%s, $%s, 0x%X", mnem, rd, rs, i_cc);
+    sprintf(buffer, "%s $%s, $%s, 0x%X", mnem, rd, rs, i_cc);
 }
 
 /* mipsType10
@@ -4026,7 +3745,7 @@ static void mipsType9(char *buffer, const char *mnem, int i_rd, int i_rs, int i_
  *  [MNEM] target
  */
 static void mipsType10(char *buffer, const char *mnem, unsigned int target) {
-    sprintf(buffer, "%-8s 0x%08X", mnem, target);
+    sprintf(buffer, "%s 0x%08X", mnem, target);
 }
 
 /* mipsType11
@@ -4037,7 +3756,7 @@ static void mipsType11(char *buffer, const char *mnem, int i_rs, int i_rt,
         unsigned int target) {
     const char *rs = mipsRegisterArray[i_rs];
     const char *rt = mipsRegisterArray[i_rt];
-    sprintf(buffer, "%-8s $%s, $%s, 0x%08X", mnem, rs, rt, target);
+    sprintf(buffer, "%s $%s, $%s, 0x%08X", mnem, rs, rt, target);
 }
 
 /* mipsType12
@@ -4047,7 +3766,7 @@ static void mipsType11(char *buffer, const char *mnem, int i_rs, int i_rt,
 static void mipsType12(char *buffer, const char *mnem, int i_rs, 
         unsigned int target) {
     const char *rs = mipsRegisterArray[i_rs];
-    sprintf(buffer, "%-8s $%s, 0x%08X", mnem, rs, target);
+    sprintf(buffer, "%s $%s, 0x%08X", mnem, rs, target);
 }
 
 /* mipsType13
@@ -4057,7 +3776,7 @@ static void mipsType12(char *buffer, const char *mnem, int i_rs,
 static void mipsType13(char *buffer, const char *mnem, int i_fd, int i_fs) {
     const char *fd = mipsFpRegNames[i_fd];
     const char *fs = mipsFpRegNames[i_fs];
-    sprintf(buffer, "%-8s $%s, $%s", mnem, fd, fs);
+    sprintf(buffer, "%s $%s, $%s", mnem, fd, fs);
 }
 
 /* mipsTypeCcDest
@@ -4065,7 +3784,7 @@ static void mipsType13(char *buffer, const char *mnem, int i_fd, int i_fs) {
  *  [MNEM] cc, dest
  */
 static void mipsTypeCcDest(char *buffer, const char *mnem, int cc, unsigned int dest) {
-    sprintf(buffer, "%-8s %d, 0x%08X", mnem, cc, dest);
+    sprintf(buffer, "%s %d, 0x%08X", mnem, cc, dest);
 }
 
 /* mipsTypeCcFsFt
@@ -4075,7 +3794,7 @@ static void mipsTypeCcDest(char *buffer, const char *mnem, int cc, unsigned int 
 static void mipsTypeCcFsFt(char *buffer, const char *mnem, int cc, int i_fs, int i_ft) {
     const char *fs = mipsFpRegNames[i_fs];
     const char *ft = mipsFpRegNames[i_ft];
-    sprintf(buffer, "%-8s %d, $%s, $%s", mnem, cc, fs, ft);
+    sprintf(buffer, "%s %d, $%s, $%s", mnem, cc, fs, ft);
 }
 
 /* mipsTypeFdFrFsFt
@@ -4087,7 +3806,7 @@ static void mipsTypeFdFrFsFt(char *buffer, const char *mnem, int iFd, int iFr, i
     const char *fr = mipsFpRegNames[iFr];
     const char *fs = mipsFpRegNames[iFs];
     const char *ft = mipsFpRegNames[iFt];
-    sprintf(buffer, "%-8s $%s, $%s, $%s, $%s", mnem, fd, fr, fs, ft);
+    sprintf(buffer, "%s $%s, $%s, $%s, $%s", mnem, fd, fr, fs, ft);
 }
 
 /* mipsTypeFdFs
@@ -4097,7 +3816,7 @@ static void mipsTypeFdFrFsFt(char *buffer, const char *mnem, int iFd, int iFr, i
 static void mipsTypeFdFs(char *buffer, const char *mnem, int i_fd, int i_fs) {
     const char *fd = mipsFpRegNames[i_fd];
     const char *fs = mipsFpRegNames[i_fs];
-    sprintf(buffer, "%-8s $%s, $%s", mnem, fd, fs);
+    sprintf(buffer, "%s $%s, $%s", mnem, fd, fs);
 }
 
 /* mipsTypeFdFsCc
@@ -4107,7 +3826,7 @@ static void mipsTypeFdFs(char *buffer, const char *mnem, int i_fd, int i_fs) {
 static void mipsTypeFdFsCc(char *buffer, const char *mnem, int i_fd, int i_fs, int i_cc) {
     const char *fd = mipsFpRegNames[i_fd];
     const char *fs = mipsFpRegNames[i_fs];
-    sprintf(buffer, "%-8s $%s, $%s, %d", mnem, fd, fs, i_cc);
+    sprintf(buffer, "%s $%s, $%s, %d", mnem, fd, fs, i_cc);
 }
 
 /* mipsTypeFdFsFt
@@ -4118,7 +3837,7 @@ static void mipsTypeFdFsFt(char *buffer, const char *mnem, int iFd, int iFs, int
     const char *fd = mipsFpRegNames[iFd];
     const char *fs = mipsFpRegNames[iFs];
     const char *ft = mipsFpRegNames[iFt];
-    sprintf(buffer, "%-8s $%s, $%s, $%s", mnem, fd, fs, ft);
+    sprintf(buffer, "%s $%s, $%s, $%s", mnem, fd, fs, ft);
 }
 
 /* mipsTypeFdFsFtRs
@@ -4130,7 +3849,7 @@ static void mipsTypeFdFsFtRs(char *buffer, const char *mnem, int iFd, int iFs, i
     const char *fs = mipsFpRegNames[iFs];
     const char *ft = mipsFpRegNames[iFt];
     const char *rs = mipsRegisterArray[iRs];
-    sprintf(buffer, "%-8s $%s, $%s, $%s, $%s", mnem, fd, fs, ft, rs);
+    sprintf(buffer, "%s $%s, $%s, $%s, $%s", mnem, fd, fs, ft, rs);
 }
 
 /* mipsTypeFdFsRt
@@ -4141,7 +3860,7 @@ static void mipsTypeFdFsRt(char *buffer, const char *mnem, int iFd, int iFs, int
     const char *fd = mipsFpRegNames[iFd];
     const char *fs = mipsFpRegNames[iFs];
     const char *rt = mipsRegisterArray[iRt];
-    sprintf(buffer, "%-8s $%s, $%s, $%s", mnem, fd, fs, rt);
+    sprintf(buffer, "%s $%s, $%s, $%s", mnem, fd, fs, rt);
 }
 
 /* mipsTypeFsIndexBase
@@ -4152,7 +3871,7 @@ static void mipsTypeFsIndexBase(char *buffer, const char *mnem, int iFs, int iIn
     const char *fs = mipsFpRegNames[iFs];
     const char *index = mipsRegisterArray[iIndex];
     const char *base = mipsRegisterArray[iBase];
-    sprintf(buffer, "%-8s $%s, $%s($%s)", mnem, fs, index, base);
+    sprintf(buffer, "%s $%s, $%s($%s)", mnem, fs, index, base);
 }
 
 /* mipsTypeRtOffsetBase
@@ -4162,7 +3881,7 @@ static void mipsTypeFsIndexBase(char *buffer, const char *mnem, int iFs, int iIn
 static void mipsTypeRtOffsetBase(char *buffer, const char *mnem, int i_rt, short offset, int i_base) {
     const char *base = mipsRegisterArray[i_base];
     const char *rt = mipsRegisterArray[i_rt];
-    sprintf(buffer, "%-8s $%s, 0x%X($%s)", mnem, rt, offset, base);
+    sprintf(buffer, "%s $%s, 0x%X($%s)", mnem, rt, offset, base);
 }
 
 /* mipsTypeRtRdSel
@@ -4174,7 +3893,7 @@ static void mipsTypeRtRdSel(char* buffer, const char* mnem,
     const char *rt = mipsRegisterArray[i_rt];
     const char *rd = mipsRegisterArray[i_rd];
     const char *sel = mipsControlRegister[i_sel];
-    sprintf(buffer, "%-8s $%s, $%s, $%s", mnem, rt, rd, sel);
+    sprintf(buffer, "%s $%s, $%s, $%s", mnem, rt, rd, sel);
 }
 
 /* mipsTypeRtRsPosSize
@@ -4184,11 +3903,11 @@ static void mipsTypeRtRdSel(char* buffer, const char* mnem,
 static void mipsTypeRtRsPosSize(char *buffer, const char *mnem, int iRt, int iRs, int iPos, int iSize) {
     const char *rt = mipsRegisterArray[iRt];
     const char *rs = mipsRegisterArray[iRs];
-    sprintf(buffer, "%-8s $%s, $%s, %d, %d", mnem, rt, rs, iPos, iSize);
+    sprintf(buffer, "%s $%s, $%s, %d, %d", mnem, rt, rs, iPos, iSize);
 }
 
 static void mipsTypeVrd(char* buffer, const char* mnem, int iRd) {
-    sprintf(buffer, "%-8s $v%d", mnem, iRd);
+    sprintf(buffer, "%s $v%d", mnem, iRd);
 }
 
 static void mipsTypeVrdA(char* buffer, const char* mnem, int iRd, int iA) {
@@ -4256,21 +3975,21 @@ static void mipsTypeVrdA(char* buffer, const char* mnem, int iRd, int iA) {
             sprintf(buf, "%d", iA);
             sCn = buf;
     }
-    sprintf(buffer, "%-8s $v%d, %s", mnem, iRd, sCn);
+    sprintf(buffer, "%s $v%d, %s", mnem, iRd, sCn);
 }
 
 static void mipsTypeVrdVrs(char* buffer, const char* mnem, int iRd, int iRs) {
-    sprintf(buffer, "%-8s $v%d, $v%d", mnem, iRd, iRs);
+    sprintf(buffer, "%s $v%d, $v%d", mnem, iRd, iRs);
 }
 
 static void mipsTypeVrdVrsScale(char* buffer, const char* mnem,
         int iRd, int iRs, int scale) {
-    sprintf(buffer, "%-8s $v%d, $v%d, %d", mnem, iRd, iRs, scale);
+    sprintf(buffer, "%s $v%d, $v%d, %d", mnem, iRd, iRs, scale);
 }
 
 static void mipsTypeVrdVrsVrt(char* buffer, const char* mnem,
         int iRd, int iRs, int iRt) {
-    sprintf(buffer, "%-8s $v%d, $v%d, $v%d", mnem, iRd, iRs, iRt);
+    sprintf(buffer, "%s $v%d, $v%d, $v%d", mnem, iRd, iRs, iRt);
 }
 
 void mipsDecode(char *buffer, unsigned int i_inst, unsigned int i_addr) {
