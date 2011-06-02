@@ -1,10 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <pspkerneltypes.h>
-#include <pspiofilemgr.h>
-#include "colorconfig.h"
-#include "dimension.h"
-#include "cursorpos.h"
 #include "panelconfig.h"
 
 int panelconfig_copy(PanelConfig* prDest, PanelConfig* prSrc) {

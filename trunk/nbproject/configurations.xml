@@ -111,8 +111,6 @@
       <in>searchpanel.h</in>
       <in>searchquery.h</in>
       <in>searchsize.h</in>
-      <in>textcolumn.c</in>
-      <in>textcolumn.h</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -415,16 +413,6 @@
         </cTool>
       </item>
       <item path="searchpanel.c" ex="false" tool="0" flavor="2">
-        <cTool>
-          <incDir>
-            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>_PSP_FW_VERSION=150</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="textcolumn.c" ex="false" tool="0" flavor="2">
         <cTool>
           <incDir>
             <pElem>/opt/pspsdk/psp/sdk/include</pElem>

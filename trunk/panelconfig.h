@@ -8,7 +8,10 @@
 #ifndef PANELCONFIG_H
 #define	PANELCONFIG_H
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <pspkerneltypes.h>
+#include <pspiofilemgr.h>
 #include "colorconfig.h"
 #include "cursorpos.h"
 #include "dimension.h"
