@@ -16,6 +16,8 @@
       <in>block.h</in>
       <in>blockmodel.c</in>
       <in>blockmodel.h</in>
+      <in>blockview.c</in>
+      <in>blockview.h</in>
       <in>buttonstate.h</in>
       <in>bytecolumn.c</in>
       <in>bytecolumn.h</in>

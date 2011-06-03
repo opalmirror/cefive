@@ -5,18 +5,21 @@
  * Created on September 20, 2010, 11:43 AM
  */
 
-#ifndef _CEFIVE_H
-#define	_CEFIVE_H
+#ifndef CEFIVE_H
+#define	CEFIVE_H
 
+#include <stdio.h>
+#include <string.h>
 #include <pspkerneltypes.h>
 #include <psploadcore.h>
+#include <pspthreadman.h>
+#include "cefiveconfig.h"
 #include "cefiveui.h"
 #include "cheatengine.h"
-#include "searchengine.h"
-#include "cefiveconfig.h"
 #include "gameinfo.h"
 #include "geelog.h"
 #include "ggame.h"
+#include "searchengine.h"
 
 /** Indicates success. */
 #define CEFIVE_SUCCESS      (0)
@@ -146,59 +149,6 @@ extern "C" {
     /** Structure representing a Cheat Engine of Five. */
     CEFive;
 
-    /** Return a pointer to a CheatEngine struct representing the Cheat Engine.
-     * 
-     * @return A pointer to a CheatEngine struct is returned.
-     */
-    CheatEngine* cefive_get_cheatengine();
-    
-    /** Return a pointer to a CEFiveConfig struct representing the CEFive
-     * Configuration.
-     * 
-     * @return A pointer to a CEFiveConfig struct is returned.
-     */
-    CEFiveConfig* cefive_get_config();
-    
-    /** Return a pointer to a GGame struct representing the current Game.
-     * 
-     * @return A pointer to a GGame struct is returned.
-     */
-    GGame* cefive_get_game();
-    
-    /** Return a pointer to a CEFiveUi struct representing the CEFive User
-     * Interface.
-     * 
-     * @return A pointer to a CEFiveUi struct is returned.
-     */
-    CEFiveUi* cefive_get_interface();
-    
-    /** Return a pointer to a SceModule struct representing the 
-     * sceKernelLibrary library.
-     * 
-     * @return A pointer to a SceModule struct or NULL is returned.
-     */
-    SceModule* cefive_get_kernellib();
-    
-    /** Return a pointer to a SearchEngine struct representing the Search 
-     * Engine.
-     * 
-     * @return A pointer to a SearchEngine struct is returned.
-     */
-    SearchEngine* cefive_get_searchengine();
-    
-    /** Return the Thread Id of the CEFive thread.
-     * 
-     * @return A SceUID containing the Thread Id is returned.
-     */
-    SceUID cefive_get_threadid();
-    
-    /** Initialize Cheat Engine of Five.
-     * 
-     * @param prLog Pointer to a GeeLog struct representing the Logger.
-     * @return 0 indicates success, less than 0 indicates failure.
-     */
-    int cefive_init(GeeLog* prLog);
-    
     /** Start Cheat Engine of Five.
      * 
      * @return 0 indicates success, less than 0 indicates failure.
@@ -215,5 +165,4 @@ extern "C" {
 }
 #endif
 
-#endif	/* _CEFIVE_H */
-
+#endif	/* CEFIVE_H */
