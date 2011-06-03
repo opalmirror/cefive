@@ -3,43 +3,37 @@
 static Block karBlock[CHEATENGINE_BLOCK_MAX];
 static Cheat karCheat[CHEATENGINE_CHEAT_MAX];
 
-static SceUInt32 parseDword(const char* sBuf);
-static int parseName(const char* buffer, char* sName, size_t maxlen);
-
 Block* cheatengine_add_block(CheatEngine* prEng) {
-    Block* prBlock = NULL;
     int index = 0;
     if (prEng != NULL) {
         if (prEng->block_count < CHEATENGINE_BLOCK_MAX) {
             index = prEng->block_count;
             prEng->block_count++;
-            prBlock = cheatengine_get_block(prEng, index);
+            return cheatengine_get_block(prEng, index);
         }
     }
-    return prBlock;
+    return NULL;
 }
 
 Cheat* cheatengine_add_cheat(CheatEngine* prEng) {
-    Cheat* prCheat = NULL;
     int index = 0;
     if (prEng != NULL) {
         if (prEng->cheat_count < CHEATENGINE_CHEAT_MAX) {
             index = prEng->cheat_count;
             prEng->cheat_count++;
-            prCheat = cheatengine_get_cheat(prEng, index);
+            return cheatengine_get_cheat(prEng, index);
         }
     }
-    return prCheat;
+    return NULL;
 }
 
 Block* cheatengine_get_block(CheatEngine* prEng, const int index) {
-    Block* prBlock = NULL;
     if (prEng != NULL) {
         if ((index >= 0) && (index < prEng->block_count)) {
-            prBlock = &prEng->blocklist[index];
+            return &prEng->blocklist[index];
         }
     }
-    return prBlock;
+    return NULL;
 }
 
 int cheatengine_get_blockcount(CheatEngine* prEng) {
@@ -55,19 +49,18 @@ int cheatengine_get_blockcount(CheatEngine* prEng) {
 BlockModel* cheatengine_get_blockmodel(CheatEngine* prEng) {
     BlockModel* prModel = NULL;
     if (prEng != NULL) {
-        prModel = &prEng->blockModel;
+        return &prEng->blockModel;
     }
-    return prModel;
+    return NULL;
 }
 
 Cheat* cheatengine_get_cheat(CheatEngine* prEng, const int index) {
-    Cheat *prCheat = NULL;
     if (prEng != NULL) {
         if ((index >= 0) && (index < prEng->cheat_count)) {
-            prCheat = &prEng->cheatlist[index];
+            return &prEng->cheatlist[index];
         }
     }
-    return prCheat;
+    return NULL;
 }
 
 int cheatengine_get_cheatcount(CheatEngine* prEng) {
@@ -81,11 +74,10 @@ int cheatengine_get_cheatcount(CheatEngine* prEng) {
 }
 
 CheatModel* cheatengine_get_cheatmodel(CheatEngine* prEng) {
-    CheatModel* prModel = NULL;
     if (prEng != NULL) {
-        prModel = &prEng->cheatModel;
+        return &prEng->cheatModel;
     }
-    return prModel;
+    return NULL;
 }
 
 int cheatengineActivateCheats(CheatEngine* prEng) {
@@ -350,141 +342,6 @@ int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
     return CHEATENGINE_SUCCESS;
 }
 
-int cheatengineLoadCheats(CheatEngine* prEng) {
-    CEFiveConfig* prCfg = NULL;
-    char* sPlugin = NULL;
-    char* sDir = NULL;
-    char* sGameId = NULL;
-    SceUID fh = 0;
-    SceOff rOffset = 0;
-
-    if (prEng == NULL) {
-        return CHEATENGINE_NULLPTR;
-    }
-    prCfg = prEng->prConfig;
-    if (prCfg == NULL) {
-        return CHEATENGINE_NULLPTR;
-    }
-    sPlugin = prCfg->plugins_dir;
-    sDir = prCfg->cefive_dir;
-    sGameId = prCfg->game_id;
-    sprintf(prCfg->cheatfile_path, "ms0:/%s/%s/%s.txt", sPlugin, sDir, sGameId);
-
-    fh = sceIoOpen(prCfg->cheatfile_path, PSP_O_RDONLY, 0777);
-    if (fh == 0) {
-        return CHEATENGINE_FILEIO;
-    }
-    rOffset = sceIoLseek(fh, 0, SEEK_END);
-    sceIoLseek(fh, 0, SEEK_SET);
-
-    sceIoClose(fh);
-    return CHEATENGINE_SUCCESS;
-}
-
-int cheatengine_parsebuffer(CheatEngine* prEngine, const char* buffer,
-        size_t len) {
-    int bytes = 0;
-    char c = (char)0;
-    static int incomment = 0;
-    static int inname = 0;
-    static int incheat = 0;
-    static int namelen = 0;
-    static int curindex = 0;
-    Cheat* prCheat = NULL;
-
-    while (bytes < len) {
-        c = *(buffer + bytes);
-        switch (c) {
-            case '\r':
-            case '\n':
-                if (incomment == 1) {
-                    incomment = 0;
-                }
-                break;
-            case '#':
-                if (incomment == 0) {
-                    if (inname == 0) {
-                        if (incheat == 0) {
-                            curindex = prEngine->cheat_count;
-                            prCheat = cheatengineAddCheat(prEngine);
-                            incheat = 1;
-                            inname = 1;
-                            namelen = 0;
-                        }
-                    }
-                }
-                break;
-            case '!':
-                if (incomment == 0) {
-                    if (incheat == 1) {
-                        if (inname == 0) {
-                            if (prCheat != NULL) {
-                                if (cheat_is_selected(prCheat) == 1) {
-                                    cheat_set_constant(prCheat);
-                                } else {
-                                    cheat_set_selected(prCheat);
-                                }
-                            }
-                        } else {
-                            if (prCheat != NULL) {
-                                prCheat->name[namelen] = c;
-                                namelen++;
-                            }
-                        }
-                    }
-                }
-                break;
-            case ';':
-                if (incomment == 0) {
-                    if (inname == 0) {
-                        incomment = 1;
-                    }
-                }
-                break;
-            default:
-                if (incomment == 0) {
-                    if (incheat == 1) {
-                        if (inname == 1) {
-                            if (prCheat != NULL) {
-                                prCheat->name[namelen] = c;
-                                namelen++;
-                            }
-                        }
-                    }
-                }
-                break;
-        }
-        bytes++;
-    }
-    return bytes;
-}
-
-int cheatengineReadline(SceUID rFh, char* buffer) {
-    int len = 0;
-    int ci = 0;
-    char c = (char)0;
-    int end = 0;
-    int r = 0;
-
-    if (buffer == NULL) {
-        return CHEATENGINE_NULLPTR;
-    }
-    while (end == 0) {
-        r = sceIoRead(rFh, buffer + ci, 1);
-        len += r;
-        if (r == 0) {
-            end = 1;
-            continue;
-        }
-        c = *(buffer + ci);
-        if (c == '\n' || c == '\r') {
-            end = 1;
-        }
-        ci++;
-    }
-    return len;
-}
-
 int cheatengineRefresh(CheatEngine* prEng) {
     Cheat* prCheat = NULL;
     int iCheat = 0;
@@ -646,94 +503,3 @@ int cheatengineSetCheatSelected(CheatEngine* prEng, int index) {
     return CHEATENGINE_SUCCESS;
 }
 
-static SceUInt32 parseDword(const char* sBuf) {
-    SceUInt32 value = 0;
-    char c = (char)0;
-    int i = 0;
-
-    for (i = 0; i < 8; i++) {
-        c = sBuf[i];
-        value <<= 4;
-        switch (c) {
-            case '_':
-            case '0':
-                break;
-            case '1':
-                value |= 1;
-                break;
-            case '2':
-                value |= 2;
-                break;
-            case '3':
-                value |= 3;
-                break;
-            case '4':
-                value |= 4;
-                break;
-            case '5':
-                value |= 5;
-                break;
-            case '6':
-                value |= 6;
-                break;
-            case '7':
-                value |= 7;
-                break;
-            case '8':
-                value |= 8;
-                break;
-            case '9':
-                value |= 9;
-                break;
-            case 'A':
-            case 'a':
-                value |= 10;
-                break;
-            case 'B':
-            case 'b':
-                value |= 11;
-                break;
-            case 'C':
-            case 'c':
-                value |= 12;
-                break;
-            case 'D':
-            case 'd':
-                value |= 13;
-                break;
-            case 'E':
-            case 'e':
-                value |= 14;
-                break;
-            case 'F':
-            case 'f':
-                value |= 15;
-                break;
-        }
-    }
-    
-    return value;
-}
-
-static int parseName(const char* buffer, char* sName, size_t maxlen) {
-    int len = 0;
-    int started = 0;
-    char c = (char)0;
-    while (len < maxlen) {
-        c = *(buffer + len);
-        if (c == '\r' || c == '\n') {
-            sName[len] = (char)0;
-            break;
-        }
-        if (c == ' ' && started == 0) {
-            continue;
-        }
-        sName[len] = c;
-        started = 1;
-        len++;
-    }
-    if (len == maxlen) {
-        sName[maxlen] = (char)0;
-    }
-    return len;
-}

@@ -253,17 +253,6 @@ extern "C" {
     int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
             Block* arBlock);
 
-    /** Load initial Cheats and Blocks from the configured cheatfile_path of the
-     * specified Cheat Engine.
-     * 
-     * @param prEng Pointer to a CheatEngine struct representing the Cheat Engine.
-     * @return CHEATENGINE_NULLPTR is returned if prEng is NULL or if the 
-     * Configuration pointer within prEng is NULL.  CHEATENGINE_FILEIO is returned 
-     * if an I/O Error occurs.  CHEATENGINE_SUCCESS is returned if the file is 
-     * loaded.
-     */
-    int cheatengineLoadCheats(CheatEngine* prEng);
-
     /** Refresh the specified Cheat Engine, Applying or Resetting cheats as 
      * necessary.
      * 
