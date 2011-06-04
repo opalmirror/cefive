@@ -11,10 +11,12 @@
 #include <stdio.h>
 #include <pspdebug.h>
 #include <psptypes.h>
+#include "block.h"
 #include "colorconfig.h"
 #include "cursorpos.h"
 #include "dimension.h"
 #include "hexpad.h"
+#include "mips.h"
 #include "panelconfig.h"
 
 #define BLOCKVIEW_SUCCESS (0)
@@ -22,6 +24,15 @@
 #define BLOCKVIEW_NULLPTR (-2)
 #define BLOCKVIEW_MEMORY (-3)
 #define BLOCKVIEW_INVIDX (-4)
+
+#define BLOCKVIEW_POS_X (0)
+#define BLOCKVIEW_POS_Y (3)
+#define BLOCKVIEW_SIZE_W (60)
+#define BLOCKVIEW_SIZE_H (20)
+#define BLOCKVIEW_PANELBG ((u32)0xFFC0C0C0)
+#define BLOCKVIEW_PANELFG ((u32)0xFF000000)
+#define BLOCKVIEW_CURSORBG ((u32)0xFFE00000)
+#define BLOCKVIEW_CURSORFG ((u32)0xFFFFFFFF)
 
 #ifdef	__cplusplus
 extern "C" {
@@ -36,6 +47,7 @@ extern "C" {
         int pageIndex;
         int editing;
         int dirty;
+        Block* blockList;
     }
     BlockView;
 

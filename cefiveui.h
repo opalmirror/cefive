@@ -229,7 +229,7 @@ extern "C" {
      * @param prSearch Pointer to a SearchEngine struct representing the Search
      * Engine.
      */
-    void cefiveuiInit(CEFiveUi *prUi, CheatEngine *prEngine,
+    void cefiveui_init(CEFiveUi *prUi, CheatEngine *prEngine,
             SearchEngine* prSearch);
 
     /** Draw the User Interface on the debug screen.

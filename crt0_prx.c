@@ -297,7 +297,7 @@ void cheatApply(unsigned char a_type) {
     if (!cheatSaved) {
         return;
     }
-    cheatengineRefresh(&krCheatEngine);
+    cheatengine_refresh(&krCheatEngine);
 }
 
 void cheatSave() {
@@ -677,7 +677,7 @@ static void computeCheats() {
 }
 
 static void freshenCheats() {
-    cheatengineRefresh(&krCheatEngine);
+    cheatengine_refresh(&krCheatEngine);
 }
 
 static void gamePause(SceUID thid) {
@@ -1089,7 +1089,7 @@ static void start() {
 
     geelog_log(LOG_DEBUG, "start: Initializing CheatEngine.");
     /* Initialize the CheatEngine */
-    r = cheatengineInit(prEng, prCfg, cheat, block);
+    r = cheatengine_init(prEng, prCfg, cheat, block);
 
     geelog_log(LOG_DEBUG, "start: Initializing SearchEngine.");
     // Initialize the SearchEngine
@@ -1099,7 +1099,7 @@ static void start() {
     geelog_log(LOG_DEBUG, "start: Initializing UI.");
     /* Initialize the UI */
     prUi->prCEConfig = prCfg;
-    cefiveuiInit(prUi, prEng, prSearch);
+    cefiveui_init(prUi, prEng, prSearch);
     krRunState = CES_Starting;
     krStartState = CESS_WaitKernelLib;
 
@@ -1186,14 +1186,14 @@ int mainThread() {
                 cefiveui_update_controls(prUi);
                 cefiveuiRedraw(prUi);
                 searchengine_run(prSearch);
-                cheatengineRefresh(prEngine);
+                cheatengine_refresh(prEngine);
                 sceKernelDelayThread(50000);
             }
             geelog_flog(LOG_DEBUG, sFunc, "Hiding Interface.");
             hideInterface();
         }
         searchengine_run(prSearch);
-        cheatengineRefresh(prEngine);
+        cheatengine_refresh(prEngine);
         sceKernelDelayThread(50000);
     }
     

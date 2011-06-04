@@ -95,22 +95,6 @@ extern "C" {
      */
     Block* cheatengine_get_block(CheatEngine* prEng, const int index);
     
-    /** Return the number of Block elements in a Cheat Engine.
-     * 
-     * @param prEng Pointer to a CheatEngine struct representing the Cheat
-     * Engine.
-     * @return The number of Block elements or -1 is returned. 
-     */
-    int cheatengine_get_blockcount(CheatEngine* prEng);
-    
-    /** Return a pointer to a BlockModel struct representing the Block Model.
-     * 
-     * @param prEng Pointer to a CheatEngine struct representing the Cheat
-     * Engine.
-     * @return A pointer to a BlockModel struct or NULL is returned. 
-     */
-    BlockModel* cheatengine_get_blockmodel(CheatEngine* prEng);
-    
     /** Return a pointer to a Cheat struct representing the indicated Cheat.
      * 
      * @param prEng Pointer to a CheatEngine struct representing the Cheat
@@ -120,22 +104,6 @@ extern "C" {
      */
     Cheat* cheatengine_get_cheat(CheatEngine* prEng, const int index);
     
-    /** Return the number of Cheat elements in a Cheat Engine.
-     * 
-     * @param prEng Pointer to a CheatEngine struct representing the Cheat
-     * Engine.
-     * @return The number of Cheat elements or -1 is returned. 
-     */
-    int cheatengine_get_cheatcount(CheatEngine* prEng);
-    
-    /** Return a pointer to a CheatModel struct representing the Cheat Model.
-     * 
-     * @param prEng Pointer to a CheatEngine struct representing the Cheat
-     * Engine.
-     * @return A pointer to a CheatModel struct or NULL is returned.
-     */
-    CheatModel* cheatengine_get_cheatmodel(CheatEngine* prEng);
-    
     /** Activate all Cheats that are currently inactive.
      * 
      * @param prEng Pointer to a CheatEngine struct representing the Cheat Engine.
@@ -143,28 +111,6 @@ extern "C" {
      * CHEATENGINE_SUCCESS is returned if the Cheats are activated.
      */
     int cheatengineActivateCheats(CheatEngine* prEng);
-
-    /** Add and return a pointer to a new Block in a Cheat Engine by specifying the
-     * values of the Block to add.
-     * 
-     * @param prEng Pointer to a CheatEngine struct representing the Cheat Engine.
-     * @param flags 8-bit Block flags (see Block.h)
-     * @param addr 32-bit unsigned integer containing the address of the Block.
-     * @param value 32-bit unsigned integer containing the patch value of the Block.
-     * @return A pointer to the newly created Block struct is returned.
-     * NULL is returned if the Block could not be created.
-     */
-    Block* cheatengineAddBlock(CheatEngine *prEng,
-            unsigned char flags, unsigned int addr, unsigned int value);
-
-    /** Add a Cheat to the specified Cheat Engine returning a pointer to the newly
-     * added Cheat struct.
-     * 
-     * @param prEng Pointer to a CheatEngine struct representing the Cheat Engine.
-     * @return A pointer to a Cheat struct representing the newly added Cheat is 
-     * returned. NULL is returned if a Cheat could not be added.
-     */
-    Cheat* cheatEngineAddCheat(CheatEngine *prEng);
 
     /** Apply the specified Block to memory.
      * 
@@ -250,7 +196,7 @@ extern "C" {
      * @return CHEATENGINE_NULLPTR is returned if prEng or prCfg are NULL.
      * CHEATENGINE_SUCCESS is returned if the struct is initialized.
      */
-    int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
+    int cheatengine_init(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
             Block* arBlock);
 
     /** Refresh the specified Cheat Engine, Applying or Resetting cheats as 
@@ -260,7 +206,7 @@ extern "C" {
      * @return CHEATENGINE_NULLPTR is returned if prEng is NULL.
      * CHEATENGINE_SUCCESS is returned if the Cheat Engine is refreshed.
      */
-    int cheatengineRefresh(CheatEngine* prEng);
+    int cheatengine_refresh(CheatEngine* prEng);
 
     /** Reset a previously activated Block by specifying the index.  A Block that
      * is Reset will return memory to it's value when the Block was applied.

@@ -515,9 +515,9 @@ int cefiveuiHandleInput(CEFiveUi *prUi) {
     return handled;
 }
 
-void cefiveuiInit(CEFiveUi* prUi, CheatEngine* prEngine,
+void cefiveui_init(CEFiveUi* prUi, CheatEngine* prEngine,
         SearchEngine* prSearch) {
-    const char* sFunc = "cefiveuiInit";
+    const char* sFunc = "cefiveui_init";
     CEFiveUiConfig* prUiCfg = NULL;
     CEFiveConfig* prConfig = NULL;
     AppletConfig* prAppCfg = NULL;

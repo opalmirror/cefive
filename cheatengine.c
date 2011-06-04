@@ -36,46 +36,11 @@ Block* cheatengine_get_block(CheatEngine* prEng, const int index) {
     return NULL;
 }
 
-int cheatengine_get_blockcount(CheatEngine* prEng) {
-    int count = CHEATENGINE_FAILURE;
-    BlockModel* prModel = NULL;
-    if (prEng != NULL) {
-        prModel = cheatengine_get_blockmodel(prEng);
-        count = prModel->rowCount;
-    }
-    return count;
-}
-
-BlockModel* cheatengine_get_blockmodel(CheatEngine* prEng) {
-    BlockModel* prModel = NULL;
-    if (prEng != NULL) {
-        return &prEng->blockModel;
-    }
-    return NULL;
-}
-
 Cheat* cheatengine_get_cheat(CheatEngine* prEng, const int index) {
     if (prEng != NULL) {
         if ((index >= 0) && (index < prEng->cheat_count)) {
             return &prEng->cheatlist[index];
         }
-    }
-    return NULL;
-}
-
-int cheatengine_get_cheatcount(CheatEngine* prEng) {
-    int count = CHEATENGINE_FAILURE;
-    CheatModel* prModel = NULL;
-    if (prEng != NULL) {
-        prModel = cheatengine_get_cheatmodel(prEng);
-        count = prModel->rowCount;
-    }
-    return count;
-}
-
-CheatModel* cheatengine_get_cheatmodel(CheatEngine* prEng) {
-    if (prEng != NULL) {
-        return &prEng->cheatModel;
     }
     return NULL;
 }
@@ -100,39 +65,6 @@ int cheatengineActivateCheats(CheatEngine* prEng) {
     prEng->trigger_active = 1;
 
     return CHEATENGINE_SUCCESS;
-}
-
-Block* cheatengineAddBlock(CheatEngine *prEng, unsigned char flags, 
-        unsigned int addr, unsigned int value) {
-    Block *prDest = NULL;
-    if (prEng == NULL) {
-        return prDest;
-    }
-    prDest = &(prEng->blocklist[prEng->block_count]);
-    prDest->flags = flags;
-    prDest->address = addr;
-    prDest->hakVal = value;
-    prEng->block_count++;
-    return prDest;
-}
-
-Cheat* cheatengineAddCheat(CheatEngine *prEng) {
-    Cheat *prDest = NULL;
-    int ct = 0;
-    
-    if (prEng == NULL) {
-        return prDest;
-    }
-    ct = prEng->cheat_count;
-    ct++;
-    if (ct < CHEATENGINE_CHEAT_MAX) {
-        prDest = &(prEng->cheatlist[prEng->cheat_count]);
-        cheat_set_length(prDest, 0);
-        cheat_set_block(prDest, prEng->block_count);
-        cheat_setflag_fresh(prDest);
-        prEng->cheat_count = ct;
-    }
-    return prDest;
 }
 
 int cheatengineApplyBlock(CheatEngine *prEng, int index) {
@@ -255,34 +187,16 @@ int cheatengineDeactivateCheats(CheatEngine* prEng) {
 }
 
 Block* cheatengineGetBlock(CheatEngine *prEng, int index) {
-    Block *prDest = NULL;
-    if (prEng == NULL || index < 0) {
-        return prDest;
-    }
-    if (index >= prEng->block_count) {
-        return prDest;
-    }
-    prDest = &(prEng->blocklist[index]);
-    return prDest;
+    return cheatengine_get_block(prEng, index);
 }
 
 Cheat* cheatengineGetCheat(CheatEngine *prEng, int index) {
-    Cheat *prDest = NULL;
-    if (prEng == NULL || index < 0) {
-        return prDest;
-    }
-    if (index >= prEng->cheat_count) {
-        return prDest;
-    }
-    prDest = &(prEng->cheatlist[index]);
-    return prDest;
+    return cheatengine_get_cheat(prEng, index);
 }
 
-int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
+int cheatengine_init(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
         Block* arBlock) {
     const char* sFunc = "cheatengineInit";
-    BlockModel* prBmodel = NULL;
-    CheatModel* prCmodel = NULL;
     Block* prBlock = NULL;
     Cheat* prCheat = NULL;
     int i = 0;
@@ -328,21 +242,11 @@ int cheatengineInit(CheatEngine* prEng, CEFiveConfig* prCfg, Cheat* arCheat,
     }
     prEng->cheat_count = 0;
 
-    prBmodel = cheatengine_get_blockmodel(prEng);
-    if (blockmodel_init(prBmodel, 16) != BLOCKMODEL_SUCCESS) {
-        geelog_flog(LOG_ERROR, sFunc, "Failed to initialize Block Model.");
-        return CHEATENGINE_FAILURE;
-    }
-    prCmodel = cheatengine_get_cheatmodel(prEng);
-    if (cheatmodel_init(prCmodel, 8) != CHEATMODEL_SUCCESS) {
-        geelog_flog(LOG_ERROR, sFunc, "Failed to initialize Cheat Model.");
-        return CHEATENGINE_FAILURE;
-    }
     geelog_flog(LOG_INFO, sFunc, "Cheat Engine initialized.");
     return CHEATENGINE_SUCCESS;
 }
 
-int cheatengineRefresh(CheatEngine* prEng) {
+int cheatengine_refresh(CheatEngine* prEng) {
     Cheat* prCheat = NULL;
     int iCheat = 0;
 
