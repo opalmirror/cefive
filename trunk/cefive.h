@@ -13,12 +13,14 @@
 #include <pspkerneltypes.h>
 #include <psploadcore.h>
 #include <pspthreadman.h>
+#include <pspctrl_kernel.h>
 #include "cefiveconfig.h"
 #include "cefiveui.h"
 #include "cheatengine.h"
 #include "gameinfo.h"
 #include "geelog.h"
 #include "ggame.h"
+#include "niteprio.h"
 #include "searchengine.h"
 
 /** Indicates success. */
@@ -55,7 +57,7 @@
 #define CEFIVE_PLUGIN_DIR "seplugins"
 
 /** The CEFive Data Folder */
-#define CEFIVE_DATA_DIR "NitePr"
+#define CEFIVE_DATA_DIR "nitePR"
 
 /** The CEFive Configuration File */
 #define CEFIVE_CONFIG_FILE "CEFive.cdf"
@@ -71,6 +73,13 @@
 
 /** The Name of the Run State Semaphore. */
 #define CEFIVE_RSS_NAME "CEFiveRSSema"
+
+/** The Name of the CEFive Kernel Event Mask. */
+#define CEFIVE_EVENT_NAME "CEFiveEvent"
+
+#define CEFIVE_E_SHOW_UI (1)
+#define CEFIVE_E_HIDE_UI (2)
+#define CEFIVE_E_VRAM_RDY (4)
 
 /** The Length of a Path */
 #define CEFIVE_PATH_LEN (255)
@@ -144,7 +153,7 @@ extern "C" {
         /** GGame struct representing the current Game. */
         GGame rGame;
         /** UID of Input Events */
-        SceUID rIEvtUID;
+        SceUID eventUID;
     }
     /** Structure representing a Cheat Engine of Five. */
     CEFive;

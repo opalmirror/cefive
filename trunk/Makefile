@@ -5,14 +5,12 @@ OBJS =  addresscolumn.o \
 	appletmenu.o \
 	appletmenuconfig.o \
 	asciicolumn.o \
-	blockmodel.o \
 	bytecolumn.o \
 	cefiveconfig.o \
 	cefiveui.o \
 	cheat.o \
 	cheateditor.o \
 	cheatengine.o \
-	cheatmodel.o \
 	cheatpanel.o \
 	colorconfig.o \
 	crt0_prx.o \

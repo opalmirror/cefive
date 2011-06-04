@@ -1,4 +1,3 @@
-#include <pspkerneltypes.h>
 #include "searchengine.h"
 
 static int find_next_byte(SearchEngine* prEngine) {
@@ -187,10 +186,10 @@ SearchResult* searchengine_get_result(SearchEngine* prEngine, int index) {
     SearchResult* prResult = NULL;
     if (prEngine != NULL) {
         if (index >= 0 && index < prEngine->result_count) {
-            prResult = &(prEngine->arResult[index]);
+            return &(prEngine->arResult[index]);
         }
     }
-    return prResult;
+    return NULL;
 }
 
 int searchengine_init(SearchEngine* prEngine) {

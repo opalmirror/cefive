@@ -869,10 +869,10 @@ static int render_comment_col(MemViewPanel* prPanel, const int row) {
                 prLabel = ggame_find_label(prGame, jdest);
                 if (prLabel != NULL) {
                     if (opcode == 0x02) {
-                        sprintf(sComment, "j %s", prLabel->text);
+                        sprintf(sComment, "J %s", prLabel->text);
                     }
                     if (opcode == 0x03) {
-                        sprintf(sComment, "jal %s", prLabel->text);
+                        sprintf(sComment, "JAL %s", prLabel->text);
                     }
                     pspDebugScreenKprintf(sFmt, sComment);
                     return MEMVIEWPANEL_SUCCESS;

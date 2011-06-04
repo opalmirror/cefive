@@ -6,9 +6,10 @@
  * Created on September 29, 2010, 10:13 AM
  */
 
-#ifndef _SEARCHENGINE_H
-#define	_SEARCHENGINE_H
+#ifndef SEARCHENGINE_H
+#define	SEARCHENGINE_H
 
+#include <stdio.h>
 #include <pspkerneltypes.h>
 
 #define SEARCHENGINE_SUCCESS        (0)
@@ -84,5 +85,4 @@ extern "C" {
 }
 #endif
 
-#endif	/* _SEARCHENGINE_H */
-
+#endif	/* SEARCHENGINE_H */
