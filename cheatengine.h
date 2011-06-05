@@ -12,8 +12,6 @@
 #include "cheat.h"
 #include "block.h"
 #include "cefiveconfig.h"
-#include "cheatmodel.h"
-#include "blockmodel.h"
 #include "geelog.h"
 
 /** Indicates success. */
@@ -43,10 +41,6 @@ extern "C" {
 
 
     typedef struct _CheatEngine {
-        /** CheatModel struct representing the Cheat Model. */
-        CheatModel cheatModel;
-        /** BlockModel struct representing the Block Model. */
-        BlockModel blockModel;
         /** Pointer to the first element of an array of Cheat structs. */
         Cheat* cheatlist;
         /** Pointer to the first element of an array of Block structs. */
