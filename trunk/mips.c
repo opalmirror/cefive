@@ -24,38 +24,41 @@ static const char *mipsControlRegister[]={
     "Config", "WatchLO", "XContext", "$22", 
     "Debug", "ECC", "TagLo", "ErrorEPC"};
 
-static void decodeBSHFL(char *, unsigned int, unsigned int);
-static void decodeCOP0(char *, unsigned int, unsigned int);
-static void decodeCOP1(char *, unsigned int, unsigned int);
-static void decodeCOP1D(char *, unsigned int, unsigned int);
-static void decodeCOP1L(char *, unsigned int, unsigned int);
-static void decodeCOP1PS(char *, unsigned int, unsigned int);
-static void decodeCOP1S(char *, unsigned int, unsigned int);
-static void decodeCOP1W(char *, unsigned int, unsigned int);
-static void decodeCOP1X(char *, unsigned int, unsigned int);
-static void decodeCOP2(char *, unsigned int, unsigned int);
-static void decodeREGIMM(char *, unsigned int, unsigned int);
-static void decodeSPECIAL(char *, unsigned int, unsigned int);
-static void decodeSPECIAL2(char *, unsigned int, unsigned int);
-static void decodeSPECIAL3(char *, unsigned int, unsigned int);
-static void decodeVCOP(char* buffer, unsigned int i_inst, unsigned int i_addr);
-static char* mipsGetFormat(int fmt);
-static short mipsGetImmediate(unsigned int i_inst);
-static int mipsGetInstrIndex(unsigned int i_inst);
-static unsigned char mipsGetOperand0(unsigned int i_inst);
-static unsigned char mipsGetOperand1(unsigned int i_inst);
-static unsigned char mipsGetOperand2(unsigned int i_inst);
-static unsigned char mipsGetOperand3(unsigned int i_inst);
-static void mipsType0(char *, const char *);
-static void mipsTypeFdFs(char *, const char *, int, int);
-static void mipsTypeRtOffsetBase(char *, const char *, int, short, int);
-static void mipsTypeVrd(char* buffer, const char* mnem, int iRd);
-static void mipsTypeVrdA(char* buffer, const char* mnem, int iRd, int iA);
-static void re_vrd_vrs(char* buffer, const char* mnem, int iRd, int iRs);
-static void re_vrd_vrs_scale(char* buffer, const char* mnem,
-        int iRd, int iRs, int scale);
-static void re_vrd_vrs_vrt(char* buffer, const char* mnem,
-        int iRd, int iRs, int iRt);
+static void de_bshfl(char *, unsigned int, unsigned int);
+static void de_cop0(char *, unsigned int, unsigned int);
+static void de_cop1(char *, unsigned int, unsigned int);
+static void de_cop1d(char *, unsigned int, unsigned int);
+static void de_cop1l(char *, unsigned int, unsigned int);
+static void de_cop1ps(char *, unsigned int, unsigned int);
+static void de_cop1s(char *, unsigned int, unsigned int);
+static void de_cop1w(char *, unsigned int, unsigned int);
+static void de_cop1x(char *, unsigned int, unsigned int);
+static void de_cop2(char *, unsigned int, unsigned int);
+static void de_regimm(char *, unsigned int, unsigned int);
+static void de_special(char *, unsigned int, unsigned int);
+static void de_special2(char *, unsigned int, unsigned int);
+static void de_special3(char *, unsigned int, unsigned int);
+static void de_vcop(char* buffer, unsigned int i_inst, unsigned int i_addr);
+static void de_vcop2(char* buffer, const SceUInt32 inst, const SceUInt32 addr);
+static void de_vcop3(char* buffer, const SceUInt32 inst, const SceUInt32 addr);
+static void de_vcop4(char* buffer, const SceUInt32 inst, const SceUInt32 addr);
+static void de_vcop5(char* buffer, const SceUInt32 inst, const SceUInt32 addr);
+
+static char* get_format(int fmt);
+static short get_imm(unsigned int i_inst);
+static int get_instr_index(unsigned int i_inst);
+static unsigned char get_operand0(unsigned int i_inst);
+static unsigned char get_operand1(unsigned int i_inst);
+static unsigned char get_operand2(unsigned int i_inst);
+static unsigned char get_operand3(unsigned int i_inst);
+static unsigned short get_uimm(unsigned int i_inst);
+static char* get_vformat(int f, int F);
+static int get_voperand0(unsigned int i_inst);
+static int get_voperand1(unsigned int i_inst);
+static int get_voperand2(unsigned int i_inst);
+static int get_voperand3(unsigned int i_inst);
+static int get_voperand4(unsigned int i_inst);
+static int get_voperand5(unsigned int i_inst);
 
 static void in_brs_offset(char* buffer, const char* mnem, unsigned int inst,
         unsigned int address);
@@ -92,6 +95,36 @@ static void in_rt_rs_pos_size(char* buffer, const char* mnem,
         unsigned int inst);
 static void in_target(char* buffer, const char* mnem, unsigned int inst, 
         unsigned int address);
+static void in_vrd(char* buffer, const char* mnem, unsigned int inst);
+static void in_vrd_a(char* buffer, const char* mnem, unsigned int inst);
+static void in_vrd_vrs(char* buffer, const char* mnem, unsigned int inst);
+static void in_vrd_vrs_scale(char* buffer, const char* mnem, unsigned int inst);
+static void in_vrd_vrs_vrt(char* buffer, const char* mnem, unsigned int inst);
+static void in_vrs_vrd(char* buffer, const char* mnem, unsigned int inst);
+
+static char* get_format(int fmt);
+static short get_imm(unsigned int i_inst);
+static int get_instr_index(unsigned int i_inst);
+static unsigned char get_operand0(unsigned int i_inst);
+static unsigned char get_operand1(unsigned int i_inst);
+static unsigned char get_operand2(unsigned int i_inst);
+static unsigned char get_operand3(unsigned int i_inst);
+static void mipsInBC1(char *buffer, unsigned int i_inst, unsigned int i_addr);
+static void mipsInBC2(char *buffer, unsigned int i_inst, unsigned int i_addr);
+static void mipsInCACHE(char *buffer, unsigned int i_inst);
+static void mipsInCcondfmt(char *buffer, unsigned int i_inst);
+static void mipsInJALR(char *buffer, unsigned int i_inst);
+static void mipsInMFMC0(char *buffer, unsigned int i_inst);
+static void mipsInMOVC1(char *buffer, unsigned int i_inst);
+static void mipsInMOVCFfmt(char *buffer, unsigned int i_inst);
+static void mipsInMTC0(char *buffer, unsigned int i_inst);
+static void mipsInPREF(char *buffer, unsigned int i_inst);
+static void mipsInPREFX(char *buffer, unsigned int i_inst);
+static void mipsInSDBBP(char *buffer, unsigned int i_inst);
+static void mipsInSLL(char *buffer, unsigned int i_inst);
+static void mipsInSRL(char *buffer, unsigned int i_inst);
+static void mipsInSRLV(char *buffer, unsigned int i_inst);
+static void mipsInSYNCI(char *buffer, unsigned int i_instr);
 
 static void re_cc_fr_fr(char *, const char *, int, int, int);
 static void re_cc_target(char *, const char *, int, unsigned int);
@@ -117,18 +150,1177 @@ static void re_gr_gr_sel(char* buffer, const char* mnem,
 static void re_gr_gr_target(char *, const char *, int, int, unsigned int);
 static void re_gr_offset_base(char *, const char *, int, int, short);
 static void re_gr_target(char *, const char *, int, unsigned int);
+static void re_mnem(char *, const char *);
 static void re_offset_base(char *, const char *, short, int);
 static void re_op_offset_base(char *, const char *, int, int, short);
 static void re_target(char *, const char *, unsigned int);
+static void re_vr(char* buffer, const char* mnem, int iRd);
+static void re_vr_a(char* buffer, const char* mnem, int iRd, int iA);
+static void re_vr_vr(char* buffer, const char* mnem, int iRd, int iRs);
+static void re_vr_vr_scale(char* buffer, const char* mnem,
+        int iRd, int iRs, int scale);
+static void re_vr_vr_vr(char* buffer, const char* mnem,
+        int iRd, int iRs, int iRt);
 
 SceUInt32 mipsGetBranchDestination(unsigned int i_inst, unsigned int i_addr) {
     SceUInt32 dest = 0;
-    int offset = (int)mipsGetImmediate(i_inst);
+    int offset = (int)get_imm(i_inst);
     dest = i_addr + 4 + (offset << 2);
     return dest;
 }
 
-static char* mipsGetFormat(int fmt) {
+unsigned char mipsGetFunction(unsigned int i_inst) {
+    unsigned char uc_func;
+    uc_func = (unsigned char)(i_inst & 0x3F);
+    return uc_func;
+}
+
+SceUInt32 mipsGetJumpDestination(unsigned int i_inst, unsigned int i_addr) {
+    SceUInt32 dest = 0;
+    unsigned int pref = (i_addr + 4) & 0x0C000000;
+    dest = i_inst & 0x03FFFFFF;
+    dest <<= 2;
+    dest |= pref;
+    return dest;
+}
+
+unsigned char mipsGetOpCode(unsigned int i_inst) {
+    unsigned char uc_opcode;
+    uc_opcode = (unsigned char)(((i_inst & 0xFC000000) >> 26) & 0x3F);
+    return uc_opcode;
+}
+
+static void de_bshfl(char *buffer, unsigned int i_inst, 
+        unsigned int i_addr) {
+    int sa = (int)get_operand3(i_inst);
+    switch (sa) {
+        case 0x02: /* WSBH rd, rt - Word Swap Bytes Within Halfwords */
+            in_rd_rt(buffer, "WSBH", i_inst);
+            break;
+        case 0x10: /* SEB rd, rt - Sign-Extend Byte */
+            in_rd_rt(buffer, "SEB", i_inst);
+            break;
+        case 0x18: /* SEH rd, rt - Sign-Extend Halfword */
+            in_rd_rt(buffer, "SEH", i_inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+            break;
+    }
+}
+
+static void de_cop0(char *buffer, unsigned int i_inst, unsigned int i_addr) {
+    int rs = (int)get_operand0(i_inst);
+    int func = (int)mipsGetFunction(i_inst);
+    if (rs > 0x10) {
+        switch (func) {
+            case 0x01: /* TLBR - Read Indexed TLB Entry */
+                re_mnem(buffer, "TLBR");
+                break;
+            case 0x02: /* TLBWI - Write Indexed TLB Entry */
+                re_mnem(buffer, "TLBWI");
+                break;
+            case 0x06: /* TLBWR - Write Random TLB Entry */
+                re_mnem(buffer, "TLBWR");
+                break;
+            case 0x08: /* TLBP - Probe TLB for Matching Entry */
+                re_mnem(buffer, "TLBP");
+                break;
+            case 0x18: /* ERET - Exception Return */
+                re_mnem(buffer, "ERET");
+                break;
+            case 0x1F: /* DERET - Debug Exception Return */
+                re_mnem(buffer, "DERET");
+                break;
+            case 0x20: /* WAIT - Enter StandBy Mode */
+                re_mnem(buffer, "WAIT");
+                break;
+            default:
+                sprintf(buffer, "???");
+                break;
+        }
+    } else {
+        switch (rs) {
+            case 0x00: /* MFC0 rt, rd[, sel] - Move from Coprocessor 0 */
+                in_rt_rd_sel(buffer, "MFC0", i_inst);
+                break;
+            case 0x04: /* MTC0 */
+                mipsInMTC0(buffer, i_inst);
+                break;
+            case 0x0A: /* RDPGPR rd, rt - Read GPR from Previous Shadow Set */
+                in_rd_rt(buffer, "RDPGPR", i_inst);
+                break;
+            case 0x0B: /* *MFMC0 */
+                mipsInMFMC0(buffer, i_inst);
+                break;
+            case 0x0E: /* WRPGPR rd, rt - Write to GPR in Previous Shadow Set */
+                in_rd_rt(buffer, "WRPGPR", i_inst);
+                break;
+            default:
+                sprintf(buffer, "???");
+                break;
+        }
+    }
+}
+
+static void de_cop1(char *buffer, unsigned int i_inst, unsigned int i_addr) {
+    int rs = (int)get_operand0(i_inst);
+    switch (rs) {
+        case 0x00: /* MFC1 rt, fs - Move Word From Floating Point */
+            in_rt_fs(buffer, "MFC1", i_inst);
+            break;
+        case 0x02: /* CFC1 rt, fs - Move Control Word From Floating Point */
+            in_rt_fs(buffer, "CFC1", i_inst);
+            break;
+        case 0x03: /* MFHC1 rt, fs - 
+                    * Move Word From High Half of Floating Point Register */
+            in_rt_fs(buffer, "MFHC1", i_inst);
+            break;
+        case 0x04: /* MTC1 rt, fs - Move Word to Floating Point */
+            in_rt_fs(buffer, "MTC1", i_inst);
+            break;
+        case 0x06: /* CTC1 rt, fs - Move Control Word to Floating Point */
+            in_rt_fs(buffer, "CTC1", i_inst);
+            break;
+        case 0x07: /* MTHC1 rt, fs - 
+                    * Move Word to High Half of Floating Point Register */
+            in_rt_fs(buffer, "MTHC1", i_inst);
+            break;
+        case 0x08: /* *BC1 */
+            mipsInBC1(buffer, i_inst, i_addr);
+            break;
+        case 0x09: /* *BC1ANY2 */
+            sprintf(buffer, "*BC1ANY2");
+            break;
+        case 0x0A: /* *BC1ANY4 */
+            sprintf(buffer, "*BC1ANY4");
+            break;
+        case 0x10: /* *S */
+            de_cop1s(buffer, i_inst, i_addr);
+            break;
+        case 0x11: /* *D */
+            de_cop1d(buffer, i_inst, i_addr);
+            break;
+        case 0x14: /* *W */
+            de_cop1w(buffer, i_inst, i_addr);
+            break;
+        case 0x15: /* *L */
+            de_cop1l(buffer, i_inst, i_addr);
+            break;
+        case 0x16: /* *PS */
+            de_cop1ps(buffer, i_inst, i_addr);
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_cop1d(char *buffer, unsigned int i_inst, unsigned int i_addr) {
+    int func = (int)mipsGetFunction(i_inst);
+    switch (func) {
+        case 0x00: /* ADD.D fd, fs, ft - Floating Point Add (Double) */
+            in_fmt_fd_fs_ft(buffer, "ADD", i_inst);
+            break;
+        case 0x01: /* SUB.D fd, fs, ft - Floating Point Subtract (Double) */
+            in_fmt_fd_fs_ft(buffer, "SUB", i_inst);
+            break;
+        case 0x02: /* MUL.D fd, fs, ft - Floating Point Multiply (Double) */
+            in_fmt_fd_fs_ft(buffer, "MUL", i_inst);
+            break;
+        case 0x03: /* DIV.D fd, fs, ft - Floating Point Divide (Double) */
+            in_fmt_fd_fs_ft(buffer, "DIV", i_inst);
+            break;
+        case 0x04: /* SQRT.D fd, fs - Floating Point Square Root (Double) */
+            in_fmt_fd_fs(buffer, "SQRT", i_inst);
+            break;
+        case 0x05: /* ABS.D fd, fs - Floating Point Absolute Value (Double) */
+            in_fmt_fd_fs(buffer, "ABS", i_inst);
+            break;
+        case 0x06: /* MOV.D fd, fs - Floating Point Move (Double) */
+            in_fmt_fd_fs(buffer, "MOV", i_inst);
+            break;
+        case 0x07: /* NEG.D fd, fs - Floating Point Negate (Double) */
+            in_fmt_fd_fs(buffer, "NEG", i_inst);
+            break;
+        case 0x08: /* ROUND.L.D fd, fs - 
+                    * Floating Point Round to Long Fixed Point (Double) */
+            in_fmt_fd_fs(buffer, "ROUND.L", i_inst);
+            break;
+        case 0x09: /* TRUNC.L.D fd, fs - 
+                    * Floating Point Truncate to Long Fixed Point (Double) */
+            in_fmt_fd_fs(buffer, "TRUNC.L", i_inst);
+            break;
+        case 0x0A: /* CEIL.L.D fd, fs - 
+                    * Floating Point Ceiling Convert to Long Fixed Point */
+            in_fmt_fd_fs(buffer, "CEIL.L", i_inst);
+            break;
+        case 0x0B: /* FLOOR.L.D fd, fs - 
+                    * Floating Point Floor Convert to Long Fixed Point */
+            in_fmt_fd_fs(buffer, "FLOOR.L", i_inst);
+            break;
+        case 0x0C: /* ROUND.W.D fd, fs - 
+                    * Floating Point Round to Word Fixed Point */
+            in_fmt_fd_fs(buffer, "ROUND.W", i_inst);
+            break;
+        case 0x0D: /* TRUNC.W.D fd, fs - 
+                    * Floating Point Truncate to Word Fixed Point */
+            in_fmt_fd_fs(buffer, "TRUNC.W", i_inst);
+            break;
+        case 0x0E: /* CEIL.W.D fd, fs - 
+                    * Floating Point Ceiling Convert to Word Fixed Point */
+            in_fmt_fd_fs(buffer, "CEIL.W", i_inst);
+            break;
+        case 0x0F: /* FLOOR.W.D fd, fs - 
+                    * Floating Point Floor Convert to Word Fixed Point */
+            in_fmt_fd_fs(buffer, "FLOOR.W", i_inst);
+            break;
+        case 0x11: /* MOVCF.D */
+            mipsInMOVCFfmt(buffer, i_inst);
+            break;
+        case 0x12: /* MOVZ.D fd, fs, rt - 
+                    * Floating Point Move Conditional on Zero */
+            in_fmt_fd_fs_rt(buffer, "MOVZ", i_inst);
+            break;
+        case 0x13: /* MOVN.D fd, fs, rt - 
+                    * Floating Point Move Conditional on Not Zero */
+            in_fmt_fd_fs_rt(buffer, "MOVN", i_inst);
+            break;
+        case 0x15: /* RECIP.D fd, fs - Reciprocal Approximation */
+            in_fmt_fd_fs(buffer, "RECIP", i_inst);
+            break;
+        case 0x16: /* RSQRT.D fd, fs - Reciprocal Square Root Approximation */
+            in_fmt_fd_fs(buffer, "RSQRT", i_inst);
+            break;
+        case 0x1C: /* RECIP2.D */
+            sprintf(buffer, "RECIP2.D");
+            break;
+        case 0x1D: /* RECIP1.D */
+            sprintf(buffer, "RECIP1.D");
+            break;
+        case 0x1E: /* RSQRT1.D */
+            sprintf(buffer, "RSQRT1.D");
+            break;
+        case 0x1F: /* RSQRT2.D */
+            sprintf(buffer, "RSQRT2.D");
+            break;
+        case 0x21: /* CVT.S.D fd, fs - 
+                    * Floating Point Convert to Single Floating Point */
+            in_fmt_fd_fs(buffer, "CVT.S", i_inst);
+            break;
+        case 0x24: /* CVT.W.D fd, fs - 
+                    * Floating Point Convert to Word Fixed Point */
+            in_fmt_fd_fs(buffer, "CVT.W", i_inst);
+            break;
+        case 0x25: /* CVT.L.D fd, fs - 
+                    * Floating Point Convert to Long Fixed Point */
+            in_fmt_fd_fs(buffer, "CVT.L", i_inst);
+            break;
+        case 0x30: /* C.F.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x31: /* C.UN.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x32: /* C.EQ.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x33: /* C.UEQ.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x34: /* C.OLT.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x35: /* C.ULT.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x36: /* C.OLE.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x37: /* C.ULE.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x38: /* C.SF.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x39: /* C.NGLE.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3A: /* C.SEQ.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3B: /* C.NGL.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3C: /* C.LT.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3D: /* C.NGE.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3E: /* C.LE.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3F: /* C.NGT.D */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_cop1l(char *buffer, unsigned int i_inst, unsigned int i_addr) {
+    int func = (int)mipsGetFunction(i_inst);
+    switch (func) {
+        case 0x21: /* CVT.S.L fd, fs - 
+                    * Floating Point Convert to Single Floating Point */
+            in_fmt_fd_fs(buffer, "CVT.S", i_inst);
+            break;
+        case 0x22: /* CVT.D.L fd, fs - 
+                    * Floating Point Convert to Double Floating Point */
+            in_fmt_fd_fs(buffer, "CVT.D", i_inst);
+            break;
+        case 0x26: /* CVT.PS.PW */
+            sprintf(buffer, "CVT.PS.PW");
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_cop1ps(char *buffer, unsigned int i_inst, unsigned int i_addr) {
+    int func = (int)mipsGetFunction(i_inst);
+    switch (func) {
+        case 0x00: /* ADD.PS fd, fs, ft - Floating Point Add */
+            in_fmt_fd_fs_ft(buffer, "ADD", i_inst);
+            break;
+        case 0x01: /* SUB.PS fd, fs, ft - Floating Point Subtract */
+            in_fmt_fd_fs_ft(buffer, "SUB", i_inst);
+            break;
+        case 0x02: /* MUL.PS fd, fs, ft - Floating Point Multiply */
+            in_fmt_fd_fs_ft(buffer, "MUL", i_inst);
+            break;
+        case 0x05: /* ABS.PS fd, fs - 
+                    * Floating Point Absolute Value (Paired Single) */
+            in_fmt_fd_fs(buffer, "ABS", i_inst);
+            break;
+        case 0x06: /* MOV.PS fd, fs - Floating Point Move (Paired Single) */
+            in_fmt_fd_fs(buffer, "MOV", i_inst);
+            break;
+        case 0x07: /* NEG.PS fd, fs - Floating Point Negate (Paired Single) */
+            in_fmt_fd_fs(buffer, "NEG", i_inst);
+            break;
+        case 0x11: /* MOVCF.PS */
+            mipsInMOVCFfmt(buffer, i_inst);
+            break;
+        case 0x12: /* MOVZ.PS fd, fs, rt - 
+                    * Floating Point Move Conditional on Zero */
+            in_fmt_fd_fs_rt(buffer, "MOVZ", i_inst);
+            break;
+        case 0x13: /* MOVN.PS fd, fs, rt - 
+                    * Floating Point Move Conditional on Not Zero */
+            in_fmt_fd_fs_rt(buffer, "MOVN", i_inst);
+            break;
+        case 0x18: /* ADDR.PS */
+            sprintf(buffer, "ADDR.PS");
+            break;
+        case 0x1A: /* MULR.PS */
+            sprintf(buffer, "MULR.PS");
+            break;
+        case 0x1C: /* RECIP2.PS */
+            sprintf(buffer, "RECIP2.PS");
+            break;
+        case 0x1D: /* RECIP1.PS */
+            sprintf(buffer, "RECIP1.PS");
+            break;
+        case 0x1E: /* RSQRT1.PS */
+            sprintf(buffer, "RSQRT1.PS");
+            break;
+        case 0x1F: /* RSQRT2.PS */
+            sprintf(buffer, "RSQRT2.PS");
+            break;
+        case 0x20: /* CVT.S.PU fd, fs - 
+                    * Floating Point Convert Pair Upper to Single Floating Point
+                    */
+            in_fd_fs(buffer, "CVT.S.PU", i_inst);
+            break;
+        case 0x24: /* CVT.PW.PS */
+            sprintf(buffer, "CVT.PW.PS");
+            break;
+        case 0x28: /* CVT.S.PL fd, fs - 
+                    * Floating Point Convert Pair Lower to Single Floating Point
+                    */
+            in_fd_fs(buffer, "CVT.S.PL", i_inst);
+            break;
+        case 0x2C: /* PLL.PS fd, fs, ft - Pair Lower Lower */
+            in_fd_fs_ft(buffer, "PLL.PS", i_inst);
+            break;
+        case 0x2D: /* PLU.PS fd, fs, ft - Pair Lower Upper */
+            in_fd_fs_ft(buffer, "PLU.PS", i_inst);
+            break;
+        case 0x2E: /* PUL.PS fd, fs, ft - Pair Upper Lower */
+            in_fd_fs_ft(buffer, "PUL.PS", i_inst);
+            break;
+        case 0x2F: /* PUU.PS fd, fs, ft - Pair Upper Upper */
+            in_fd_fs_ft(buffer, "PUU.PS", i_inst);
+            break;
+        case 0x30: /* C.F.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x31: /* C.UN.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x32: /* C.EQ.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x33: /* C.UEQ.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x34: /* C.OLT.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x35: /* C.ULT.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x36: /* C.OLE.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x37: /* C.ULE.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x38: /* C.SF.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x39: /* C.NGLE.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3A: /* C.SEQ.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3B: /* C.NGL.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3C: /* C.LT.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3D: /* C.NGE.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3E: /* C.LE.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3F: /* C.NGT.PS */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_cop1s(char *buffer, unsigned int i_inst, unsigned int i_addr) {
+    int func = (int)mipsGetFunction(i_inst);
+    switch (func) {
+        case 0x00: /* ADD.S fd, fs, ft - Floating Point Add (Single) */
+            in_fmt_fd_fs_ft(buffer, "ADD", i_inst);
+            break;
+        case 0x01: /* SUB.S fd, fs, ft - Floating Point Subtract (Single) */
+            in_fmt_fd_fs_ft(buffer, "SUB", i_inst);
+            break;
+        case 0x02: /* MUL.S fd, fs, ft - Floating Point Multiply (Single) */
+            in_fmt_fd_fs_ft(buffer, "MUL", i_inst);
+            break;
+        case 0x03: /* DIV.S fd, fs, ft - Floating Point Divide (Single) */
+            in_fmt_fd_fs_ft(buffer, "DIV", i_inst);
+            break;
+        case 0x04: /* SQRT.S fd, fs - Floating Point Square Root (Single) */
+            in_fmt_fd_fs(buffer, "SQRT", i_inst);
+            break;
+        case 0x05: /* ABS.S fd, fs - Floating Point Absolute Value (Single) */
+            in_fmt_fd_fs(buffer, "ABS", i_inst);
+            break;
+        case 0x06: /* MOV.S fd, fs - Floating Point Move (Single) */
+            in_fmt_fd_fs(buffer, "MOV", i_inst);
+            break;
+        case 0x07: /* NEG.S fd, fs - Floating Point Negate (Single) */
+            in_fmt_fd_fs(buffer, "NEG", i_inst);
+            break;
+        case 0x08: /* ROUND.L.S fd, fs - 
+                    * Floating Point Round to Long Fixed Point (Single) */
+            in_fmt_fd_fs(buffer, "ROUND.L", i_inst);
+            break;
+        case 0x09: /* TRUNC.L.S fd, fs - 
+                    * Floating Point Truncate to Long Fixed Point (Single) */
+            in_fmt_fd_fs(buffer, "TRUNC.L", i_inst);
+            break;
+        case 0x0A: /* CEIL.L.S fd, fs - 
+                    * Floating Point Ceiling Convert to Long Fixed Point */
+            in_fmt_fd_fs(buffer, "CEIL.L", i_inst);
+            break;
+        case 0x0B: /* FLOOR.L.S fd, fs - 
+                    * Floating Point Floor Convert to Long Fixed Point */
+            in_fmt_fd_fs(buffer, "FLOOR.L", i_inst);
+            break;
+        case 0x0C: /* ROUND.W.S fd, fs - 
+                    * Floating Point Round to Word Fixed Point */
+            in_fmt_fd_fs(buffer, "ROUND.W", i_inst);
+            break;
+        case 0x0D: /* TRUNC.W.S fd, fs - 
+                    * Floating Point Truncate to Word Fixed Point */
+            in_fmt_fd_fs(buffer, "TRUNC.W", i_inst);
+            break;
+        case 0x0E: /* CEIL.W.S fd, fs - 
+                    * Floating Point Ceiling Convert to Word Fixed Point */
+            in_fmt_fd_fs(buffer, "CEIL.W", i_inst);
+            break;
+        case 0x0F: /* FLOOR.W.S fd, fs - 
+                    * Floating Point Floor Convert to Word Fixed Point */
+            in_fmt_fd_fs(buffer, "FLOOR.W", i_inst);
+            break;
+        case 0x11: /* MOVCF.S */
+            mipsInMOVCFfmt(buffer, i_inst);
+            break;
+        case 0x12: /* MOVZ.S fd, fs, rt - 
+                    * Floating Point Move Conditional on Zero */
+            in_fmt_fd_fs_rt(buffer, "MOVZ", i_inst);
+            break;
+        case 0x13: /* MOVN.S fd, fs, rt - 
+                    * Floating Point Move Conditional on Not Zero */
+            in_fmt_fd_fs_rt(buffer, "MOVN", i_inst);
+            break;
+        case 0x15: /* RECIP.S fd, fs - Reciprocal Approximation */
+            in_fmt_fd_fs(buffer, "RECIP", i_inst);
+            break;
+        case 0x16: /* RSQRT.S fd, fs - Reciprocal Square Root Approximation */
+            in_fmt_fd_fs(buffer, "RSQRT", i_inst);
+            break;
+        case 0x1C: /* RECIP2.S */
+            sprintf(buffer, "RECIP2.S");
+            break;
+        case 0x1D: /* RECIP1.S */
+            sprintf(buffer, "RECIP1.S");
+            break;
+        case 0x1E: /* RSQRT1.S */
+            sprintf(buffer, "RSQRT1.S");
+            break;
+        case 0x1F: /* RSQRT2.S */
+            sprintf(buffer, "RSQRT2.S");
+            break;
+        case 0x21: /* CVT.D.S fd, fs - 
+                    * Floating Point Convert to Double Floating Point */
+            in_fmt_fd_fs(buffer, "CVT.D", i_inst);
+            break;
+        case 0x24: /* CVT.W.S fd, fs - 
+                    * Floating Point Convert to Word Fixed Point */
+            in_fmt_fd_fs(buffer, "CVT.W", i_inst);
+            break;
+        case 0x25: /* CVT.L.S fd, fs - 
+                    * Floating Point Convert to Long Fixed Point */
+            in_fmt_fd_fs(buffer, "CVT.L", i_inst);
+            break;
+        case 0x26: /* CVT.PS.S fd, fs, ft - 
+                    * Floating Point Convert Pair to Paired Single */
+            in_fd_fs_ft(buffer, "CVT.PS.S", i_inst);
+            break;
+        case 0x30: /* C.F.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x31: /* C.UN.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x32: /* C.EQ.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x33: /* C.UEQ.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x34: /* C.OLT.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x35: /* C.ULT.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x36: /* C.OLE.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x37: /* C.ULE.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x38: /* C.SF.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x39: /* C.NGLE.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3A: /* C.SEQ.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3B: /* C.NGL.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3C: /* C.LT.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3D: /* C.NGE.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3E: /* C.LE.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        case 0x3F: /* C.NGT.S */
+            mipsInCcondfmt(buffer, i_inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_cop1w(char *buffer, unsigned int i_inst, unsigned int i_addr) {
+    int func = (int)mipsGetFunction(i_inst);
+    switch (func) {
+        case 0x20: /* CVT.S.W fd, fs - 
+                    * Floating Point Convert to Single Floating Point */
+            in_fmt_fd_fs(buffer, "CVT.S", i_inst);
+            break;
+        case 0x21: /* CVT.D.W fd, fs - 
+                    * Floating Point Convert to Double Floating Point */
+            in_fmt_fd_fs(buffer, "CVT.D", i_inst);
+            break;
+        case 0x26: /* CVT.PS.PW */
+            sprintf(buffer, "CVT.PS.PW");
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_cop2(char *buffer, unsigned int i_inst, unsigned int i_addr) {
+    int rs = (int)get_operand0(i_inst);
+    switch (rs) {
+        case 0x00: /* MFC2 rt, rd[, sel] - Move from Coprocessor 2 */
+            in_rt_rd_sel(buffer, "MFC2", i_inst);
+            break;
+        case 0x02: /* CFC2 rt, fs - Move Control Word From Floating Point */
+            in_rt_fs(buffer, "CFC2", i_inst);
+            break;
+        case 0x03: /* MFHC2 rt, rd - 
+                    * Move Word From High Half of Coprocessor 2 Register */
+            in_rt_rd(buffer, "MFHC2", i_inst);
+            break;
+        case 0x04: /* MTC2 rt, rd - Move Word to Coprocessor 2 */
+            in_rt_rd(buffer, "MTC2", i_inst);
+            break;
+        case 0x06: /* CTC2 rt, rd - Move Control Word to Coprocessor 2 */
+            in_rt_rd(buffer, "CTC2", i_inst);
+            break;
+        case 0x07: /* MTHC2 rt, rd - 
+                    * Move Word to High Half of Coprocessor 2 Register */
+            in_rt_rd(buffer, "MTHC2", i_inst);
+            break;
+        case 0x08: /* BC2 */
+            mipsInBC2(buffer, i_inst, i_addr);
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_cop1x(char *buffer, unsigned int i_inst, unsigned int i_addr) {
+    int func = (int)mipsGetFunction(i_inst);
+    switch (func) {
+        case 0x00: /* LWXC1 fd, index(base) - 
+                    * Load Word Indexed to Floating Point */
+            in_fd_index_base(buffer, "LWXC1", i_inst);
+            break;
+        case 0x01: /* LDXC1 fd, index(base) - 
+                    * Load Doubleword Indexed to Floating Point */
+            in_fd_index_base(buffer, "LDXC1", i_inst);
+            break;
+        case 0x05: /* LUXC1 fd, index(base) - 
+                    * Load Doubleword Indexed Unaligned to Floating Point */
+            in_fd_index_base(buffer, "LUXC1", i_inst);
+            break;
+        case 0x08: /* SWXC1 fs, index(base) - 
+                    * Store Word Indexed from Floating Point */
+            in_fs_index_base(buffer, "SWXC1", i_inst);
+            break;
+        case 0x09: /* SDXC1 fs, index(base) - 
+                    * Store Doubleword Indexed from Floating Point */
+            in_fs_index_base(buffer, "SDXC1", i_inst);
+            break;
+        case 0x0D: /* SUXC1 fs, index(base) - 
+                    * Store Doubleword Indexed Unaligned from Floating Point */
+            in_fs_index_base(buffer, "SUXC1", i_inst);
+            break;
+        case 0x0F: /* PREFX */
+            mipsInPREFX(buffer, i_inst);
+            break;
+        case 0x1E: /* ALNV.PS fd, fs, ft, rs - Floating Point Align Variable */
+            in_fd_fs_ft_rs(buffer, "ALNV.PS", i_inst);
+            break;
+        case 0x20: /* MADD.S fd, fr, fs, ft - Floating Point Multiply Add */
+            in_fd_fr_fs_ft(buffer, "MADD", i_inst);
+            break;
+        case 0x21: /* MADD.D fd, fr, fs, ft - Floating Point Multiply Add*/
+            in_fd_fr_fs_ft(buffer, "MADD", i_inst);
+            break;
+        case 0x26: /* MADD.PS fd, fr, fs, ft - Floating Point Multiply Add */
+            in_fd_fr_fs_ft(buffer, "MADD", i_inst);
+            break;
+        case 0x28: /* MSUB.S fd, fr, fs, ft - Floating Point Multiply Subtract 
+                    */
+            in_fd_fr_fs_ft(buffer, "MSUB", i_inst);
+            break;
+        case 0x29: /* MSUB.D fd, fr, fs, ft - Floating Point Multiply Subtract 
+                    */
+            in_fd_fr_fs_ft(buffer, "MSUB", i_inst);
+            break;
+        case 0x2E: /* MSUB.PS fd, fr, fs, ft - Floating Point Multiply Subtract
+                    */
+            in_fd_fr_fs_ft(buffer, "MSUB", i_inst);
+            break;
+        case 0x30: /* NMADD.S fd, fr, fs, ft - 
+                    * Floating Point Negative Multiply Add */
+            in_fd_fr_fs_ft(buffer, "NMADD", i_inst);
+            break;
+        case 0x31: /* NMADD.D fd, fr, fs, ft - 
+                    * Floating Point Negative Multiply Add */
+            in_fd_fr_fs_ft(buffer, "NMADD", i_inst);
+            break;
+        case 0x36: /* NMADD.PS fd, fr, fs, ft - 
+                    * Floating Point Negative Multiply Add */
+            in_fd_fr_fs_ft(buffer, "NMADD", i_inst);
+            break;
+        case 0x38: /* NMSUB.S fd. fr. fs. ft - 
+                    * Floating Point Negative Multiply Subtract */
+            in_fd_fr_fs_ft(buffer, "NMSUB", i_inst);
+            break;
+        case 0x39: /* NMSUB.D fd. fr. fs. ft - 
+                    * Floating Point Negative Multiply Subtract */
+            in_fd_fr_fs_ft(buffer, "NMSUB", i_inst);
+            break;
+        case 0x3E: /* NMSUB.PS fd. fr. fs. ft - 
+                    * Floating Point Negative Multiply Subtract */
+            in_fd_fr_fs_ft(buffer, "NMSUB", i_inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_regimm(char *buffer, unsigned int i_inst,
+        unsigned int i_addr) {
+    int rt = (int)get_operand1(i_inst);
+    switch (rt) {
+        case 0x00: /* BLTZ rs, offset - Branch on Less Than Zero */
+            in_brs_offset(buffer, "BLTZ", i_inst, i_addr);
+            break;
+        case 0x01: /* BGEZ rs, offset - 
+                    * Branch on Greater Than or Equal to Zero */
+            in_brs_offset(buffer, "BGEZ", i_inst, i_addr);
+            break;
+        case 0x02: /* BLTZL rs, offset - Branch on Less Than Zero Likely */
+            in_brs_offset(buffer, "BLTZL", i_inst, i_addr);
+            break;
+        case 0x03: /* BGEZL rs, offset - 
+                    * Branch on Greater Than or Equal to Zero Likely */
+            in_brs_offset(buffer, "BGEZL", i_inst, i_addr);
+            break;
+        case 0x08: /* TGEI rs, immediate - Trap if Greater or Equal Immediate */
+            in_rs_imm(buffer, "TGEI", i_inst);
+            break;
+        case 0x09: /* TGEIU rs, immediate - 
+                    * Trap if Greater or Equal Immediate Unsigned */
+            in_rs_imm(buffer, "TGEIU", i_inst);
+            break;
+        case 0x0A: /* TLTI rs, immediate - Trap if Less Than Immediate */
+            in_rs_imm(buffer, "TLTI", i_inst);
+            break;
+        case 0x0B: /* TLTIU rs, immediate - 
+                    * Trap if Less Than Immediate Unsigned */
+            in_rs_imm(buffer, "TLTIU", i_inst);
+            break;
+        case 0x0C: /* TEQI rs, immediate - Trap if Equal Immediate */
+            in_rs_imm(buffer, "TEGI", i_inst);
+            break;
+        case 0x0E: /* TNEI rs, immediate - Trap if Not Equal Immediate */
+            in_rs_imm(buffer, "TNEI", i_inst);
+            break;
+        case 0x10: /* BLTZAL rs, offset - Branch on Less Than Zero and Link */
+            in_brs_offset(buffer, "BLTZAL", i_inst, i_addr);
+            break;
+        case 0x11: /* BGEZAL rs, offset - 
+                    * Branch on Greater Than or Equal to Zero and Link */
+            in_brs_offset(buffer, "BGEZAL", i_inst, i_addr);
+            break;
+        case 0x12: /* BLTZALL rs, offset - 
+                    * Branch on Less Than Zero and Link Likely */
+            in_brs_offset(buffer, "BLTZALL", i_inst, i_addr);
+            break;
+        case 0x13: /* BGEZALL rs, offset - 
+                    * Branch on Greater Than or Equal to Zero and Link Likely */
+            in_brs_offset(buffer, "BGEZALL", i_inst, i_addr);
+            break;
+        case 0x1F: /* SYNCI */
+            mipsInSYNCI(buffer, i_inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+            break;
+    }
+}
+
+static void de_special(char *buffer, unsigned int i_inst,
+        unsigned int i_addr) {
+    int func = (int)mipsGetFunction(i_inst);
+    switch (func) {
+        case 0x00: /* SLL */
+            mipsInSLL(buffer, i_inst);
+            break;
+        case 0x01: /* *MOVC1 */
+            mipsInMOVC1(buffer, i_inst);
+            break;
+        case 0x02: /* *SRL */
+            mipsInSRL(buffer, i_inst);
+            break;
+        case 0x03: /* SRA rd, rt, sa - Shift Word Right Arithmetic */
+            in_rd_rt_sa(buffer, "SRA", i_inst);
+            break;
+        case 0x04: /* SLLV rd, rt, rs - Shift Word Left Logical Variable */
+            in_rd_rt_rs(buffer, "SLLV", i_inst);
+            break;
+        case 0x06: /* *SRLV */
+            mipsInSRLV(buffer, i_inst);
+            break;
+        case 0x07: /* SRAV rd, rt, rs - Shift Word Right Arithmetic Variable */
+            in_rd_rt_rs(buffer, "SRAV", i_inst);
+            break;
+        case 0x08: /* JR rs - Jump Register */
+            in_rs(buffer, "JR", i_inst);
+            break;
+        case 0x09: /* JALR */
+            mipsInJALR(buffer, i_inst);
+            break;
+        case 0x0A: /* MOVZ rd, rs, rt - Move Conditional on Zero */
+            in_rd_rs_rt(buffer, "MOVZ", i_inst);
+            break;
+        case 0x0B: /* MOVN rd, rs, rt - Move Conditional on Not Zero */
+            in_rd_rs_rt(buffer, "MOVN", i_inst);
+            break;
+        case 0x0C: /* SYSCALL - System Call */
+            re_mnem(buffer, "SYSCALL");
+            break;
+        case 0x0D: /* BREAK - Breakpoint */
+            re_mnem(buffer, "BREAK");
+            break;
+        case 0x0F: /* SYNC - Synchronize Shared Memory */
+            re_mnem(buffer, "SYNC");
+            break;
+        case 0x10: /* MFHI rs - Move From HI Register */
+            in_rs(buffer, "MFHI", i_inst);
+            break;
+        case 0x11: /* MTHI rs - Move to HI Register */
+            in_rs(buffer, "MTHI", i_inst);
+            break;
+        case 0x12: /* MFLO rs - Move From LO Register */
+            in_rs(buffer, "MFLO", i_inst);
+            break;
+        case 0x13: /* MTLO rs - Move to LO Register */
+            in_rs(buffer, "MTLO", i_inst);
+            break;
+        case 0x18: /* MULT rs, rt - Multiply Word */
+            in_rs_rt(buffer, "MULT", i_inst);
+            break;
+        case 0x19: /* MULTU rs, rt - Multiply Unsigned Word */
+            in_rs_rt(buffer, "MULTU", i_inst);
+            break;
+        case 0x1A: /* DIV rs, rt - Divide Word */
+            in_rs_rt(buffer, "DIV", i_inst);
+            break;
+        case 0x1B: /* DIVU rs, rt - Divide Unsigned Word */
+            in_rs_rt(buffer, "DIVU", i_inst);
+            break;
+        case 0x20: /* ADD rd, rs, rt - Add Word */
+            in_rd_rs_rt(buffer, "ADD", i_inst);
+            break;
+        case 0x21: /* ADDU rd, rs, rt - Add Unsigned Word */
+            in_rd_rs_rt(buffer, "ADDU", i_inst);
+            break;
+        case 0x22: /* SUB rd, rs, rt - Subtract Word */
+            in_rd_rs_rt(buffer, "SUB", i_inst);
+            break;
+        case 0x23: /* SUBU rd, rs, rt - Subtract Unsigned Word */
+            in_rd_rs_rt(buffer, "SUBU", i_inst);
+            break;
+        case 0x24: /* AND rd, rs, rt - And */
+            in_rd_rs_rt(buffer, "AND", i_inst);
+            break;
+        case 0x25: /* OR rd, rs, rt - Or */
+            in_rd_rs_rt(buffer, "OR", i_inst);
+            break;
+        case 0x26: /* XOR rd, rs, rt - Exclusive Or */
+            in_rd_rs_rt(buffer, "XOR", i_inst);
+            break;
+        case 0x27: /* NOR rd, rs, rt - Not Or */
+            in_rd_rs_rt(buffer, "NOR", i_inst);
+            break;
+        case 0x2A: /* SLT rd, rs, rt - Set on Less Than */
+            in_rd_rs_rt(buffer, "SLT", i_inst);
+            break;
+        case 0x2B: /* SLTU rd, rs, rt - Set on Less Than Unsigned */
+            in_rd_rs_rt(buffer, "SLTU", i_inst);
+            break;
+        case 0x30: /* TGE rs, rt - Trap if Greater or Equal */
+            in_rs_rt(buffer, "TGE", i_inst);
+            break;
+        case 0x31: /* TGEU rs, rt - Trap if Greater or Equal Unsigned */
+            in_rs_rt(buffer, "TGEU", i_inst);
+            break;
+        case 0x32: /* TLT rs, rt - Trap if Less Than */
+            in_rs_rt(buffer, "TLT", i_inst);
+            break;
+        case 0x33: /* TLTU rs, rt - Trap if Less Than Unsigned */
+            in_rs_rt(buffer, "TLTU", i_inst);
+            break;
+        case 0x34: /* TEQ rs, rt - Trap if Equal */
+            in_rs_rt(buffer, "TEQ", i_inst);
+            break;
+        case 0x36: /* TNE rs, rt - Trap if Not Equal */
+            in_rs_rt(buffer, "TNE", i_inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+            break;
+    }
+}
+
+static void de_special2(char *buffer, unsigned int i_inst,
+        unsigned int i_addr) {
+    int func = (int)mipsGetFunction(i_inst);
+    switch (func) {
+        case 0x00: /* MADD rs, rt - Multiply and Add Word to Hi, Lo */
+            in_rs_rt(buffer, "MADD", i_inst);
+            break;
+        case 0x01: /* MADDU rs, rt - Multiply and Add Unsigned Word to Hi, Lo */
+            in_rs_rt(buffer, "MADDU", i_inst);
+            break;
+        case 0x02: /* MUL rd, rs, rt - Multiply Word to GPR */
+            in_rd_rs_rt(buffer, "MUL", i_inst);
+            break;
+        case 0x04: /* MSUB rs, rt - Multiply and Subtract Word to Hi, Lo */
+            in_rs_rt(buffer, "MSUB", i_inst);
+            break;
+        case 0x05: /* MSUBU rs, rt - 
+                    * Multiply and Subtract Unsigned Word to Hi, Lo */
+            in_rs_rt(buffer, "MSUBU", i_inst);
+            break;
+        case 0x20: /* CLZ rd, rs - Count Leading Zeros in Word */
+            in_rd_rs(buffer, "CLZ", i_inst);
+            break;
+        case 0x21: /* CLO rd, rs - Count Leading Ones in Word */
+            in_rd_rs(buffer, "CLO", i_inst);
+            break;
+        case 0x24: /* MFIC rt, rd - Allegrex MFIC */
+            in_rt_rd(buffer, "MFIC", i_inst);
+            break;
+        case 0x26: /* MTIC rt, rd - Allegrex MTIC */
+            in_rt_rd(buffer, "MTIC", i_inst);
+            break;
+        case 0x3F: /* SDBBP */
+            mipsInSDBBP(buffer, i_inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+            break;
+    }
+}
+
+static void de_special3(char *buffer, unsigned int i_inst,
+        unsigned int i_addr) {
+    int func = (int)mipsGetFunction(i_inst);
+    switch (func) {
+        case 0x00: /* EXT rt, rs, pos, size - Extract Bit Field */
+            in_rt_rs_pos_size(buffer, "EXT", i_inst);
+            break;
+        case 0x04: /* INS rt, rs, pos, size - Insert Bit Field */
+            in_rt_rs_pos_size(buffer, "INS", i_inst);
+            break;
+        case 0x20: /* *BSHFL */
+            de_bshfl(buffer, i_inst, i_addr);
+            break;
+        case 0x3B: /* RDHWR rt, rd - Read Hardware Register */
+            in_rt_rd(buffer, "RDHWR", i_inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+            break;
+    }
+}
+
+static void de_vcop(char* buffer, unsigned int i_inst, unsigned int i_addr) {
+    int sel = get_voperand0(i_inst);
+    int rt = get_voperand1(i_inst);
+
+    if (sel == 4) {
+        /* VF2IN.fmt rd, rs - Vector Float to Integer - Round Near */
+        in_vrd_vrs_scale(buffer, "VF2IN", i_inst);
+        return;
+    }
+    if (sel == 5) {
+        /* VI2F.fmt rd, rs, scale - Vector Integer to Float */
+        in_vrd_vrs_scale(buffer, "VI2F", i_inst);
+        return;
+    }
+    if (rt & 0x60 == 0x60) {
+        /* VCST.fmt rd, a - Vector Store Constant (Single/Pair/Triple/Quad) */
+        in_vrd_a(buffer, "VCST", i_inst);
+        return;
+    }
+    switch (rt) {
+        case 0x01: /* VABS.fmt rd, rs - 
+                    * Vector Absolute Value (Single/Pair/Triple/Quad) */
+            in_vrd_vrs(buffer, "VABS", i_inst);
+            break;
+        case 0x02: /* VNEG.fmt rd, rs - 
+                    * Vector Negate (Single/Pair/Triple/Quad) */
+            in_vrd_vrs(buffer, "VNEG", i_inst);
+            break;
+        case 0x03: /* VIDT.fmt rd - 
+                    * Vector Load Identity (Pair/Triple/Quad) */
+            in_vrd(buffer, "VIDT", i_inst);
+            break;
+        case 0x06: /* VZERO.fmt rd - 
+                    * Set Vector Zero (Single/Pair/Triple/Quad) */
+            in_vrd(buffer, "VZERO", i_inst);
+            break;
+        case 0x07: /* VONE.fmt rd - 
+                    * Set Vector One (Single/Pair/Triple/Quad) */
+            in_vrd(buffer, "VONE", i_inst);
+            break;
+        case 0x10: /* VRCP.fmt rs, rd - 
+                    * Vector Reciprocal (Single/Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VRCP", i_inst);
+            break;
+        case 0x11: /* VRSQ.fmt rs, rd - 
+                    * Vector Reciprocal Square Root (Single/Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VRSQ", i_inst);
+            break;
+        case 0x12: /* VSIN.fmt rs, rd - 
+                    * Vector Sin (Single/Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VSIN", i_inst);
+            break;
+        case 0x13: /* VCOS.fmt rs, rd - 
+                    * Vector Cosin (Single/Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VCOS", i_inst);
+            break;
+        case 0x14: /* VEXP2.fmt rs, rd - 
+                    * Vector Exp2 (Single/Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VEXP2", i_inst);
+            break;
+        case 0x15: /* VLOG2.fmt rs, rd - 
+                    * Vector Log2 (Single/Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VLOG2", i_inst);
+            break;
+        case 0x16: /* VSQRT.fmt rs, rd - 
+                    * Vector Square Root (Single/Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VSQRT", i_inst);
+            break;
+        case 0x17: /* VASIN.fmt rs, rd - 
+                    * Vector Arc Sin (Single/Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VASIN", i_inst);
+            break;
+        case 0x18: /* VNRCP.fmt rs, rd - 
+                    * Vector Negative Reciprocal (Single/Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VNRCP", i_inst);
+            break;
+        case 0x1A: /* VNSIN.fmt rs, rd - 
+                    * Vector Negative Sin (Single/Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VNSIN", i_inst);
+            break;
+        case 0x1C: /* VREXP2.fmt rs, rd - 
+                    * Vector Reciprocal Exp2 (Single/Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VREXP2", i_inst);
+            break;
+        case 0x3C: /* VI2UC.Q rd, rs - 
+                    * Vector Integer to Unsigned Char Quad */
+            in_vrd_vrs(buffer, "VI2UC.Q", i_inst);
+            break;
+        case 0x3F: /* VI2S.fmt rd, rs - 
+                    * Vector Integer to Short (Pair/Quad) */
+            in_vrd_vrs(buffer, "VI2S", i_inst);
+            break;
+        case 0x4A: /* VSGN.fmt rd, rs - 
+                    * Vector Sign (Single/Pair/Triple/Quad) */
+            in_vrd_vrs(buffer, "VSGN", i_inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_vcop2(char* buffer, const SceUInt32 inst, const SceUInt32 addr) {
+    int func = get_voperand0(inst);
+    switch (func) {
+        case 0x0: /* VADD.fmt rd, rs, rt - 
+                    * Vector Add (Single/Pair/Triple/Quad) */
+            in_vrd_vrs_vrt(buffer, "VADD", inst);
+            break;
+        case 0x7: /* VDIV.fmt rd, rs, rt - 
+                    * Vector Divide (Single/Pair/Triple/Quad) */
+            in_vrd_vrs_vrt(buffer, "VDIV", inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_vcop3(char* buffer, const SceUInt32 inst, const SceUInt32 addr) {
+    int func = get_voperand0(inst);
+    switch (func) {
+        case 0x0: /* VMUL.fmt rd, rs, rt - 
+                   * Vector Multiply (Single/Pair/Triple/Quad) */
+            in_vrd_vrs_vrt(buffer, "VMUL", inst);
+            break;
+        case 0x1: /* VDOT.fmt rd, rs, rt - 
+                   * Vector Dot Product (Single/Pair/Triple/Quad) */
+            in_vrd_vrs_vrt(buffer, "VDOT", inst);
+            break;
+        case 0x4: /* VDHP.fmt rd, rs, rt - 
+                   * Vector Homogenous Dot Product (Single/Pair/Triple/Quad) */
+            in_vrd_vrs_vrt(buffer, "VDHP", inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_vcop4(char* buffer, const SceUInt32 inst, const SceUInt32 addr) {
+    int func = get_voperand0(inst);
+    switch (func) {
+        case 0x0: /* VSUB.fmt rd, rs, rt - 
+                   * Vector Subtract (Single/Pair/Triple/Quad) */
+            in_vrd_vrs_vrt(buffer, "VSUB", inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static void de_vcop5(char* buffer, const SceUInt32 inst, const SceUInt32 addr) {
+    int func = get_voperand0(inst);
+    switch (func) {
+        case 0x2: /* VMIN.fmt rd, rs, rt - 
+                   * Vector Minimum Value (Single/Pair/Triple/Quad) */
+            in_vrd_vrs_vrt(buffer, "VMIN", inst);
+            break;
+        case 0x3: /* VMAX.fmt rd, rs, rt - 
+                   * Vector Maximum Value (Single/Pair/Triple/Quad) */
+            in_vrd_vrs_vrt(buffer, "VMAX", inst);
+            break;
+        default:
+            sprintf(buffer, "???");
+    }
+}
+
+static char* get_format(int fmt) {
     if (fmt == 0x10) {
         return "S";
     }
@@ -147,70 +1339,49 @@ static char* mipsGetFormat(int fmt) {
     return "?";
 }
 
-unsigned char mipsGetFunction(unsigned int i_inst) {
-    unsigned char uc_func;
-    uc_func = (unsigned char)(i_inst & 0x3F);
-    return uc_func;
-}
-
-static short mipsGetImmediate(unsigned int i_inst) {
+static short get_imm(unsigned int i_inst) {
     short un_imm;
     un_imm = (short)(i_inst & 0xFFFF);
     return un_imm;
 }
 
-static int mipsGetInstrIndex(unsigned int i_inst) {
+static int get_instr_index(unsigned int i_inst) {
     unsigned int index = 0;
     index = i_inst & 0x03FFFFFF;
     return index;
 }
 
-SceUInt32 mipsGetJumpDestination(unsigned int i_inst, unsigned int i_addr) {
-    SceUInt32 dest = 0;
-    unsigned int pref = (i_addr + 4) & 0x0C000000;
-    dest = i_inst & 0x03FFFFFF;
-    dest <<= 2;
-    dest |= pref;
-    return dest;
-}
-
-unsigned char mipsGetOpCode(unsigned int i_inst) {
-    unsigned char uc_opcode;
-    uc_opcode = (unsigned char)(((i_inst & 0xFC000000) >> 26) & 0x3F);
-    return uc_opcode;
-}
-
-static unsigned char mipsGetOperand0(unsigned int i_inst) {
+static unsigned char get_operand0(unsigned int i_inst) {
     unsigned char uc_oper;
     uc_oper = (unsigned char)(((i_inst & 0x03E00000) >> 21) & 0x1F);
     return uc_oper;
 }
 
-static unsigned char mipsGetOperand1(unsigned int i_inst) {
+static unsigned char get_operand1(unsigned int i_inst) {
     unsigned char uc_oper;
     uc_oper = (unsigned char)(((i_inst & 0x001F0000) >> 16) & 0x1F);
     return uc_oper;
 }
 
-static unsigned char mipsGetOperand2(unsigned int i_inst) {
+static unsigned char get_operand2(unsigned int i_inst) {
     unsigned char uc_oper;
     uc_oper = (unsigned char)(((i_inst & 0x0000F800) >> 11) & 0x1F);
     return uc_oper;
 }
 
-static unsigned char mipsGetOperand3(unsigned int i_inst) {
+static unsigned char get_operand3(unsigned int i_inst) {
     unsigned char uc_oper;
     uc_oper = (unsigned char)(((i_inst & 0x000007C0) >> 6) & 0x1F);
     return uc_oper;
 }
 
-static unsigned short mipsGetUnsignedImmediate(unsigned int i_inst) {
+static unsigned short get_uimm(unsigned int i_inst) {
     unsigned short un_val;
     un_val = (unsigned short)(i_inst & 0x0000FFFF);
     return un_val;
 }
 
-static char* mipsGetVformat(int f, int F) {
+static char* get_vformat(int f, int F) {
     if (f == 0 && F == 0) {
         return "S";
     }
@@ -226,40 +1397,41 @@ static char* mipsGetVformat(int f, int F) {
     return "?";
 }
 
-static int mipsGetVoperand0(unsigned int i_inst) {
+/* 0000 0011 1000 0000  0000 0000 0000 0000 */
+static int get_voperand0(unsigned int i_inst) {
     int val = (i_inst & 0x03800000) >> 23;
     return val;
 }
 
-static int mipsGetVoperand1(unsigned int i_inst) {
+static int get_voperand1(unsigned int i_inst) {
     int val = (i_inst & 0x007F0000) >> 16;
     return val;
 }
 
-static int mipsGetVoperand2(unsigned int i_inst) {
+static int get_voperand2(unsigned int i_inst) {
     int val = (i_inst & 0x00008000) >> 15;
     return val;
 }
 
-static int mipsGetVoperand3(unsigned int i_inst) {
+static int get_voperand3(unsigned int i_inst) {
     int val = (i_inst & 0x00007F00) >> 8;
     return val;
 }
 
-static int mipsGetVoperand4(unsigned int i_inst) {
+static int get_voperand4(unsigned int i_inst) {
     int val = (i_inst & 0x00000080) >> 7;
     return val;
 }
 
-static int mipsGetVoperand5(unsigned int i_inst) {
+static int get_voperand5(unsigned int i_inst) {
     int val = i_inst & 0x0000007F;
     return val;
 }
 
 static void in_brs_offset(char* buffer, const char* mnem, unsigned int inst,
         unsigned int address) {
-    int rs = (int)mipsGetOperand0(inst);
-    short offset = mipsGetImmediate(inst);
+    int rs = (int)get_operand0(inst);
+    short offset = get_imm(inst);
     unsigned int dest = (address + 4 + (offset << 2)) & 0x0FFFFFFF;
     re_gr_target(buffer, mnem, rs, dest);
 }
@@ -267,188 +1439,188 @@ static void in_brs_offset(char* buffer, const char* mnem, unsigned int inst,
 static void in_brs_rt_offset(char* buffer, const char* mnem, unsigned int inst,
         unsigned int address)
 {
-    int rs = (int)mipsGetOperand0(inst);
-    int rt = (int)mipsGetOperand1(inst);
-    short offset = mipsGetImmediate(inst);
+    int rs = (int)get_operand0(inst);
+    int rt = (int)get_operand1(inst);
+    short offset = get_imm(inst);
     unsigned int dest = (address & 0x0FFFFFFF) + 4 + (offset << 2);
     re_gr_gr_target(buffer, mnem, rs, rt, dest);
 }
 
 static void in_fd_fr_fs_ft(char* buffer, const char* mnem, unsigned int inst) {
-    int fd = (int)mipsGetOperand0(inst);
-    int fr = (int)mipsGetOperand0(inst);
-    int fs = (int)mipsGetOperand0(inst);
-    int ft = (int)mipsGetOperand0(inst);
+    int fd = (int)get_operand0(inst);
+    int fr = (int)get_operand0(inst);
+    int fs = (int)get_operand0(inst);
+    int ft = (int)get_operand0(inst);
     int fmt = (inst & 0x7);
     char fmnem[10];
-    char *sfmt = mipsGetFormat(fmt);
+    char *sfmt = get_format(fmt);
     sprintf(fmnem, "%s.%s", mnem, sfmt);
     re_fr_fr_fr_fr(buffer, fmnem, fd, fr, fs, ft);
 }
 
 static void in_fd_fs(char* buffer, const char* mnem, unsigned int inst) {
-    int fs = (int)mipsGetOperand2(inst);
-    int fd = (int)mipsGetOperand3(inst);
+    int fs = (int)get_operand2(inst);
+    int fd = (int)get_operand3(inst);
     re_fr_fr(buffer, mnem, fd, fs);
 }
 
 static void in_fd_fs_ft(char* buffer, const char* mnem, unsigned int inst) {
-    int ft = (int)mipsGetOperand0(inst);
-    int fs = (int)mipsGetOperand1(inst);
-    int fd = (int)mipsGetOperand2(inst);
+    int ft = (int)get_operand0(inst);
+    int fs = (int)get_operand1(inst);
+    int fd = (int)get_operand2(inst);
     re_fr_fr_fr(buffer, mnem, fd, fs, ft);
 }
 
 static void in_fd_fs_ft_rs(char* buffer, const char* mnem, unsigned int inst) {
-    int rs = (int)mipsGetOperand0(inst);
-    int ft = (int)mipsGetOperand1(inst);
-    int fs = (int)mipsGetOperand2(inst);
-    int fd = (int)mipsGetOperand3(inst);
+    int rs = (int)get_operand0(inst);
+    int ft = (int)get_operand1(inst);
+    int fs = (int)get_operand2(inst);
+    int fd = (int)get_operand3(inst);
     re_fr_fr_fr_gr(buffer, mnem, fd, fs, ft, rs);
 }
 
 static void in_fd_index_base(char* buffer, const char* mnem, unsigned int inst) 
 {
-    int base = (int)mipsGetOperand0(inst);
-    int index = (int)mipsGetOperand1(inst);
-    int fd = (int)mipsGetOperand3(inst);
+    int base = (int)get_operand0(inst);
+    int index = (int)get_operand1(inst);
+    int fd = (int)get_operand3(inst);
     re_fr_index_base(buffer, mnem, fd, index, base);
 }
 
 static void in_fmt_fd_fs(char* buffer, const char* mnem, unsigned int inst) {
-    int fmt = (int)mipsGetOperand0(inst);
-    int fs = (int)mipsGetOperand2(inst);
-    int fd = (int)mipsGetOperand3(inst);
-    char* sfmt = mipsGetFormat(fmt);
+    int fmt = (int)get_operand0(inst);
+    int fs = (int)get_operand2(inst);
+    int fd = (int)get_operand3(inst);
+    char* sfmt = get_format(fmt);
     char fmnem[9];
     sprintf(fmnem, "%s.%s", mnem, sfmt);
     re_fr_fr(buffer, fmnem, fd, fs);
 }
 
 static void in_fmt_fd_fs_ft(char* buffer, const char* mnem, unsigned int inst) {
-    int fmt = (int)mipsGetOperand0(inst);
-    int ft = (int)mipsGetOperand1(inst);
-    int fs = (int)mipsGetOperand2(inst);
-    int fd = (int)mipsGetOperand3(inst);
+    int fmt = (int)get_operand0(inst);
+    int ft = (int)get_operand1(inst);
+    int fs = (int)get_operand2(inst);
+    int fd = (int)get_operand3(inst);
     char fmnem[9];
-    char *sfmt = mipsGetFormat(fmt);
+    char *sfmt = get_format(fmt);
     sprintf(fmnem, "%s.%s", mnem, sfmt);
     re_fr_fr_fr(buffer, fmnem, fd, fs, ft);
 }
 
 static void in_fmt_fd_fs_rt(char* buffer, const char* mnem, unsigned int inst) {
-    int fmt = (int)mipsGetOperand0(inst);
-    int rt = (int)mipsGetOperand1(inst);
-    int fs = (int)mipsGetOperand2(inst);
-    int fd = (int)mipsGetOperand3(inst);
+    int fmt = (int)get_operand0(inst);
+    int rt = (int)get_operand1(inst);
+    int fs = (int)get_operand2(inst);
+    int fd = (int)get_operand3(inst);
     char fmnem[10];
-    char* sfmt = mipsGetFormat(fmt);
+    char* sfmt = get_format(fmt);
     sprintf(fmnem, "%s.%s", mnem, sfmt);
     re_fr_fr_gr(buffer, fmnem, fd, fs, rt);
 }
 
 static void in_fs_index_base(char* buffer, const char* mnem, unsigned int inst) 
 {
-    int base = (int)mipsGetOperand0(inst);
-    int index = (int)mipsGetOperand1(inst);
-    int fs = (int)mipsGetOperand2(inst);
+    int base = (int)get_operand0(inst);
+    int index = (int)get_operand1(inst);
+    int fs = (int)get_operand2(inst);
     re_fr_index_base(buffer, mnem, fs, index, base);
 }
 
 static void in_ft_offset_base(char* buffer, const char* mnem, unsigned int inst)
 {
-    int base = (int)mipsGetOperand0(inst);
-    int ft = (int)mipsGetOperand1(inst);
-    short offset = mipsGetImmediate(inst);
+    int base = (int)get_operand0(inst);
+    int ft = (int)get_operand1(inst);
+    short offset = get_imm(inst);
     re_fr_offset_base(buffer, mnem, base, ft, offset);
 }
 
 static void in_rd_rs(char* buffer, const char* mnem, unsigned int i_inst) {
-    int rs = (int)mipsGetOperand0(i_inst);
-    int rd = (int)mipsGetOperand2(i_inst);
+    int rs = (int)get_operand0(i_inst);
+    int rd = (int)get_operand2(i_inst);
     re_gr_gr(buffer, mnem, rd, rs);
 }
 
 static void in_rd_rs_rt(char* buffer, const char* mnem, unsigned int inst) {
-    int rs = (int)mipsGetOperand0(inst);
-    int rt = (int)mipsGetOperand1(inst);
-    int rd = (int)mipsGetOperand2(inst);
+    int rs = (int)get_operand0(inst);
+    int rt = (int)get_operand1(inst);
+    int rd = (int)get_operand2(inst);
     re_gr_gr_gr(buffer, mnem, rd, rs, rt);
 }
 
 static void in_rd_rt(char* buffer, const char* mnem, unsigned int inst) {
-    int rt = (int)mipsGetOperand1(inst);
-    int rd = (int)mipsGetOperand2(inst);
+    int rt = (int)get_operand1(inst);
+    int rd = (int)get_operand2(inst);
     re_gr_gr(buffer, mnem, rd, rt);
 }
 
 static void in_rd_rt_rs(char* buffer, const char* mnem, unsigned int inst) {
-    int rs = (int)mipsGetOperand0(inst);
-    int rt = (int)mipsGetOperand1(inst);
-    int rd = (int)mipsGetOperand2(inst);
+    int rs = (int)get_operand0(inst);
+    int rt = (int)get_operand1(inst);
+    int rd = (int)get_operand2(inst);
     re_gr_gr_gr(buffer, mnem, rd, rs, rt);
 }
 
 static void in_rd_rt_sa(char* buffer, const char* mnem, unsigned int inst) {
-    int rt = (int)mipsGetOperand1(inst);
-    int rd = (int)mipsGetOperand2(inst);
-    int sa = (int)mipsGetOperand3(inst);
+    int rt = (int)get_operand1(inst);
+    int rd = (int)get_operand2(inst);
+    int sa = (int)get_operand3(inst);
     re_gr_gr_sa(buffer, mnem, rd, rt, sa);
 }
 
 static void in_rs(char* buffer, const char* mnem, unsigned int inst) {
-    int rs = (int)mipsGetOperand0(inst);
+    int rs = (int)get_operand0(inst);
     re_gr(buffer, mnem, rs);
 }
 
 static void in_rs_imm(char* buffer, const char* mnem, unsigned int inst) {
-    int rs = (int)mipsGetOperand0(inst);
-    short imm = mipsGetImmediate(inst);
+    int rs = (int)get_operand0(inst);
+    short imm = get_imm(inst);
     re_gr_imm(buffer, mnem, rs, imm);
 }
 
 static void in_rs_rt(char* buffer, const char* mnem, unsigned int inst) {
-    int rs = (int)mipsGetOperand0(inst);
-    int rt = (int)mipsGetOperand1(inst);
+    int rs = (int)get_operand0(inst);
+    int rt = (int)get_operand1(inst);
     re_gr_gr(buffer, mnem, rs, rt);
 }
 
 static void in_rs_rt_imm(char* buffer, const char* mnem, unsigned int inst) {
-    int rs = (int)mipsGetOperand0(inst);
-    int rt = (int)mipsGetOperand1(inst);
-    short imm = mipsGetImmediate(inst);
+    int rs = (int)get_operand0(inst);
+    int rt = (int)get_operand1(inst);
+    short imm = get_imm(inst);
     re_gr_gr_imm(buffer, mnem, rs, rt, imm);
 }
 
 static void in_rt_fs(char* buffer, const char* mnem, unsigned int inst) {
-    int rt = (int)mipsGetOperand1(inst);
-    int fs = (int)mipsGetOperand2(inst);
+    int rt = (int)get_operand1(inst);
+    int fs = (int)get_operand2(inst);
     re_gr_fr(buffer, mnem, rt, fs);
 }
 
 static void in_rt_imm(char* buffer, const char* mnem, unsigned int inst) {
-    int rt = (int)mipsGetOperand1(inst);
-    short imm = mipsGetImmediate(inst);
+    int rt = (int)get_operand1(inst);
+    short imm = get_imm(inst);
     re_gr_imm(buffer, mnem, rt, imm);
 }
 
 static void in_rt_offset_base(char* buffer, const char* mnem, unsigned int inst)
 {
-    int base = (int)mipsGetOperand0(inst);
-    int rt = (int)mipsGetOperand1(inst);
-    short offset = mipsGetImmediate(inst);
+    int base = (int)get_operand0(inst);
+    int rt = (int)get_operand1(inst);
+    short offset = get_imm(inst);
     re_gr_offset_base(buffer, mnem, base, rt, offset);
 }
 
 static void in_rt_rd(char* buffer, const char* mnem, unsigned int inst) {
-    int rt = (int)mipsGetOperand1(inst);
-    int rd = (int)mipsGetOperand2(inst);
+    int rt = (int)get_operand1(inst);
+    int rd = (int)get_operand2(inst);
     re_gr_gr(buffer, mnem, rt, rd);
 }
 
 static void in_rt_rd_sel(char* buffer, const char* mnem, unsigned int inst) {
-    int rt = (int)mipsGetOperand1(inst);
-    int rd = (int)mipsGetOperand2(inst);
+    int rt = (int)get_operand1(inst);
+    int rd = (int)get_operand2(inst);
     int sel = inst & 0x00000007;
     if (sel == 0) {
         re_gr_gr(buffer, mnem, rt, rd);
@@ -458,18 +1630,18 @@ static void in_rt_rd_sel(char* buffer, const char* mnem, unsigned int inst) {
 }
 
 static void in_rt_rs_imm(char* buffer, const char* mnem, unsigned int inst) {
-    int rs = (int)mipsGetOperand0(inst);
-    int rt = (int)mipsGetOperand1(inst);
-    unsigned short imm = mipsGetUnsignedImmediate(inst);
+    int rs = (int)get_operand0(inst);
+    int rt = (int)get_operand1(inst);
+    unsigned short imm = get_uimm(inst);
     re_gr_gr_imm(buffer, mnem, rs, rt, imm);
 }
 
 static void in_rt_rs_pos_size(char* buffer, const char* mnem, unsigned int inst)
 {
-    int rs = (int)mipsGetOperand0(inst);
-    int rt = (int)mipsGetOperand1(inst);
-    int size = (int)mipsGetOperand2(inst) + 1;
-    int pos = (int)mipsGetOperand3(inst);
+    int rs = (int)get_operand0(inst);
+    int rt = (int)get_operand1(inst);
+    int size = (int)get_operand2(inst) + 1;
+    int pos = (int)get_operand3(inst);
     re_gr_gr_pos_size(buffer, mnem, rt, rs, pos, size);
 }
 
@@ -478,6 +1650,75 @@ static void in_target(char* buffer, const char* mnem, unsigned int inst,
     unsigned int instr_index = ((inst & 0x03FFFFFF) << 2);
     unsigned int dest = ((address + 4) & 0x0C000000) | instr_index;
     re_target(buffer, mnem, dest);
+}
+
+static void in_vrd(char* buffer, const char* mnem, unsigned int inst) {
+    int f = get_voperand2(inst);
+    int F = get_voperand4(inst);
+    int rd = get_voperand5(inst);
+    char fmnem[10];
+    char* sfmt = get_vformat(f, F);
+    sprintf(fmnem, "%s.%s", mnem, sfmt);
+    re_vr(buffer, fmnem, rd);
+}
+
+static void in_vrd_a(char* buffer, const char* mnem, unsigned int inst) {
+    int op1 = get_voperand1(inst);
+    int a = op1 & 0x1F;
+    int f = get_voperand2(inst);
+    int F = get_voperand4(inst);
+    int rd = get_voperand5(inst);
+    char fmnem[10];
+    char *sfmt = get_vformat(f, F);
+    sprintf(fmnem, "%s.%s", mnem, sfmt);
+    re_vr_a(buffer, fmnem, rd, a);
+}
+
+static void in_vrd_vrs(char* buffer, const char* mnem, unsigned int inst) {
+    int f = get_voperand2(inst);
+    int rs = get_voperand3(inst);
+    int F = get_voperand4(inst);
+    int rd = get_voperand5(inst);
+    char fmnem[10];
+    char *sfmt = get_vformat(f, F);
+    sprintf(fmnem, "%s.%s", mnem, sfmt);
+    re_vr_vr(buffer, fmnem, rd, rs);
+}
+
+static void in_vrd_vrs_scale(char* buffer, const char* mnem, unsigned int inst)
+{
+    int scale = get_voperand1(inst);
+    int f = get_voperand2(inst);
+    int rs = get_voperand3(inst);
+    int F = get_voperand4(inst);
+    int rd = get_voperand5(inst);
+    char fmnem[10];
+    char *sfmt = get_vformat(f, F);
+    sprintf(fmnem, "%s.%s", mnem, sfmt);
+    re_vr_vr_scale(buffer, fmnem, rd, rs, scale);
+}
+
+static void in_vrd_vrs_vrt(char* buffer, const char* mnem, unsigned int inst) {
+    int rt = get_voperand1(inst);
+    int f = get_voperand2(inst);
+    int rs = get_voperand3(inst);
+    int F = get_voperand4(inst);
+    int rd = get_voperand5(inst);
+    char fmnem[10];
+    char *sfmt = get_vformat(f, F);
+    sprintf(fmnem, "%s.%s", mnem, sfmt);
+    re_vr_vr_vr(buffer, fmnem, rd, rs, rt);
+}
+
+static void in_vrs_vrd(char* buffer, const char* mnem, unsigned int inst) {
+    int f = get_voperand2(inst);
+    int rs = get_voperand3(inst);
+    int F = get_voperand4(inst);
+    int rd = get_voperand5(inst);
+    char fmnem[10];
+    char *sfmt = get_vformat(f, F);
+    sprintf(fmnem, "%s.%s", mnem, sfmt);
+    re_vr_vr(buffer, fmnem, rs, rd);
 }
 
 /* mipsInBC1
@@ -495,8 +1736,8 @@ static void in_target(char* buffer, const char* mnem, unsigned int inst,
  */
 static void mipsInBC1(char *buffer, unsigned int i_inst, unsigned int i_addr) {
     char *mnem;
-    int op1 = (int)mipsGetOperand1(i_inst);
-    int offset = (int)mipsGetImmediate(i_inst);
+    int op1 = (int)get_operand1(i_inst);
+    int offset = (int)get_imm(i_inst);
     int cc = (op1 & 0x1C) >> 2;
     int nd = (op1 & 2) >> 1;
     int tf = op1 & 1;
@@ -536,8 +1777,8 @@ static void mipsInBC1(char *buffer, unsigned int i_inst, unsigned int i_addr) {
  */
 static void mipsInBC2(char *buffer, unsigned int i_inst, unsigned int i_addr) {
     char *mnem;
-    int op1 = (int)mipsGetOperand1(i_inst);
-    int offset = (int)mipsGetImmediate(i_inst);
+    int op1 = (int)get_operand1(i_inst);
+    int offset = (int)get_imm(i_inst);
     int cc = (op1 & 0x1C) >> 2;
     int nd = (op1 & 2) >> 1;
     int tf = op1 & 1;
@@ -570,9 +1811,9 @@ static void mipsInBC2(char *buffer, unsigned int i_inst, unsigned int i_addr) {
  */
 static void mipsInCACHE(char *buffer, unsigned int i_inst) {
     const char *mnem = "CACHE";
-    int i_base = (int)mipsGetOperand0(i_inst);
-    int i_op = (int)mipsGetOperand1(i_inst);
-    short offset = mipsGetImmediate(i_inst);
+    int i_base = (int)get_operand0(i_inst);
+    int i_op = (int)get_operand1(i_inst);
+    short offset = get_imm(i_inst);
     re_op_offset_base(buffer, mnem, i_base, i_op, offset);
 }
 
@@ -588,10 +1829,10 @@ static void mipsInCACHE(char *buffer, unsigned int i_inst) {
  *  [COP1  ][fmt  ][ft   ][fs   ][cc ][0][A][FC][cond]
  */
 static void mipsInCcondfmt(char *buffer, unsigned int i_inst) {
-    int fmt = (int)mipsGetOperand0(i_inst);
-    int ft = (int)mipsGetOperand1(i_inst);
-    int fs = (int)mipsGetOperand2(i_inst);
-    int op3 = (int)mipsGetOperand3(i_inst);
+    int fmt = (int)get_operand0(i_inst);
+    int ft = (int)get_operand1(i_inst);
+    int fs = (int)get_operand2(i_inst);
+    int op3 = (int)get_operand3(i_inst);
     int op4 = (int)mipsGetFunction(i_inst);
     int cc = (op3 & 0x1C) >> 2;
     int a = (op3 & 1);
@@ -650,7 +1891,7 @@ static void mipsInCcondfmt(char *buffer, unsigned int i_inst) {
             scond = "NGT";
             break;
     }
-    sfmt = mipsGetFormat(fmt);
+    sfmt = get_format(fmt);
     sprintf(mnem, "C.%s.%s", scond, sfmt);
     if (cc == 0) {
         re_fr_fr(buffer, mnem, fs, ft);
@@ -668,8 +1909,8 @@ static void mipsInCcondfmt(char *buffer, unsigned int i_inst) {
  */
 static void mipsInJALR(char *buffer, unsigned int i_inst) {
     const char *mnem = "JALR";
-    int rs = (int)mipsGetOperand0(i_inst);
-    int rd = (int)mipsGetOperand2(i_inst);
+    int rs = (int)get_operand0(i_inst);
+    int rd = (int)get_operand2(i_inst);
     if (rd == 31) {
         re_gr(buffer, mnem, rs);
     } else {
@@ -685,7 +1926,7 @@ static void mipsInJALR(char *buffer, unsigned int i_inst) {
  *  [COP0  ][MFMC0][rt   ][12   ][0    ][sc][0 ][0  ]
  */
 static void mipsInMFMC0(char *buffer, unsigned int i_inst) {
-    int rt = (int)mipsGetOperand1(i_inst);
+    int rt = (int)get_operand1(i_inst);
     int sc = (i_inst & 0x20) >> 5;
     if (sc == 0) {
         re_gr(buffer, "DI", rt);
@@ -702,11 +1943,11 @@ static void mipsInMFMC0(char *buffer, unsigned int i_inst) {
  * [SPECIAL][rs   ][cc ][0][t][rd   ][0    ][MOVC1 ]
  */
 static void mipsInMOVC1(char *buffer, unsigned int i_inst) {
-    int rs = (int)mipsGetOperand0(i_inst);
-    int o1 = (int)mipsGetOperand1(i_inst);
+    int rs = (int)get_operand0(i_inst);
+    int o1 = (int)get_operand1(i_inst);
     int cc = (o1 & 0x1C) >> 2;
     int tf = (o1 & 0x01);
-    int rd = (int)mipsGetOperand2(i_inst);
+    int rd = (int)get_operand2(i_inst);
     if (tf == 1) {
         re_gr_gr_cc(buffer, "MOVT", rd, rs, cc);
     } else {
@@ -727,13 +1968,13 @@ static void mipsInMOVCFfmt(char *buffer, unsigned int i_inst) {
     char *cond;
     char *format;
     char mnem[10];
-    int fmt = (int)mipsGetOperand0(i_inst);
-    int op1 = (int)mipsGetOperand1(i_inst);
-    int fs = (int)mipsGetOperand2(i_inst);
-    int fd = (int)mipsGetOperand3(i_inst);
+    int fmt = (int)get_operand0(i_inst);
+    int op1 = (int)get_operand1(i_inst);
+    int fs = (int)get_operand2(i_inst);
+    int fd = (int)get_operand3(i_inst);
     int cc = (op1 & 0x1C) >> 2;
     int tf = op1 & 1;
-    format = mipsGetFormat(fmt);
+    format = get_format(fmt);
     if (tf == 1) {
         cond = "T";
     } else {
@@ -752,8 +1993,8 @@ static void mipsInMOVCFfmt(char *buffer, unsigned int i_inst) {
  */
 static void mipsInMTC0(char *buffer, unsigned int i_inst) {
     const char *mnem = "MTC0";
-    int rt = (int)mipsGetOperand1(i_inst);
-    int rd = (int)mipsGetOperand2(i_inst);
+    int rt = (int)get_operand1(i_inst);
+    int rd = (int)get_operand2(i_inst);
     int sel = i_inst & 0x00000007;
     if (sel == 0) {
         re_gr_gr(buffer, mnem, rt, rd);
@@ -771,9 +2012,9 @@ static void mipsInMTC0(char *buffer, unsigned int i_inst) {
  */
 static void mipsInPREF(char *buffer, unsigned int i_inst) {
     const char *mnem = "PREF";
-    int base = (int)mipsGetOperand0(i_inst);
-    int hint = (int)mipsGetOperand1(i_inst);
-    short offset = mipsGetImmediate(i_inst);
+    int base = (int)get_operand0(i_inst);
+    int hint = (int)get_operand1(i_inst);
+    short offset = get_imm(i_inst);
     re_op_offset_base(buffer, mnem, base, hint, offset);
 }
 
@@ -785,9 +2026,9 @@ static void mipsInPREF(char *buffer, unsigned int i_inst) {
  */
 static void mipsInPREFX(char *buffer, unsigned int i_inst) {
     const char *mnem = "PREFX";
-    int base = (int)mipsGetOperand0(i_inst);
-    int index = (int)mipsGetOperand1(i_inst);
-    int hint = (int)mipsGetOperand2(i_inst);
+    int base = (int)get_operand0(i_inst);
+    int index = (int)get_operand1(i_inst);
+    int hint = (int)get_operand2(i_inst);
     re_op_offset_base(buffer, mnem, base, hint, index);
 }
 
@@ -810,19 +2051,19 @@ static void mipsInSDBBP(char *buffer, unsigned int i_inst) {
  *  [SPECIAL][0   ][rt   ][rd   ][sa   ][SLL   ]
  */
 static void mipsInSLL(char *buffer, unsigned int i_inst) {
-    int rt = (int)mipsGetOperand1(i_inst);
-    int rd = (int)mipsGetOperand2(i_inst);
-    int sa = (int)mipsGetOperand3(i_inst);
+    int rt = (int)get_operand1(i_inst);
+    int rd = (int)get_operand2(i_inst);
+    int sa = (int)get_operand3(i_inst);
     if (rt == 0 && rd == 0) {
         switch(sa) {
             case 0:
-                mipsType0(buffer, "NOP");
+                re_mnem(buffer, "NOP");
                 break;
             case 1:
-                mipsType0(buffer, "SSNOP");
+                re_mnem(buffer, "SSNOP");
                 break;
             case 3:
-                mipsType0(buffer, "EHB");
+                re_mnem(buffer, "EHB");
                 break;
         }
         return;
@@ -838,10 +2079,10 @@ static void mipsInSLL(char *buffer, unsigned int i_inst) {
  * [SPECIAL][0   ][R][rt   ][rd   ][sa   ][SRL   ]
  */
 static void mipsInSRL(char *buffer, unsigned int i_inst) {
-    int i_rt = (int)mipsGetOperand1(i_inst);
-    int i_rd = (int)mipsGetOperand2(i_inst);
-    int i_sa = (int)mipsGetOperand3(i_inst);
-    int o0 = (int)mipsGetOperand0(i_inst);
+    int i_rt = (int)get_operand1(i_inst);
+    int i_rd = (int)get_operand2(i_inst);
+    int i_sa = (int)get_operand3(i_inst);
+    int o0 = (int)get_operand0(i_inst);
     int r = (o0 & 0x1);
     if (r == 1) {
         re_gr_gr_sa(buffer, "ROTR", i_rd, i_rt, i_sa);
@@ -857,10 +2098,10 @@ static void mipsInSRL(char *buffer, unsigned int i_inst) {
  * [SPECIAL][rs   ][rt   ][rd   ][0   ][R][SRLV  ]
  */
 static void mipsInSRLV(char *buffer, unsigned int i_inst) {
-    int rs = (int)mipsGetOperand0(i_inst);
-    int rt = (int)mipsGetOperand1(i_inst);
-    int rd = (int)mipsGetOperand2(i_inst);
-    int o3 = (int)mipsGetOperand3(i_inst);
+    int rs = (int)get_operand0(i_inst);
+    int rt = (int)get_operand1(i_inst);
+    int rd = (int)get_operand2(i_inst);
+    int o3 = (int)get_operand3(i_inst);
     int r = o3 & 1;
     if (r == 1) {
         re_gr_gr_gr(buffer, "ROTRV", rd, rs, rt);
@@ -877,642 +2118,9 @@ static void mipsInSRLV(char *buffer, unsigned int i_inst) {
  */
 static void mipsInSYNCI(char *buffer, unsigned int i_instr) {
     const char *mnem = "SYNCI";
-    int base = (int)mipsGetOperand0(i_instr);
-    short offset = mipsGetImmediate(i_instr);
+    int base = (int)get_operand0(i_instr);
+    short offset = get_imm(i_instr);
     re_offset_base(buffer, mnem, offset, base);
-}
-
-/* mipsInVABSfmt
- *  Vector Absolute Value (Single/Pair/Triple/Quad)
- *  vabs.s rd, rs
- *  vabs.p rd, rs
- *  vabs.t rd, rs
- *  vabs.q rd, rs
- *  [110100][000][0000001][-][-------][-][-------]
- *  [vabs. ][0  ][1      ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x1
- */
-static void mipsInVABSfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VABS.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rd, rs);
-}
-
-/* mipsInVADDfmt
- *  Vector Add (Single/Pair/Triple/Quad)
- *  vadd.s rd, rs, rt
- *  vadd.p rd, rs, rt
- *  vadd.t rd, rs, rt
- *  vadd.q rd, rs, rt
- *  [011000][000][-------][-][-------][-][-------]
- *  [vadd. ][0  ][rt     ][f][rs     ][F][rd     ]
- *  0x18, 0x0
- */
-static void mipsInVADDfmt(char* buffer, unsigned int i_inst) {
-    int rt = mipsGetVoperand1(i_inst);
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VADD.%s", sfmt);
-    re_vrd_vrs_vrt(buffer, mnem, rd, rs, rt);
-}
-
-/* mipsInVASINfmt
- *  Vector Arc Sin (Single/Pair/Triple/Quad)
- *  vasin.s rs, rd
- *  vasin.p rs, rd
- *  vasin.t rs, rd
- *  vasin.q rs, rd
- *  [110100][000][0010111][-][-------][-][-------]
- *  [0x34  ][0  ][0x17   ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x17
- */
-static void mipsInVASINfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VASIN.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVCOSfmt
- *  Vector Cosin (Single/Pair/Triple/Quad)
- *  vcos.s rs, rd
- *  vcos.p rs, rd
- *  vcos.t rs, rd
- *  vcos.q rs, rd
- *  [110100][000][0010011][-][-------][-][-------]
- *  [0x34  ][0  ][0x13   ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x13
- */
-static void mipsInVCOSfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VCOS.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVCSTfmt
- *  Vector Store Constant (Single/Pair/Triple/Quad)
- *  vcst.s rd, a
- *  vcst.p rd, a
- *  vcst.t rd, a
- *  vcst.q rd, a
- *  [110100][000][11][-----][-][0000000][-][-------]
- *  [VCOP  ][0  ][3 ][a    ][f][0      ][F][rd     ]
- *  0x34, 0, *0x3
- */
-static void mipsInVCSTfmt(char* buffer, unsigned int i_inst) {
-    int op1 = mipsGetVoperand1(i_inst);
-    int a = op1 & 0x1F;
-    int f = mipsGetVoperand2(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VCST.%s", sfmt);
-    mipsTypeVrdA(buffer, mnem, rd, a);
-}
-
-/* mipsInVDHPfmt
- *  Vector Homogenous Dot Product (Single/Pair/Triple/Quad)
- *  vdhp.p rd, rs, rt
- *  vdhp.t rd, rs, rt
- *  vdhp.q rd, rs, rt
- *  [011001][100][-------][-][-------][-][-------]
- *  [vdhp. ][4  ][rt     ][f][rs     ][F][rd     ]
- *  0x19, 0x4
- */
-static void mipsInVDHPfmt(char* buffer, unsigned int i_inst) {
-    int rt = mipsGetVoperand1(i_inst);
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VDHP.%s", sfmt);
-    re_vrd_vrs_vrt(buffer, mnem, rd, rs, rt);
-}
-
-/* mipsInVDIVfmt
- *  Vector Divide (Single/Pair/Triple/Quad)
- *  vdiv.s rd, rs, rt
- *  vdiv.p rd, rs, rt
- *  vdiv.t rd, rs, rt
- *  vdiv.q rd, rs, rt
- *  [011000][111][-------][-][-------][-][-------]
- *  [vdiv. ][7  ][rt     ][f][rs     ][F][rd     ]
- *  0x18, 0x7
- */
-static void mipsInVDIVfmt(char* buffer, unsigned int i_inst) {
-    int rt = mipsGetVoperand1(i_inst);
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VDIV.%s", sfmt);
-    re_vrd_vrs_vrt(buffer, mnem, rd, rs, rt);
-}
-
-/* mipsInVDOTfmt
- *  Vector Dot Product (Single/Pair/Triple/Quad)
- *  vdot.p rd, rs, rt
- *  vdot.t rd, rs, rt
- *  vdot.q rd, rs, rt
- *  [011001][001][-------][-][-------][-][-------]
- *  [vdot. ][1  ][rt     ][f][rs     ][F][rd     ]
- *  0x19, 0x1
- */
-static void mipsInVDOTfmt(char* buffer, unsigned int i_inst) {
-    int rt = mipsGetVoperand1(i_inst);
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VDOT.%s", sfmt);
-    re_vrd_vrs_vrt(buffer, mnem, rd, rs, rt);
-}
-
-/* mipsInVEXP2fmt
- *  Vector Exp2 (Single/Pair/Triple/Quad)
- *  vexp2.s rs, rd
- *  vexp2.p rs, rd
- *  vexp2.t rs, rd
- *  vexp2.q rs, rd
- *  [110100][000][0010100][-][-------][-][-------]
- *  [0x34  ][0  ][0x14   ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x14
- */
-static void mipsInVEXP2fmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VEXP2.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVF2INfmt
- *  Vector Float to Integer - Round Near
- *  vf2in.s rd, rs, scale
- *  vf2in.p rd, rs, scale
- *  vf2in.t rd, rs, scale
- *  vf2in.q rd, rs, scale
- *  [110100][100][-------][-][-------][-][-------]
- *  [VCOP  ][4  ][scale  ][f][rs     ][F][rd     ]
- *  0x34, 0x4
- */
-static void mipsInVF2INfmt(char* buffer, unsigned int i_inst) {
-    int scale = mipsGetVoperand1(i_inst);
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VF2IN.%s", sfmt);
-    re_vrd_vrs_scale(buffer, mnem, rd, rs, scale);
-}
-
-/* mipsInVI2Ffmt
- *  Vector Integer to Float
- *  vi2f.s rd, rs, scale
- *  vi2f.p rd, rs, scale
- *  vi2f.t rd, rs, scale
- *  vi2f.q rd, rs, scale
- *  [110100][101][-------][-][-------][-][-------]
- *  [VCOP  ][5  ][scale  ][f][rs     ][F][rd     ]
- *  0x34, 0x4
- */
-static void mipsInVI2Ffmt(char* buffer, unsigned int i_inst) {
-    int scale = mipsGetVoperand1(i_inst);
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VI2F.%s", sfmt);
-    re_vrd_vrs_scale(buffer, mnem, rd, rs, scale);
-}
-
-/* mipsInVI2Sfmt
- *  Vector Integer to Short (Pair/Quad)
- *  vi2s.p rd, rs
- *  vi2s.q rd, rs
- *  [110100][000][0111111][-][-------][-][-------]
- *  [VCOP  ][0  ][VI2S.  ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x3F
- */
-static void mipsInVI2Sfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VI2S.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVI2UCQ
- *  Vector Integer to Unsigned Char Quad
- *  vi2uc.q rd, rs
- *  [110100][000][0111100][1][-------][1][-------]
- *  [VCOP  ][0  ][VI2UC.Q][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x3C
- */
-static void mipsInVI2UCQ(char* buffer, unsigned int i_inst) {
-    int rs = mipsGetVoperand3(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    re_vrd_vrs(buffer, "VI2UC.Q", rd, rs);
-}
-
-/* mipsInVIDTfmt
- *  Vector Load Identity (Pair/Triple/Quad)
- *  vidt.p rd
- *  vidt.t rd
- *  vidt.q rd
- *  [110100][000][0000011][-][0000000][-][-------]
- *  [0x34  ][0  ][3      ][f][0      ][F][rd     ]
- *  0x34, 0x0, 0x3
- */
-static void mipsInVIDTfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VIDT.%s", sfmt);
-    mipsTypeVrd(buffer, mnem, rd);
-}
-
-/* mipsInVLOG2fmt
- *  Vector Log2 (Single/Pair/Triple/Quad)
- *  vlog2.s rs, rd
- *  vlog2.p rs, rd
- *  vlog2.t rs, rd
- *  vlog2.q rs, rd
- *  [110100][000][0010101][-][-------][-][-------]
- *  [0x34  ][0  ][0x15   ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x15
- */
-static void mipsInVLOG2fmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VLOG2.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVMAXfmt
- *  Vector Maximum Value (Single/Pair/Triple/Quad)
- *  vmax.s rd, rs, rt
- *  vmax.p rd, rs, rt
- *  vmax.t rd, rs, rt
- *  vmax.q rd, rs, rt
- *  [011011][011][-------][-][-------][-][-------]
- *  [vmax. ][3  ][rt     ][f][rs     ][F][rd     ]
- *  0x1B, 0x3
- */
-static void mipsInVMAXfmt(char* buffer, unsigned int i_inst) {
-    int rt = mipsGetVoperand1(i_inst);
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VMAX.%s", sfmt);
-    re_vrd_vrs_vrt(buffer, mnem, rd, rs, rt);
-}
-
-/* mipsInVMINfmt
- *  Vector Minimum Value (Single/Pair/Triple/Quad)
- *  vmin.s rd, rs, rt
- *  vmin.p rd, rs, rt
- *  vmin.t rd, rs, rt
- *  vmin.q rd, rs, rt
- *  [011011][010][-------][-][-------][-][-------]
- *  [vmin. ][2  ][rt     ][f][rs     ][F][rd     ]
- *  0x1B, 0x2
- */
-static void mipsInVMINfmt(char* buffer, unsigned int i_inst) {
-    int rt = mipsGetVoperand1(i_inst);
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VMIN.%s", sfmt);
-    re_vrd_vrs_vrt(buffer, mnem, rd, rs, rt);
-}
-
-/* mipsInVMULfmt
- *  Vector Multiply (Single/Pair/Triple/Quad)
- *  vmul.s rd, rs, rt
- *  vmul.p rd, rs, rt
- *  vmul.t rd, rs, rt
- *  vmul.q rd, rs, rt
- *  [011001][000][-------][-][-------][-][-------]
- *  [vmul. ][0  ][rt     ][f][rs     ][F][rd     ]
- *  0x19, 0x0
- */
-static void mipsInVMULfmt(char* buffer, unsigned int i_inst) {
-    int rt = mipsGetVoperand1(i_inst);
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VMUL.%s", sfmt);
-    re_vrd_vrs_vrt(buffer, mnem, rd, rs, rt);
-}
-
-/* mipsInVNEGfmt
- *  Vector Negate (Single/Pair/Triple/Quad)
- *  vneg.s rd, rs
- *  vneg.p rd, rs
- *  vneg.t rd, rs
- *  vneg.q rd, rs
- *  [110100][000][0000010][-][-------][-][-------]
- *  [vneg. ][0  ][2      ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x2
- */
-static void mipsInVNEGfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VNEG.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rd, rs);
-}
-
-/* mipsInVNRCPfmt
- *  Vector Negative Reciprocal (Single/Pair/Triple/Quad)
- *  vnrcp.s rs, rd
- *  vnrcp.p rs, rd
- *  vnrcp.t rs, rd
- *  vnrcp.q rs, rd
- *  [110100][000][0011000][-][-------][-][-------]
- *  [0x34  ][0  ][0x18   ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x18
- */
-static void mipsInVNRCPfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VNRCP.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVNSINfmt
- *  Vector Negative Sin (Single/Pair/Triple/Quad)
- *  vnsin.s rs, rd
- *  vnsin.p rs, rd
- *  vnsin.t rs, rd
- *  vnsin.q rs, rd
- *  [110100][000][0011010][-][-------][-][-------]
- *  [VCOP  ][0  ][NSIN.  ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x1A
- */
-static void mipsInVNSINfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VNSIN.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVONEfmt
- *  Set Vector One (Single/Pair/Triple/Quad)
- *  vone.s rd
- *  vone.p rd
- *  vone.t rd
- *  vone.q rd
- *  [110100][000][0000111][-][0000000][-][-------]
- *  [0x34  ][0  ][7      ][f][0      ][F][rd     ]
- *  0x34, 0x0, 0x7
- */
-static void mipsInVONEfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VONE.%s", sfmt);
-    mipsTypeVrd(buffer, mnem, rd);
-}
-
-/* mipsInVRCPfmt
- *  Vector Reciprocal (Single/Pair/Triple/Quad)
- *  vrcp.s rs, rd
- *  vrcp.p rs, rd
- *  vrcp.t rs, rd
- *  vrcp.q rs, rd
- *  [110100][000][0010000][-][-------][-][-------]
- *  [0x34  ][0  ][0x10   ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x10
- */
-static void mipsInVRCPfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VRCP.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVREXP2fmt
- *  Vector Reciprocal Exp2 (Single/Pair/Triple/Quad)
- *  vrexp2.s rs, rd
- *  vrexp2.p rs, rd
- *  vrexp2.t rs, rd
- *  vrexp2.q rs, rd
- *  [110100][000][0011100][-][-------][-][-------]
- *  [VCOP  ][0  ][REXP2. ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x1C
- */
-static void mipsInVREXP2fmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VREXP2.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVRSQfmt
- *  Vector Reciprocal Square Root (Single/Pair/Triple/Quad)
- *  vrsq.s rs, rd
- *  vrsq.p rs, rd
- *  vrsq.t rs, rd
- *  vrsq.q rs, rd
- *  [110100][000][0010001][-][-------][-][-------]
- *  [0x34  ][0  ][0x11   ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x10
- */
-static void mipsInVRSQfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VRSQ.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVSGNfmt
- *  Vector Sign (Single/Pair/Triple/Quad)
- *  vsgn.s rd, rs
- *  vsgn.p rd, rs
- *  vsgn.t rd, rs
- *  vsgn.q rd, rs
- *  [110100][000][1001010][-][-------][-][-------]
- *  [VCOP  ][0  ][VSGN.  ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x4A
- */
-static void mipsInVSGNfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VSGN.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rd, rs);
-}
-
-/* mipsInVSINfmt
- *  Vector Sin (Single/Pair/Triple/Quad)
- *  vsin.s rs, rd
- *  vsin.p rs, rd
- *  vsin.t rs, rd
- *  vsin.q rs, rd
- *  [110100][000][0010010][-][-------][-][-------]
- *  [0x34  ][0  ][0x12   ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x12
- */
-static void mipsInVSINfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VSIN.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVSQRTfmt
- *  Vector Square Root (Single/Pair/Triple/Quad)
- *  vsqrt.s rs, rd
- *  vsqrt.p rs, rd
- *  vsqrt.t rs, rd
- *  vsqrt.q rs, rd
- *  [110100][000][0010110][-][-------][-][-------]
- *  [0x34  ][0  ][0x16   ][f][rs     ][F][rd     ]
- *  0x34, 0x0, 0x16
- */
-static void mipsInVSQRTfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VSQRT.%s", sfmt);
-    re_vrd_vrs(buffer, mnem, rs, rd);
-}
-
-/* mipsInVSUBfmt
- *  Vector Subtract (Single/Pair/Triple/Quad)
- *  vsub.s rd, rs, rt
- *  vsub.p rd, rs, rt
- *  vsub.t rd, rs, rt
- *  vsub.q rd, rs, rt
- *  [011010][000][-------][-][-------][-][-------]
- *  [vsub. ][0  ][rt     ][f][rs     ][F][rd     ]
- *  0x1A, 0x0
- */
-static void mipsInVSUBfmt(char* buffer, unsigned int i_inst) {
-    int rt = mipsGetVoperand1(i_inst);
-    int f = mipsGetVoperand2(i_inst);
-    int rs = mipsGetVoperand3(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VSUB.%s", sfmt);
-    re_vrd_vrs_vrt(buffer, mnem, rd, rs, rt);
-}
-
-/* mipsInVZEROfmt
- *  Set Vector Zero (Single/Pair/Triple/Quad)
- *  vzero.s rd
- *  vzero.p rd
- *  vzero.t rd
- *  vzero.q rd
- *  [110100][000][0000110][-][0000000][-][-------]
- *  [0x34  ][0  ][6      ][f][0      ][F][rd     ]
- *  0x34, 0x0, 0x6
- */
-static void mipsInVZEROfmt(char* buffer, unsigned int i_inst) {
-    int f = mipsGetVoperand2(i_inst);
-    int F = mipsGetVoperand4(i_inst);
-    int rd = mipsGetVoperand5(i_inst);
-    char mnem[10];
-    char* sfmt = mipsGetVformat(f, F);
-    sprintf(mnem, "VZERO.%s", sfmt);
-    mipsTypeVrd(buffer, mnem, rd);
-}
-
-/* mipsType0
- *  Render a Type 0 instruction.
- *  [MNEM]
- */
-static void mipsType0(char *buffer, const char *mnem) {
-    sprintf(buffer, "%s", mnem);
 }
 
 /** Render a Type 'CC, FPR, FPR' instruction.
@@ -1531,18 +2139,26 @@ static void re_cc_fr_fr(char *buffer, const char *mnem, int cc, int i_fs,
     sprintf(buffer, "%s %d, $%s, $%s", mnem, cc, fs, ft);
 }
 
-/* mipsTypeCcDest
- *  Render a Type 'cc, dest' instruction.
- *  [MNEM] cc, dest
+/** Render a Type 'CC, DEST' instruction.
+ * [MNEM] cc, dest
+ * 
+ * @param buffer string acting as the destination.
+ * @param mnem string containing the mnemonic.
+ * @param cc int containing the condition code.
+ * @param dest unsigned int containing the destination address.
  */
 static void re_cc_target(char *buffer, const char *mnem, int cc, 
         unsigned int dest) {
     sprintf(buffer, "%s %d, 0x%08X", mnem, cc, dest);
 }
 
-/* mipsType13
- *  Render a Type 13 instruction.
- *  [MNEM] fd, fs
+/** Render a Type 'FPR, FPR' instruction.
+ * [MNEM] fd, fs
+ * 
+ * @param buffer string acting as the destination.
+ * @param mnem string containing the mnemonic.
+ * @param i_fd int indicating the destination FP register.
+ * @param i_fs int indicating the source FP register.
  */
 static void re_fr_fr(char *buffer, const char *mnem, int i_fd, int i_fs) {
     const char *fd = mipsFpRegNames[i_fd];
@@ -1550,9 +2166,14 @@ static void re_fr_fr(char *buffer, const char *mnem, int i_fd, int i_fs) {
     sprintf(buffer, "%s $%s, $%s", mnem, fd, fs);
 }
 
-/* mipsTypeFdFsCc
- *  Render a Type 'fd, fs, cc' instruction.
- *  [MNEM] fd, fs, cc
+/** Render a Type 'FPR, FPR, CC' instruction.
+ * [MNEM] fd, fs, cc
+ * 
+ * @param buffer string acting as the destination.
+ * @param mnem string containing the mnemonic.
+ * @param i_fd int indicating the destination FP register.
+ * @param i_fs int indicating the source FP register.
+ * @param i_cc int indicating the condition code.
  */
 static void re_fr_fr_cc(char *buffer, const char *mnem, int i_fd, int i_fs, int i_cc) {
     const char *fd = mipsFpRegNames[i_fd];
@@ -1788,6 +2409,14 @@ static void re_gr_target(char *buffer, const char *mnem, int i_rs,
     sprintf(buffer, "%s $%s, 0x%08X", mnem, rs, target);
 }
 
+/* mipsType0
+ *  Render a Type 0 instruction.
+ *  [MNEM]
+ */
+static void re_mnem(char *buffer, const char *mnem) {
+    sprintf(buffer, "%s", mnem);
+}
+
 /* mipsType6
  *  Render a Type6 instruction.
  *  [MNEM] offset(base)
@@ -1821,11 +2450,11 @@ static void re_target(char *buffer, const char *mnem, unsigned int target) {
     sprintf(buffer, "%s 0x%08X", mnem, target);
 }
 
-static void mipsTypeVrd(char* buffer, const char* mnem, int iRd) {
+static void re_vr(char* buffer, const char* mnem, int iRd) {
     sprintf(buffer, "%s $v%d", mnem, iRd);
 }
 
-static void mipsTypeVrdA(char* buffer, const char* mnem, int iRd, int iA) {
+static void re_vr_a(char* buffer, const char* mnem, int iRd, int iA) {
     char* sCn = "0";
     char buf[3];
     switch (iA) {
@@ -1893,16 +2522,16 @@ static void mipsTypeVrdA(char* buffer, const char* mnem, int iRd, int iA) {
     sprintf(buffer, "%s $v%d, %s", mnem, iRd, sCn);
 }
 
-static void re_vrd_vrs(char* buffer, const char* mnem, int iRd, int iRs) {
+static void re_vr_vr(char* buffer, const char* mnem, int iRd, int iRs) {
     sprintf(buffer, "%s $v%d, $v%d", mnem, iRd, iRs);
 }
 
-static void re_vrd_vrs_scale(char* buffer, const char* mnem,
+static void re_vr_vr_scale(char* buffer, const char* mnem,
         int iRd, int iRs, int scale) {
     sprintf(buffer, "%s $v%d, $v%d, %d", mnem, iRd, iRs, scale);
 }
 
-static void re_vrd_vrs_vrt(char* buffer, const char* mnem,
+static void re_vr_vr_vr(char* buffer, const char* mnem,
         int iRd, int iRs, int iRt) {
     sprintf(buffer, "%s $v%d, $v%d, $v%d", mnem, iRd, iRs, iRt);
 }
@@ -1913,10 +2542,10 @@ void mipsDecode(char *buffer, unsigned int i_inst, unsigned int i_addr) {
     uc_opcode = mipsGetOpCode(i_inst);
     switch (uc_opcode) {
         case 0: /* SPECIAL */
-            decodeSPECIAL(buffer, i_inst, i_addr);
+            de_special(buffer, i_inst, i_addr);
             break;
         case 1: /* REGIMM */
-            decodeREGIMM(buffer, i_inst, i_addr);
+            de_regimm(buffer, i_inst, i_addr);
             break;
         case 0x02: /* J target - Jump */
             in_target(buffer, "J", i_inst, i_addr);
@@ -1962,16 +2591,16 @@ void mipsDecode(char *buffer, unsigned int i_inst, unsigned int i_addr) {
             in_rt_imm(buffer, "LUI", i_inst);
             break;
         case 0x10: /* *COP0 */
-            decodeCOP0(buffer, i_inst, i_addr);
+            de_cop0(buffer, i_inst, i_addr);
             break;
         case 0x11: /* *COP1 */
-            decodeCOP1(buffer, i_inst, i_addr);
+            de_cop1(buffer, i_inst, i_addr);
             break;
         case 0x12: /* *COP2 */
-            decodeCOP2(buffer, i_inst, i_addr);
+            de_cop2(buffer, i_inst, i_addr);
             break;
         case 0x13: /* *COP1X */
-            decodeCOP1X(buffer, i_inst, i_addr);
+            de_cop1x(buffer, i_inst, i_addr);
             break;
         case 0x14: /* BEQL rs, rt, offset - Branch on Equal Likely */
             in_brs_rt_offset(buffer, "BEQL", i_inst, i_addr);
@@ -1986,11 +2615,23 @@ void mipsDecode(char *buffer, unsigned int i_inst, unsigned int i_addr) {
         case 0x17: /* BGTZL rs, offset - Branch on Greater Than Zero Likely */
             in_brs_offset(buffer, "BGTZL", i_inst, i_addr);
             break;
+        case 0x18: /* VCOP Instruction-2 */
+            de_vcop2(buffer, i_inst, i_addr);
+            break;
+        case 0x19: /* VCOP Instruction-3 */
+            de_vcop3(buffer, i_inst, i_addr);
+            break;
+        case 0x1A: /* VCOP Instruction-4 */
+            de_vcop4(buffer, i_inst, i_addr);
+            break;
+        case 0x1B: /* VCOP Instruction-5 */
+            de_vcop5(buffer, i_inst, i_addr);
+            break;
         case 0x1C: /* *SPECIAL2 */
-            decodeSPECIAL2(buffer, i_inst, i_addr);
+            de_special2(buffer, i_inst, i_addr);
             break;
         case 0x1F: /* *SPECIAL3 */
-            decodeSPECIAL3(buffer, i_inst, i_addr);
+            de_special3(buffer, i_inst, i_addr);
             break;
         case 0x20: /* LB rt, offset(base) - Load Byte */
             in_rt_offset_base(buffer, "LB", i_inst);
@@ -2044,7 +2685,7 @@ void mipsDecode(char *buffer, unsigned int i_inst, unsigned int i_addr) {
             mipsInPREF(buffer, i_inst);
             break;
         case 0x34: /* *VCOP */
-            decodeVCOP(buffer, i_inst, i_addr);
+            de_vcop(buffer, i_inst, i_addr);
             break;
         case 0x35: /* LDC1 ft, offset(base) - 
                     * Load Doubleword to Floating Point */
@@ -2074,1052 +2715,5 @@ void mipsDecode(char *buffer, unsigned int i_inst, unsigned int i_addr) {
         default:
             sprintf(buffer, "???");
             break;
-    }
-}
-
-static void decodeBSHFL(char *buffer, unsigned int i_inst, 
-        unsigned int i_addr) {
-    int sa = (int)mipsGetOperand3(i_inst);
-    switch (sa) {
-        case 0x02: /* WSBH rd, rt - Word Swap Bytes Within Halfwords */
-            in_rd_rt(buffer, "WSBH", i_inst);
-            break;
-        case 0x10: /* SEB rd, rt - Sign-Extend Byte */
-            in_rd_rt(buffer, "SEB", i_inst);
-            break;
-        case 0x18: /* SEH rd, rt - Sign-Extend Halfword */
-            in_rd_rt(buffer, "SEH", i_inst);
-            break;
-        default:
-            sprintf(buffer, "???");
-            break;
-    }
-}
-
-static void decodeCOP0(char *buffer, unsigned int i_inst, unsigned int i_addr) {
-    int rs = (int)mipsGetOperand0(i_inst);
-    int func = (int)mipsGetFunction(i_inst);
-    if (rs > 0x10) {
-        switch (func) {
-            case 0x01: /* TLBR - Read Indexed TLB Entry */
-                mipsType0(buffer, "TLBR");
-                break;
-            case 0x02: /* TLBWI - Write Indexed TLB Entry */
-                mipsType0(buffer, "TLBWI");
-                break;
-            case 0x06: /* TLBWR - Write Random TLB Entry */
-                mipsType0(buffer, "TLBWR");
-                break;
-            case 0x08: /* TLBP - Probe TLB for Matching Entry */
-                mipsType0(buffer, "TLBP");
-                break;
-            case 0x18: /* ERET - Exception Return */
-                mipsType0(buffer, "ERET");
-                break;
-            case 0x1F: /* DERET - Debug Exception Return */
-                mipsType0(buffer, "DERET");
-                break;
-            case 0x20: /* WAIT - Enter StandBy Mode */
-                mipsType0(buffer, "WAIT");
-                break;
-            default:
-                sprintf(buffer, "???");
-                break;
-        }
-    } else {
-        switch (rs) {
-            case 0x00: /* MFC0 rt, rd[, sel] - Move from Coprocessor 0 */
-                in_rt_rd_sel(buffer, "MFC0", i_inst);
-                break;
-            case 0x04: /* MTC0 */
-                mipsInMTC0(buffer, i_inst);
-                break;
-            case 0x0A: /* RDPGPR rd, rt - Read GPR from Previous Shadow Set */
-                in_rd_rt(buffer, "RDPGPR", i_inst);
-                break;
-            case 0x0B: /* *MFMC0 */
-                mipsInMFMC0(buffer, i_inst);
-                break;
-            case 0x0E: /* WRPGPR rd, rt - Write to GPR in Previous Shadow Set */
-                in_rd_rt(buffer, "WRPGPR", i_inst);
-                break;
-            default:
-                sprintf(buffer, "???");
-                break;
-        }
-    }
-}
-
-static void decodeCOP1(char *buffer, unsigned int i_inst, unsigned int i_addr) {
-    int rs = (int)mipsGetOperand0(i_inst);
-    switch (rs) {
-        case 0x00: /* MFC1 rt, fs - Move Word From Floating Point */
-            in_rt_fs(buffer, "MFC1", i_inst);
-            break;
-        case 0x02: /* CFC1 rt, fs - Move Control Word From Floating Point */
-            in_rt_fs(buffer, "CFC1", i_inst);
-            break;
-        case 0x03: /* MFHC1 rt, fs - 
-                    * Move Word From High Half of Floating Point Register */
-            in_rt_fs(buffer, "MFHC1", i_inst);
-            break;
-        case 0x04: /* MTC1 rt, fs - Move Word to Floating Point */
-            in_rt_fs(buffer, "MTC1", i_inst);
-            break;
-        case 0x06: /* CTC1 rt, fs - Move Control Word to Floating Point */
-            in_rt_fs(buffer, "CTC1", i_inst);
-            break;
-        case 0x07: /* MTHC1 rt, fs - 
-                    * Move Word to High Half of Floating Point Register */
-            in_rt_fs(buffer, "MTHC1", i_inst);
-            break;
-        case 0x08: /* *BC1 */
-            mipsInBC1(buffer, i_inst, i_addr);
-            break;
-        case 0x09: /* *BC1ANY2 */
-            sprintf(buffer, "*BC1ANY2");
-            break;
-        case 0x0A: /* *BC1ANY4 */
-            sprintf(buffer, "*BC1ANY4");
-            break;
-        case 0x10: /* *S */
-            decodeCOP1S(buffer, i_inst, i_addr);
-            break;
-        case 0x11: /* *D */
-            decodeCOP1D(buffer, i_inst, i_addr);
-            break;
-        case 0x14: /* *W */
-            decodeCOP1W(buffer, i_inst, i_addr);
-            break;
-        case 0x15: /* *L */
-            decodeCOP1L(buffer, i_inst, i_addr);
-            break;
-        case 0x16: /* *PS */
-            decodeCOP1PS(buffer, i_inst, i_addr);
-            break;
-        default:
-            sprintf(buffer, "???");
-    }
-}
-
-static void decodeCOP1D(char *buffer, unsigned int i_inst, unsigned int i_addr) {
-    int func = (int)mipsGetFunction(i_inst);
-    switch (func) {
-        case 0x00: /* ADD.D fd, fs, ft - Floating Point Add (Double) */
-            in_fmt_fd_fs_ft(buffer, "ADD", i_inst);
-            break;
-        case 0x01: /* SUB.D fd, fs, ft - Floating Point Subtract (Double) */
-            in_fmt_fd_fs_ft(buffer, "SUB", i_inst);
-            break;
-        case 0x02: /* MUL.D fd, fs, ft - Floating Point Multiply (Double) */
-            in_fmt_fd_fs_ft(buffer, "MUL", i_inst);
-            break;
-        case 0x03: /* DIV.D fd, fs, ft - Floating Point Divide (Double) */
-            in_fmt_fd_fs_ft(buffer, "DIV", i_inst);
-            break;
-        case 0x04: /* SQRT.D fd, fs - Floating Point Square Root (Double) */
-            in_fmt_fd_fs(buffer, "SQRT", i_inst);
-            break;
-        case 0x05: /* ABS.D fd, fs - Floating Point Absolute Value (Double) */
-            in_fmt_fd_fs(buffer, "ABS", i_inst);
-            break;
-        case 0x06: /* MOV.D fd, fs - Floating Point Move (Double) */
-            in_fmt_fd_fs(buffer, "MOV", i_inst);
-            break;
-        case 0x07: /* NEG.D fd, fs - Floating Point Negate (Double) */
-            in_fmt_fd_fs(buffer, "NEG", i_inst);
-            break;
-        case 0x08: /* ROUND.L.D fd, fs - 
-                    * Floating Point Round to Long Fixed Point (Double) */
-            in_fmt_fd_fs(buffer, "ROUND.L", i_inst);
-            break;
-        case 0x09: /* TRUNC.L.D fd, fs - 
-                    * Floating Point Truncate to Long Fixed Point (Double) */
-            in_fmt_fd_fs(buffer, "TRUNC.L", i_inst);
-            break;
-        case 0x0A: /* CEIL.L.D fd, fs - 
-                    * Floating Point Ceiling Convert to Long Fixed Point */
-            in_fmt_fd_fs(buffer, "CEIL.L", i_inst);
-            break;
-        case 0x0B: /* FLOOR.L.D fd, fs - 
-                    * Floating Point Floor Convert to Long Fixed Point */
-            in_fmt_fd_fs(buffer, "FLOOR.L", i_inst);
-            break;
-        case 0x0C: /* ROUND.W.D fd, fs - 
-                    * Floating Point Round to Word Fixed Point */
-            in_fmt_fd_fs(buffer, "ROUND.W", i_inst);
-            break;
-        case 0x0D: /* TRUNC.W.D fd, fs - 
-                    * Floating Point Truncate to Word Fixed Point */
-            in_fmt_fd_fs(buffer, "TRUNC.W", i_inst);
-            break;
-        case 0x0E: /* CEIL.W.D fd, fs - 
-                    * Floating Point Ceiling Convert to Word Fixed Point */
-            in_fmt_fd_fs(buffer, "CEIL.W", i_inst);
-            break;
-        case 0x0F: /* FLOOR.W.D fd, fs - 
-                    * Floating Point Floor Convert to Word Fixed Point */
-            in_fmt_fd_fs(buffer, "FLOOR.W", i_inst);
-            break;
-        case 0x11: /* MOVCF.D */
-            mipsInMOVCFfmt(buffer, i_inst);
-            break;
-        case 0x12: /* MOVZ.D fd, fs, rt - 
-                    * Floating Point Move Conditional on Zero */
-            in_fmt_fd_fs_rt(buffer, "MOVZ", i_inst);
-            break;
-        case 0x13: /* MOVN.D fd, fs, rt - 
-                    * Floating Point Move Conditional on Not Zero */
-            in_fmt_fd_fs_rt(buffer, "MOVN", i_inst);
-            break;
-        case 0x15: /* RECIP.D fd, fs - Reciprocal Approximation */
-            in_fmt_fd_fs(buffer, "RECIP", i_inst);
-            break;
-        case 0x16: /* RSQRT.D fd, fs - Reciprocal Square Root Approximation */
-            in_fmt_fd_fs(buffer, "RSQRT", i_inst);
-            break;
-        case 0x1C: /* RECIP2.D */
-            sprintf(buffer, "RECIP2.D");
-            break;
-        case 0x1D: /* RECIP1.D */
-            sprintf(buffer, "RECIP1.D");
-            break;
-        case 0x1E: /* RSQRT1.D */
-            sprintf(buffer, "RSQRT1.D");
-            break;
-        case 0x1F: /* RSQRT2.D */
-            sprintf(buffer, "RSQRT2.D");
-            break;
-        case 0x21: /* CVT.S.D fd, fs - 
-                    * Floating Point Convert to Single Floating Point */
-            in_fmt_fd_fs(buffer, "CVT.S", i_inst);
-            break;
-        case 0x24: /* CVT.W.D fd, fs - 
-                    * Floating Point Convert to Word Fixed Point */
-            in_fmt_fd_fs(buffer, "CVT.W", i_inst);
-            break;
-        case 0x25: /* CVT.L.D fd, fs - 
-                    * Floating Point Convert to Long Fixed Point */
-            in_fmt_fd_fs(buffer, "CVT.L", i_inst);
-            break;
-        case 0x30: /* C.F.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x31: /* C.UN.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x32: /* C.EQ.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x33: /* C.UEQ.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x34: /* C.OLT.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x35: /* C.ULT.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x36: /* C.OLE.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x37: /* C.ULE.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x38: /* C.SF.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x39: /* C.NGLE.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3A: /* C.SEQ.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3B: /* C.NGL.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3C: /* C.LT.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3D: /* C.NGE.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3E: /* C.LE.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3F: /* C.NGT.D */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        default:
-            sprintf(buffer, "???");
-    }
-}
-
-static void decodeCOP1L(char *buffer, unsigned int i_inst, unsigned int i_addr) {
-    int func = (int)mipsGetFunction(i_inst);
-    switch (func) {
-        case 0x21: /* CVT.S.L fd, fs - 
-                    * Floating Point Convert to Single Floating Point */
-            in_fmt_fd_fs(buffer, "CVT.S", i_inst);
-            break;
-        case 0x22: /* CVT.D.L fd, fs - 
-                    * Floating Point Convert to Double Floating Point */
-            in_fmt_fd_fs(buffer, "CVT.D", i_inst);
-            break;
-        case 0x26: /* CVT.PS.PW */
-            sprintf(buffer, "CVT.PS.PW");
-            break;
-        default:
-            sprintf(buffer, "???");
-    }
-}
-
-static void decodeCOP1PS(char *buffer, unsigned int i_inst, unsigned int i_addr) {
-    int func = (int)mipsGetFunction(i_inst);
-    switch (func) {
-        case 0x00: /* ADD.PS fd, fs, ft - Floating Point Add */
-            in_fmt_fd_fs_ft(buffer, "ADD", i_inst);
-            break;
-        case 0x01: /* SUB.PS fd, fs, ft - Floating Point Subtract */
-            in_fmt_fd_fs_ft(buffer, "SUB", i_inst);
-            break;
-        case 0x02: /* MUL.PS fd, fs, ft - Floating Point Multiply */
-            in_fmt_fd_fs_ft(buffer, "MUL", i_inst);
-            break;
-        case 0x05: /* ABS.PS fd, fs - 
-                    * Floating Point Absolute Value (Paired Single) */
-            in_fmt_fd_fs(buffer, "ABS", i_inst);
-            break;
-        case 0x06: /* MOV.PS fd, fs - Floating Point Move (Paired Single) */
-            in_fmt_fd_fs(buffer, "MOV", i_inst);
-            break;
-        case 0x07: /* NEG.PS fd, fs - Floating Point Negate (Paired Single) */
-            in_fmt_fd_fs(buffer, "NEG", i_inst);
-            break;
-        case 0x11: /* MOVCF.PS */
-            mipsInMOVCFfmt(buffer, i_inst);
-            break;
-        case 0x12: /* MOVZ.PS fd, fs, rt - 
-                    * Floating Point Move Conditional on Zero */
-            in_fmt_fd_fs_rt(buffer, "MOVZ", i_inst);
-            break;
-        case 0x13: /* MOVN.PS fd, fs, rt - 
-                    * Floating Point Move Conditional on Not Zero */
-            in_fmt_fd_fs_rt(buffer, "MOVN", i_inst);
-            break;
-        case 0x18: /* ADDR.PS */
-            sprintf(buffer, "ADDR.PS");
-            break;
-        case 0x1A: /* MULR.PS */
-            sprintf(buffer, "MULR.PS");
-            break;
-        case 0x1C: /* RECIP2.PS */
-            sprintf(buffer, "RECIP2.PS");
-            break;
-        case 0x1D: /* RECIP1.PS */
-            sprintf(buffer, "RECIP1.PS");
-            break;
-        case 0x1E: /* RSQRT1.PS */
-            sprintf(buffer, "RSQRT1.PS");
-            break;
-        case 0x1F: /* RSQRT2.PS */
-            sprintf(buffer, "RSQRT2.PS");
-            break;
-        case 0x20: /* CVT.S.PU fd, fs - 
-                    * Floating Point Convert Pair Upper to Single Floating Point
-                    */
-            in_fd_fs(buffer, "CVT.S.PU", i_inst);
-            break;
-        case 0x24: /* CVT.PW.PS */
-            sprintf(buffer, "CVT.PW.PS");
-            break;
-        case 0x28: /* CVT.S.PL fd, fs - 
-                    * Floating Point Convert Pair Lower to Single Floating Point
-                    */
-            in_fd_fs(buffer, "CVT.S.PL", i_inst);
-            break;
-        case 0x2C: /* PLL.PS fd, fs, ft - Pair Lower Lower */
-            in_fd_fs_ft(buffer, "PLL.PS", i_inst);
-            break;
-        case 0x2D: /* PLU.PS fd, fs, ft - Pair Lower Upper */
-            in_fd_fs_ft(buffer, "PLU.PS", i_inst);
-            break;
-        case 0x2E: /* PUL.PS fd, fs, ft - Pair Upper Lower */
-            in_fd_fs_ft(buffer, "PUL.PS", i_inst);
-            break;
-        case 0x2F: /* PUU.PS fd, fs, ft - Pair Upper Upper */
-            in_fd_fs_ft(buffer, "PUU.PS", i_inst);
-            break;
-        case 0x30: /* C.F.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x31: /* C.UN.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x32: /* C.EQ.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x33: /* C.UEQ.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x34: /* C.OLT.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x35: /* C.ULT.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x36: /* C.OLE.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x37: /* C.ULE.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x38: /* C.SF.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x39: /* C.NGLE.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3A: /* C.SEQ.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3B: /* C.NGL.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3C: /* C.LT.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3D: /* C.NGE.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3E: /* C.LE.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3F: /* C.NGT.PS */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        default:
-            sprintf(buffer, "???");
-    }
-}
-
-static void decodeCOP1S(char *buffer, unsigned int i_inst, unsigned int i_addr) {
-    int func = (int)mipsGetFunction(i_inst);
-    switch (func) {
-        case 0x00: /* ADD.S fd, fs, ft - Floating Point Add (Single) */
-            in_fmt_fd_fs_ft(buffer, "ADD", i_inst);
-            break;
-        case 0x01: /* SUB.S fd, fs, ft - Floating Point Subtract (Single) */
-            in_fmt_fd_fs_ft(buffer, "SUB", i_inst);
-            break;
-        case 0x02: /* MUL.S fd, fs, ft - Floating Point Multiply (Single) */
-            in_fmt_fd_fs_ft(buffer, "MUL", i_inst);
-            break;
-        case 0x03: /* DIV.S fd, fs, ft - Floating Point Divide (Single) */
-            in_fmt_fd_fs_ft(buffer, "DIV", i_inst);
-            break;
-        case 0x04: /* SQRT.S fd, fs - Floating Point Square Root (Single) */
-            in_fmt_fd_fs(buffer, "SQRT", i_inst);
-            break;
-        case 0x05: /* ABS.S fd, fs - Floating Point Absolute Value (Single) */
-            in_fmt_fd_fs(buffer, "ABS", i_inst);
-            break;
-        case 0x06: /* MOV.S fd, fs - Floating Point Move (Single) */
-            in_fmt_fd_fs(buffer, "MOV", i_inst);
-            break;
-        case 0x07: /* NEG.S fd, fs - Floating Point Negate (Single) */
-            in_fmt_fd_fs(buffer, "NEG", i_inst);
-            break;
-        case 0x08: /* ROUND.L.S fd, fs - 
-                    * Floating Point Round to Long Fixed Point (Single) */
-            in_fmt_fd_fs(buffer, "ROUND.L", i_inst);
-            break;
-        case 0x09: /* TRUNC.L.S fd, fs - 
-                    * Floating Point Truncate to Long Fixed Point (Single) */
-            in_fmt_fd_fs(buffer, "TRUNC.L", i_inst);
-            break;
-        case 0x0A: /* CEIL.L.S fd, fs - 
-                    * Floating Point Ceiling Convert to Long Fixed Point */
-            in_fmt_fd_fs(buffer, "CEIL.L", i_inst);
-            break;
-        case 0x0B: /* FLOOR.L.S fd, fs - 
-                    * Floating Point Floor Convert to Long Fixed Point */
-            in_fmt_fd_fs(buffer, "FLOOR.L", i_inst);
-            break;
-        case 0x0C: /* ROUND.W.S fd, fs - 
-                    * Floating Point Round to Word Fixed Point */
-            in_fmt_fd_fs(buffer, "ROUND.W", i_inst);
-            break;
-        case 0x0D: /* TRUNC.W.S fd, fs - 
-                    * Floating Point Truncate to Word Fixed Point */
-            in_fmt_fd_fs(buffer, "TRUNC.W", i_inst);
-            break;
-        case 0x0E: /* CEIL.W.S fd, fs - 
-                    * Floating Point Ceiling Convert to Word Fixed Point */
-            in_fmt_fd_fs(buffer, "CEIL.W", i_inst);
-            break;
-        case 0x0F: /* FLOOR.W.S fd, fs - 
-                    * Floating Point Floor Convert to Word Fixed Point */
-            in_fmt_fd_fs(buffer, "FLOOR.W", i_inst);
-            break;
-        case 0x11: /* MOVCF.S */
-            mipsInMOVCFfmt(buffer, i_inst);
-            break;
-        case 0x12: /* MOVZ.S fd, fs, rt - 
-                    * Floating Point Move Conditional on Zero */
-            in_fmt_fd_fs_rt(buffer, "MOVZ", i_inst);
-            break;
-        case 0x13: /* MOVN.S fd, fs, rt - 
-                    * Floating Point Move Conditional on Not Zero */
-            in_fmt_fd_fs_rt(buffer, "MOVN", i_inst);
-            break;
-        case 0x15: /* RECIP.S fd, fs - Reciprocal Approximation */
-            in_fmt_fd_fs(buffer, "RECIP", i_inst);
-            break;
-        case 0x16: /* RSQRT.S fd, fs - Reciprocal Square Root Approximation */
-            in_fmt_fd_fs(buffer, "RSQRT", i_inst);
-            break;
-        case 0x1C: /* RECIP2.S */
-            sprintf(buffer, "RECIP2.S");
-            break;
-        case 0x1D: /* RECIP1.S */
-            sprintf(buffer, "RECIP1.S");
-            break;
-        case 0x1E: /* RSQRT1.S */
-            sprintf(buffer, "RSQRT1.S");
-            break;
-        case 0x1F: /* RSQRT2.S */
-            sprintf(buffer, "RSQRT2.S");
-            break;
-        case 0x21: /* CVT.D.S fd, fs - 
-                    * Floating Point Convert to Double Floating Point */
-            in_fmt_fd_fs(buffer, "CVT.D", i_inst);
-            break;
-        case 0x24: /* CVT.W.S fd, fs - 
-                    * Floating Point Convert to Word Fixed Point */
-            in_fmt_fd_fs(buffer, "CVT.W", i_inst);
-            break;
-        case 0x25: /* CVT.L.S fd, fs - 
-                    * Floating Point Convert to Long Fixed Point */
-            in_fmt_fd_fs(buffer, "CVT.L", i_inst);
-            break;
-        case 0x26: /* CVT.PS.S fd, fs, ft - 
-                    * Floating Point Convert Pair to Paired Single */
-            in_fd_fs_ft(buffer, "CVT.PS.S", i_inst);
-            break;
-        case 0x30: /* C.F.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x31: /* C.UN.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x32: /* C.EQ.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x33: /* C.UEQ.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x34: /* C.OLT.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x35: /* C.ULT.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x36: /* C.OLE.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x37: /* C.ULE.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x38: /* C.SF.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x39: /* C.NGLE.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3A: /* C.SEQ.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3B: /* C.NGL.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3C: /* C.LT.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3D: /* C.NGE.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3E: /* C.LE.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        case 0x3F: /* C.NGT.S */
-            mipsInCcondfmt(buffer, i_inst);
-            break;
-        default:
-            sprintf(buffer, "???");
-    }
-}
-
-static void decodeCOP1W(char *buffer, unsigned int i_inst, unsigned int i_addr) {
-    int func = (int)mipsGetFunction(i_inst);
-    switch (func) {
-        case 0x20: /* CVT.S.W fd, fs - 
-                    * Floating Point Convert to Single Floating Point */
-            in_fmt_fd_fs(buffer, "CVT.S", i_inst);
-            break;
-        case 0x21: /* CVT.D.W fd, fs - 
-                    * Floating Point Convert to Double Floating Point */
-            in_fmt_fd_fs(buffer, "CVT.D", i_inst);
-            break;
-        case 0x26: /* CVT.PS.PW */
-            sprintf(buffer, "CVT.PS.PW");
-            break;
-        default:
-            sprintf(buffer, "???");
-    }
-}
-
-static void decodeCOP2(char *buffer, unsigned int i_inst, unsigned int i_addr) {
-    int rs = (int)mipsGetOperand0(i_inst);
-    switch (rs) {
-        case 0x00: /* MFC2 rt, rd[, sel] - Move from Coprocessor 2 */
-            in_rt_rd_sel(buffer, "MFC2", i_inst);
-            break;
-        case 0x02: /* CFC2 rt, fs - Move Control Word From Floating Point */
-            in_rt_fs(buffer, "CFC2", i_inst);
-            break;
-        case 0x03: /* MFHC2 rt, rd - 
-                    * Move Word From High Half of Coprocessor 2 Register */
-            in_rt_rd(buffer, "MFHC2", i_inst);
-            break;
-        case 0x04: /* MTC2 rt, rd - Move Word to Coprocessor 2 */
-            in_rt_rd(buffer, "MTC2", i_inst);
-            break;
-        case 0x06: /* CTC2 rt, rd - Move Control Word to Coprocessor 2 */
-            in_rt_rd(buffer, "CTC2", i_inst);
-            break;
-        case 0x07: /* MTHC2 rt, rd - 
-                    * Move Word to High Half of Coprocessor 2 Register */
-            in_rt_rd(buffer, "MTHC2", i_inst);
-            break;
-        case 0x08: /* BC2 */
-            mipsInBC2(buffer, i_inst, i_addr);
-            break;
-        default:
-            sprintf(buffer, "???");
-    }
-}
-
-static void decodeCOP1X(char *buffer, unsigned int i_inst, unsigned int i_addr) {
-    int func = (int)mipsGetFunction(i_inst);
-    switch (func) {
-        case 0x00: /* LWXC1 fd, index(base) - 
-                    * Load Word Indexed to Floating Point */
-            in_fd_index_base(buffer, "LWXC1", i_inst);
-            break;
-        case 0x01: /* LDXC1 fd, index(base) - 
-                    * Load Doubleword Indexed to Floating Point */
-            in_fd_index_base(buffer, "LDXC1", i_inst);
-            break;
-        case 0x05: /* LUXC1 fd, index(base) - 
-                    * Load Doubleword Indexed Unaligned to Floating Point */
-            in_fd_index_base(buffer, "LUXC1", i_inst);
-            break;
-        case 0x08: /* SWXC1 fs, index(base) - 
-                    * Store Word Indexed from Floating Point */
-            in_fs_index_base(buffer, "SWXC1", i_inst);
-            break;
-        case 0x09: /* SDXC1 fs, index(base) - 
-                    * Store Doubleword Indexed from Floating Point */
-            in_fs_index_base(buffer, "SDXC1", i_inst);
-            break;
-        case 0x0D: /* SUXC1 fs, index(base) - 
-                    * Store Doubleword Indexed Unaligned from Floating Point */
-            in_fs_index_base(buffer, "SUXC1", i_inst);
-            break;
-        case 0x0F: /* PREFX */
-            mipsInPREFX(buffer, i_inst);
-            break;
-        case 0x1E: /* ALNV.PS fd, fs, ft, rs - Floating Point Align Variable */
-            in_fd_fs_ft_rs(buffer, "ALNV.PS", i_inst);
-            break;
-        case 0x20: /* MADD.S fd, fr, fs, ft - Floating Point Multiply Add */
-            in_fd_fr_fs_ft(buffer, "MADD", i_inst);
-            break;
-        case 0x21: /* MADD.D fd, fr, fs, ft - Floating Point Multiply Add*/
-            in_fd_fr_fs_ft(buffer, "MADD", i_inst);
-            break;
-        case 0x26: /* MADD.PS fd, fr, fs, ft - Floating Point Multiply Add */
-            in_fd_fr_fs_ft(buffer, "MADD", i_inst);
-            break;
-        case 0x28: /* MSUB.S fd, fr, fs, ft - Floating Point Multiply Subtract 
-                    */
-            in_fd_fr_fs_ft(buffer, "MSUB", i_inst);
-            break;
-        case 0x29: /* MSUB.D fd, fr, fs, ft - Floating Point Multiply Subtract 
-                    */
-            in_fd_fr_fs_ft(buffer, "MSUB", i_inst);
-            break;
-        case 0x2E: /* MSUB.PS fd, fr, fs, ft - Floating Point Multiply Subtract
-                    */
-            in_fd_fr_fs_ft(buffer, "MSUB", i_inst);
-            break;
-        case 0x30: /* NMADD.S fd, fr, fs, ft - 
-                    * Floating Point Negative Multiply Add */
-            in_fd_fr_fs_ft(buffer, "NMADD", i_inst);
-            break;
-        case 0x31: /* NMADD.D fd, fr, fs, ft - 
-                    * Floating Point Negative Multiply Add */
-            in_fd_fr_fs_ft(buffer, "NMADD", i_inst);
-            break;
-        case 0x36: /* NMADD.PS fd, fr, fs, ft - 
-                    * Floating Point Negative Multiply Add */
-            in_fd_fr_fs_ft(buffer, "NMADD", i_inst);
-            break;
-        case 0x38: /* NMSUB.S fd. fr. fs. ft - 
-                    * Floating Point Negative Multiply Subtract */
-            in_fd_fr_fs_ft(buffer, "NMSUB", i_inst);
-            break;
-        case 0x39: /* NMSUB.D fd. fr. fs. ft - 
-                    * Floating Point Negative Multiply Subtract */
-            in_fd_fr_fs_ft(buffer, "NMSUB", i_inst);
-            break;
-        case 0x3E: /* NMSUB.PS fd. fr. fs. ft - 
-                    * Floating Point Negative Multiply Subtract */
-            in_fd_fr_fs_ft(buffer, "NMSUB", i_inst);
-            break;
-        default:
-            sprintf(buffer, "???");
-    }
-}
-
-static void decodeREGIMM(char *buffer, unsigned int i_inst,
-        unsigned int i_addr) {
-    int rt = (int)mipsGetOperand1(i_inst);
-    switch (rt) {
-        case 0x00: /* BLTZ rs, offset - Branch on Less Than Zero */
-            in_brs_offset(buffer, "BLTZ", i_inst, i_addr);
-            break;
-        case 0x01: /* BGEZ rs, offset - 
-                    * Branch on Greater Than or Equal to Zero */
-            in_brs_offset(buffer, "BGEZ", i_inst, i_addr);
-            break;
-        case 0x02: /* BLTZL rs, offset - Branch on Less Than Zero Likely */
-            in_brs_offset(buffer, "BLTZL", i_inst, i_addr);
-            break;
-        case 0x03: /* BGEZL rs, offset - 
-                    * Branch on Greater Than or Equal to Zero Likely */
-            in_brs_offset(buffer, "BGEZL", i_inst, i_addr);
-            break;
-        case 0x08: /* TGEI rs, immediate - Trap if Greater or Equal Immediate */
-            in_rs_imm(buffer, "TGEI", i_inst);
-            break;
-        case 0x09: /* TGEIU rs, immediate - 
-                    * Trap if Greater or Equal Immediate Unsigned */
-            in_rs_imm(buffer, "TGEIU", i_inst);
-            break;
-        case 0x0A: /* TLTI rs, immediate - Trap if Less Than Immediate */
-            in_rs_imm(buffer, "TLTI", i_inst);
-            break;
-        case 0x0B: /* TLTIU rs, immediate - 
-                    * Trap if Less Than Immediate Unsigned */
-            in_rs_imm(buffer, "TLTIU", i_inst);
-            break;
-        case 0x0C: /* TEQI rs, immediate - Trap if Equal Immediate */
-            in_rs_imm(buffer, "TEGI", i_inst);
-            break;
-        case 0x0E: /* TNEI rs, immediate - Trap if Not Equal Immediate */
-            in_rs_imm(buffer, "TNEI", i_inst);
-            break;
-        case 0x10: /* BLTZAL rs, offset - Branch on Less Than Zero and Link */
-            in_brs_offset(buffer, "BLTZAL", i_inst, i_addr);
-            break;
-        case 0x11: /* BGEZAL rs, offset - 
-                    * Branch on Greater Than or Equal to Zero and Link */
-            in_brs_offset(buffer, "BGEZAL", i_inst, i_addr);
-            break;
-        case 0x12: /* BLTZALL rs, offset - 
-                    * Branch on Less Than Zero and Link Likely */
-            in_brs_offset(buffer, "BLTZALL", i_inst, i_addr);
-            break;
-        case 0x13: /* BGEZALL rs, offset - 
-                    * Branch on Greater Than or Equal to Zero and Link Likely */
-            in_brs_offset(buffer, "BGEZALL", i_inst, i_addr);
-            break;
-        case 0x1F: /* SYNCI */
-            mipsInSYNCI(buffer, i_inst);
-            break;
-        default:
-            sprintf(buffer, "???");
-            break;
-    }
-}
-
-static void decodeSPECIAL(char *buffer, unsigned int i_inst,
-        unsigned int i_addr) {
-    int func = (int)mipsGetFunction(i_inst);
-    switch (func) {
-        case 0x00: /* SLL */
-            mipsInSLL(buffer, i_inst);
-            break;
-        case 0x01: /* *MOVC1 */
-            mipsInMOVC1(buffer, i_inst);
-            break;
-        case 0x02: /* *SRL */
-            mipsInSRL(buffer, i_inst);
-            break;
-        case 0x03: /* SRA rd, rt, sa - Shift Word Right Arithmetic */
-            in_rd_rt_sa(buffer, "SRA", i_inst);
-            break;
-        case 0x04: /* SLLV rd, rt, rs - Shift Word Left Logical Variable */
-            in_rd_rt_rs(buffer, "SLLV", i_inst);
-            break;
-        case 0x06: /* *SRLV */
-            mipsInSRLV(buffer, i_inst);
-            break;
-        case 0x07: /* SRAV rd, rt, rs - Shift Word Right Arithmetic Variable */
-            in_rd_rt_rs(buffer, "SRAV", i_inst);
-            break;
-        case 0x08: /* JR rs - Jump Register */
-            in_rs(buffer, "JR", i_inst);
-            break;
-        case 0x09: /* JALR */
-            mipsInJALR(buffer, i_inst);
-            break;
-        case 0x0A: /* MOVZ rd, rs, rt - Move Conditional on Zero */
-            in_rd_rs_rt(buffer, "MOVZ", i_inst);
-            break;
-        case 0x0B: /* MOVN rd, rs, rt - Move Conditional on Not Zero */
-            in_rd_rs_rt(buffer, "MOVN", i_inst);
-            break;
-        case 0x0C: /* SYSCALL - System Call */
-            mipsType0(buffer, "SYSCALL");
-            break;
-        case 0x0D: /* BREAK - Breakpoint */
-            mipsType0(buffer, "BREAK");
-            break;
-        case 0x0F: /* SYNC - Synchronize Shared Memory */
-            mipsType0(buffer, "SYNC");
-            break;
-        case 0x10: /* MFHI rs - Move From HI Register */
-            in_rs(buffer, "MFHI", i_inst);
-            break;
-        case 0x11: /* MTHI rs - Move to HI Register */
-            in_rs(buffer, "MTHI", i_inst);
-            break;
-        case 0x12: /* MFLO rs - Move From LO Register */
-            in_rs(buffer, "MFLO", i_inst);
-            break;
-        case 0x13: /* MTLO rs - Move to LO Register */
-            in_rs(buffer, "MTLO", i_inst);
-            break;
-        case 0x18: /* MULT rs, rt - Multiply Word */
-            in_rs_rt(buffer, "MULT", i_inst);
-            break;
-        case 0x19: /* MULTU rs, rt - Multiply Unsigned Word */
-            in_rs_rt(buffer, "MULTU", i_inst);
-            break;
-        case 0x1A: /* DIV rs, rt - Divide Word */
-            in_rs_rt(buffer, "DIV", i_inst);
-            break;
-        case 0x1B: /* DIVU rs, rt - Divide Unsigned Word */
-            in_rs_rt(buffer, "DIVU", i_inst);
-            break;
-        case 0x20: /* ADD rd, rs, rt - Add Word */
-            in_rd_rs_rt(buffer, "ADD", i_inst);
-            break;
-        case 0x21: /* ADDU rd, rs, rt - Add Unsigned Word */
-            in_rd_rs_rt(buffer, "ADDU", i_inst);
-            break;
-        case 0x22: /* SUB rd, rs, rt - Subtract Word */
-            in_rd_rs_rt(buffer, "SUB", i_inst);
-            break;
-        case 0x23: /* SUBU rd, rs, rt - Subtract Unsigned Word */
-            in_rd_rs_rt(buffer, "SUBU", i_inst);
-            break;
-        case 0x24: /* AND rd, rs, rt - And */
-            in_rd_rs_rt(buffer, "AND", i_inst);
-            break;
-        case 0x25: /* OR rd, rs, rt - Or */
-            in_rd_rs_rt(buffer, "OR", i_inst);
-            break;
-        case 0x26: /* XOR rd, rs, rt - Exclusive Or */
-            in_rd_rs_rt(buffer, "XOR", i_inst);
-            break;
-        case 0x27: /* NOR rd, rs, rt - Not Or */
-            in_rd_rs_rt(buffer, "NOR", i_inst);
-            break;
-        case 0x2A: /* SLT rd, rs, rt - Set on Less Than */
-            in_rd_rs_rt(buffer, "SLT", i_inst);
-            break;
-        case 0x2B: /* SLTU rd, rs, rt - Set on Less Than Unsigned */
-            in_rd_rs_rt(buffer, "SLTU", i_inst);
-            break;
-        case 0x30: /* TGE rs, rt - Trap if Greater or Equal */
-            in_rs_rt(buffer, "TGE", i_inst);
-            break;
-        case 0x31: /* TGEU rs, rt - Trap if Greater or Equal Unsigned */
-            in_rs_rt(buffer, "TGEU", i_inst);
-            break;
-        case 0x32: /* TLT rs, rt - Trap if Less Than */
-            in_rs_rt(buffer, "TLT", i_inst);
-            break;
-        case 0x33: /* TLTU rs, rt - Trap if Less Than Unsigned */
-            in_rs_rt(buffer, "TLTU", i_inst);
-            break;
-        case 0x34: /* TEQ rs, rt - Trap if Equal */
-            in_rs_rt(buffer, "TEQ", i_inst);
-            break;
-        case 0x36: /* TNE rs, rt - Trap if Not Equal */
-            in_rs_rt(buffer, "TNE", i_inst);
-            break;
-        default:
-            sprintf(buffer, "???");
-            break;
-    }
-}
-
-static void decodeSPECIAL2(char *buffer, unsigned int i_inst,
-        unsigned int i_addr) {
-    int func = (int)mipsGetFunction(i_inst);
-    switch (func) {
-        case 0x00: /* MADD rs, rt - Multiply and Add Word to Hi, Lo */
-            in_rs_rt(buffer, "MADD", i_inst);
-            break;
-        case 0x01: /* MADDU rs, rt - Multiply and Add Unsigned Word to Hi, Lo */
-            in_rs_rt(buffer, "MADDU", i_inst);
-            break;
-        case 0x02: /* MUL rd, rs, rt - Multiply Word to GPR */
-            in_rd_rs_rt(buffer, "MUL", i_inst);
-            break;
-        case 0x04: /* MSUB rs, rt - Multiply and Subtract Word to Hi, Lo */
-            in_rs_rt(buffer, "MSUB", i_inst);
-            break;
-        case 0x05: /* MSUBU rs, rt - 
-                    * Multiply and Subtract Unsigned Word to Hi, Lo */
-            in_rs_rt(buffer, "MSUBU", i_inst);
-            break;
-        case 0x20: /* CLZ rd, rs - Count Leading Zeros in Word */
-            in_rd_rs(buffer, "CLZ", i_inst);
-            break;
-        case 0x21: /* CLO rd, rs - Count Leading Ones in Word */
-            in_rd_rs(buffer, "CLO", i_inst);
-            break;
-        case 0x24: /* MFIC rt, rd - Allegrex MFIC */
-            in_rt_rd(buffer, "MFIC", i_inst);
-            break;
-        case 0x26: /* MTIC rt, rd - Allegrex MTIC */
-            in_rt_rd(buffer, "MTIC", i_inst);
-            break;
-        case 0x3F: /* SDBBP */
-            mipsInSDBBP(buffer, i_inst);
-            break;
-        default:
-            sprintf(buffer, "???");
-            break;
-    }
-}
-
-static void decodeSPECIAL3(char *buffer, unsigned int i_inst,
-        unsigned int i_addr) {
-    int func = (int)mipsGetFunction(i_inst);
-    switch (func) {
-        case 0x00: /* EXT rt, rs, pos, size - Extract Bit Field */
-            in_rt_rs_pos_size(buffer, "EXT", i_inst);
-            break;
-        case 0x04: /* INS rt, rs, pos, size - Insert Bit Field */
-            in_rt_rs_pos_size(buffer, "INS", i_inst);
-            break;
-        case 0x20: /* *BSHFL */
-            decodeBSHFL(buffer, i_inst, i_addr);
-            break;
-        case 0x3B: /* RDHWR rt, rd - Read Hardware Register */
-            in_rt_rd(buffer, "RDHWR", i_inst);
-            break;
-        default:
-            sprintf(buffer, "???");
-            break;
-    }
-}
-
-static void decodeVCOP(char* buffer, unsigned int i_inst, unsigned int i_addr) {
-    int sel = mipsGetVoperand0(i_inst);
-    int rt = mipsGetVoperand1(i_inst);
-
-    if (sel == 4) {
-        /* VF2IN.fmt */
-        mipsInVF2INfmt(buffer, i_inst);
-        return;
-    }
-    if (sel == 5) {
-        /* VI2F.fmt */
-        mipsInVI2Ffmt(buffer, i_inst);
-        return;
-    }
-    if (rt & 0x60 == 0x60) {
-        /* VCST.fmt */
-        mipsInVCSTfmt(buffer, i_inst);
-        return;
-    }
-    switch (rt) {
-        case 0x01: /* VABS.fmt */
-            mipsInVABSfmt(buffer, i_inst);
-            break;
-        case 0x02: /* VNEG.fmt */
-            mipsInVNEGfmt(buffer, i_inst);
-            break;
-        case 0x03: /* VIDT.fmt */
-            mipsInVIDTfmt(buffer, i_inst);
-            break;
-        case 0x06: /* VZERO.fmt */
-            mipsInVZEROfmt(buffer, i_inst);
-            break;
-        case 0x07: /* VONE.fmt */
-            mipsInVONEfmt(buffer, i_inst);
-            break;
-        case 0x10: /* VRCP.fmt */
-            mipsInVRCPfmt(buffer, i_inst);
-            break;
-        case 0x11: /* VRSQ.fmt */
-            mipsInVRSQfmt(buffer, i_inst);
-            break;
-        case 0x12: /* VSIN.fmt */
-            mipsInVSINfmt(buffer, i_inst);
-            break;
-        case 0x13: /* VCOS.fmt */
-            mipsInVCOSfmt(buffer, i_inst);
-            break;
-        case 0x14: /* VEXP2.fmt */
-            mipsInVEXP2fmt(buffer, i_inst);
-            break;
-        case 0x15: /* VLOG2.fmt */
-            mipsInVLOG2fmt(buffer, i_inst);
-            break;
-        case 0x16: /* VSQRT.fmt */
-            mipsInVSQRTfmt(buffer, i_inst);
-            break;
-        case 0x17: /* VASIN.fmt */
-            mipsInVASINfmt(buffer, i_inst);
-            break;
-        case 0x18: /* VNRCP.fmt */
-            mipsInVRCPfmt(buffer, i_inst);
-            break;
-        case 0x1A: /* VNSIN.fmt */
-            mipsInVNSINfmt(buffer, i_inst);
-            break;
-        case 0x1C: /* VREXP2.fmt */
-            mipsInVREXP2fmt(buffer, i_inst);
-            break;
-        case 0x3C: /* VI2UCQ */
-            mipsInVI2UCQ(buffer, i_inst);
-            break;
-        case 0x3F: /* VI2S.fmt */
-            mipsInVI2Sfmt(buffer, i_inst);
-            break;
-        case 0x4A: /* VSGN.fmt */
-            mipsInVSGNfmt(buffer, i_inst);
-            break;
-        default:
-            sprintf(buffer, "???");
     }
 }
