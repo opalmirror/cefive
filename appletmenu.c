@@ -194,12 +194,6 @@ int appletmenu_init(AppletMenu* prMenu) {
     if (menumodel_init(prModel) != MENUMODEL_SUCCESS) {
         return APPLETMENU_FAILURE;
     }
-    menumodel_additem(prModel, 0, "Cheat Panel");
-    menumodel_additem(prModel, 1, "Disassembler");
-    menumodel_additem(prModel, 2, "Hex Editor");
-    menumodel_additem(prModel, 3, "Search Panel");
-    menumodel_additem(prModel, 4, "Game Info");
-    menumodel_additem(prModel, 5, "Options");
     appletmenu_invalidate(prMenu);
     return APPLETMENU_SUCCESS;
 }
