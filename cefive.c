@@ -35,6 +35,11 @@ static void button_callback(int curr, int last, void* pvCe) {
             return;
         }
     }
+    
+    if (cno && !lno) {
+        sceKernelSetEventFlag(prCe->eventUID, CEFIVE_E_ACTIVATE);
+        return;
+    }
 }
 
 static int cefive_init(CEFive* prCe) {
@@ -63,6 +68,7 @@ static int cefive_run(SceSize rLen, void* argv) {
     const char* sFunc = "cefive_run";
     char sFile[CEFIVE_PATH_LEN + 1];
     CEFive rCe;
+    SceUInt32 match = 0;
     
     if (cefive_init(&rCe) < 0) {
         geelog_flog(LOG_ERROR, sFunc, "Failed to initialize CEFive.");
@@ -122,8 +128,14 @@ static int cefive_run(SceSize rLen, void* argv) {
     /* While Running */
     while (rCe.rRunState == CES_Running) {
         /* Refresh the Cheat Engine */
+        if (cheatengine_refresh(&rCe.rCheatEngine) < 0) {
+            geelog_flog(LOG_ERROR, sFunc, "Error refreshing Cheat Engine.");
+            rCe.rRunState = CES_Fault;
+            continue;
+        }
         /* Refresh the Search Engine */
         /* Poll for Events */
+        sceKernelPollEventFlag(rCe.eventUID, 0xF, PSP_EVENT_WAITOR, &match);
         /* UI Request Event */
         /* UI Dismiss Event */
     }

@@ -998,15 +998,17 @@ static SceUInt32 row_destination(MemViewPanel* prPanel, const int row) {
 }
 
 static EValueType row_type(MemViewPanel* prPanel, const int row) {
-    EValueType rType = VT_None;
     SceUInt32 value = 0;
+    SceUInt32 address = 0;
+    
     if (prPanel != NULL) {
         value = row_value(prPanel, row);
         if ((value >= prPanel->minOffset) && (value < prPanel->maxOffset)) {
-            rType = VT_Pointer;
+            return VT_Pointer;
         }
+        address = row_address(prPanel, row);
     }
-    return rType;
+    return VT_None;
 }
 
 static SceUInt32 row_value(MemViewPanel* prPanel, const int row) {

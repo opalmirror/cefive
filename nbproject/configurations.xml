@@ -14,13 +14,13 @@
       <in>asciicolumn.h</in>
       <in>block.c</in>
       <in>block.h</in>
-      <in>blockmodel.c</in>
-      <in>blockmodel.h</in>
       <in>blockview.c</in>
       <in>blockview.h</in>
       <in>buttonstate.h</in>
       <in>bytecolumn.c</in>
       <in>bytecolumn.h</in>
+      <in>ceditor.c</in>
+      <in>ceditor.h</in>
       <in>cefive.c</in>
       <in>cefive.h</in>
       <in>cefiveconfig.c</in>
@@ -33,8 +33,6 @@
       <in>cheateditor.h</in>
       <in>cheatengine.c</in>
       <in>cheatengine.h</in>
-      <in>cheatmodel.c</in>
-      <in>cheatmodel.h</in>
       <in>cheatpanel.c</in>
       <in>cheatpanel.h</in>
       <in>colorconfig.c</in>
