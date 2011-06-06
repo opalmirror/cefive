@@ -80,6 +80,7 @@
 #define CEFIVE_E_SHOW_UI (1)
 #define CEFIVE_E_HIDE_UI (2)
 #define CEFIVE_E_VRAM_RDY (4)
+#define CEFIVE_E_ACTIVATE (8)
 
 /** The Length of a Path */
 #define CEFIVE_PATH_LEN (255)

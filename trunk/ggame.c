@@ -377,8 +377,12 @@ int ggame_load_module(GGame* prGame) {
     SceUInt32 entTop = 0;
     SceUInt32 entSz = 0;
     SceUInt32 entEnd = 0;
+    SceUInt32 infTop = 0;
+    SceUInt32 infEnd = 0;
     GsegMap* prMap = NULL;
     Gsegment* prSeg = NULL;
+    GstubMap* prSmap = NULL;
+    ModStub* prStub = NULL;
     char sMsg[GEELOG_LINELEN + 1];
     
     if (prGame == NULL) {
@@ -396,7 +400,7 @@ int ggame_load_module(GGame* prGame) {
     if (prSeg == NULL) {
         return GGAME_FAILURE;
     }
-    if (gsegment_set(prSeg, entTop, entEnd, ".rodata.lib_ent", SET_RoData) < 0) 
+    if (gsegment_set(prSeg, entTop, entEnd, ".lib.ent.top", SET_RoData) < 0) 
     {
         return GGAME_FAILURE;
     }    
@@ -408,7 +412,7 @@ int ggame_load_module(GGame* prGame) {
     if (prSeg == NULL) {
         return GGAME_FAILURE;
     }
-    if (gsegment_set(prSeg, entTop, entEnd, ".rodata.lib_stub", SET_RoData) < 0)
+    if (gsegment_set(prSeg, entTop, entEnd, ".lib.stub.top", SET_RoData) < 0)
     {
         return GGAME_FAILURE;
     }
@@ -418,6 +422,17 @@ int ggame_load_module(GGame* prGame) {
     }
     if (ggame_load_imports(prGame) < 0) {
         return GGAME_FAILURE;
+    }
+    prSmap = ggame_get_stubmap(prGame);
+    prStub = gstubmap_find(prSmap, GGAME_NID_MODINFO);
+    if (prStub != NULL) {
+        infTop = prStub->pvStub;
+        infEnd = infTop + sizeof(SceModuleInfo) + 4;
+        prSeg = gsegmap_add(prMap);
+        if (prSeg != NULL) {
+            gsegment_set(prSeg, infTop, infEnd, ".rodata.sceModuleInfo", 
+                    SET_RoData);
+        }
     }
     return GGAME_SUCCESS;
 }
