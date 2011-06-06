@@ -22,6 +22,17 @@
 #define CEDITOR_NULLPTR (-2)
 #define CEDITOR_MEMORY (-3)
 #define CEDITOR_INVIDX (-4)
+#define CEDITOR_INVENG (-5)
+#define CEDITOR_INVCHT (-6)
+
+#define CEDITOR_POS_X (0)
+#define CEDITOR_POS_Y (1)
+#define CEDITOR_SIZE_W (69)
+#define CEDITOR_SIZE_H (30)
+#define CEDITOR_PANEL_BG ((u32)0xFFD0D0D0)
+#define CEDITOR_PANEL_FG ((u32)0xFF000000)
+#define CEDITOR_CURSOR_BG ((u32)0xFFD00000)
+#define CEDITOR_CURSOR_FG ((u32)0xFFFFFFFF)
 
 #ifdef	__cplusplus
 extern "C" {
@@ -63,6 +74,18 @@ extern "C" {
     int ceditor_page_up(CEditor* prEd);
     
     int ceditor_redraw(CEditor* prEd);
+    
+    int ceditor_set_cursorcolor(CEditor* prEd, const u32 background, 
+            const u32 text);
+    
+    int ceditor_set_index(CEditor* prEd, const int index);
+    
+    int ceditor_set_panelcolor(CEditor* prEd, const u32 background, 
+            const u32 text);
+
+    int ceditor_set_position(CEditor* prEd, const int x, const int y);
+    
+    int ceditor_set_size(CEditor* prEd, const int width, const int height);
 
 #ifdef	__cplusplus
 }

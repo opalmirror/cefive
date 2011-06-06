@@ -1053,6 +1053,12 @@ static int init_appletmenu(CEFiveUi* prUi) {
     if (appletmenu_set_size(prMenu, 20, 10) != APPLETMENU_SUCCESS) {
         return CEFIVEUI_FAILURE;
     }
+    appletmenu_additem(prMenu, 0, "Cheat Panel");
+    appletmenu_additem(prMenu, 2, "Disassembler");
+    appletmenu_additem(prMenu, 3, "Hex Editor");
+    appletmenu_additem(prMenu, 4, "Search Panel");
+    appletmenu_additem(prMenu, 6, "Game Info");
+    appletmenu_additem(prMenu, 5, "Options");
     return CEFIVEUI_SUCCESS;
 }
 
