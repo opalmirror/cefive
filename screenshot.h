@@ -19,6 +19,7 @@
 
 #define BMP_ID "BM"
 int screenshotFd;
+unsigned char fileBuffer[1536];
 
 struct BitmapHeader
 {
