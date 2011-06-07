@@ -4,6 +4,27 @@
 static int render_status(Disassembler* prDasm);
 static int update_ggame(Disassembler* prDasm);
 
+int disassembler_analog_input(Disassembler* prDasm, unsigned char x, 
+            unsigned char y) {
+    int ry = 0;
+    if (prDasm == NULL) {
+        return DISASSEMBLER_NULLPTR;
+    }
+    ry = (int)((y - 128)/16);
+    if (ry > 1) {
+        if (disassembler_dpad_down(prDasm) < 0) {
+            return DISASSEMBLER_FAILURE;
+        }
+    }
+    if (ry < -1) {
+        if (disassembler_dpad_up(prDasm) < 0) {
+            return DISASSEMBLER_FAILURE;
+        }
+    }
+    
+    return DISASSEMBLER_SUCCESS;
+}
+
 int disassembler_button_circle(Disassembler* prDasm) {
     MemViewPanel* prMemView = NULL;
     if (prDasm == NULL) {

@@ -2181,9 +2181,14 @@ static void re_fr_fr_cc(char *buffer, const char *mnem, int i_fd, int i_fs, int 
     sprintf(buffer, "%s $%s, $%s, %d", mnem, fd, fs, i_cc);
 }
 
-/* mipsTypeFdFsFt
- *  Render a Type 'fd, fs, ft' instruction.
- *  [MNEM] fd, fs, ft
+/** Render a Type 'FPR, FPR, FPR' instruction.
+ * [MNEM] fd, fs, ft
+ * 
+ * @param buffer string acting as the destination.
+ * @param mnem string containing the mnemonic.
+ * @param iFd int indicating the destination FP register.
+ * @param iFs int indicating the source FP register.
+ * @param iFt int indicating the target FP register.
  */
 static void re_fr_fr_fr(char *buffer, const char *mnem, int iFd, int iFs, int iFt) {
     const char *fd = mipsFpRegNames[iFd];
@@ -2255,17 +2260,20 @@ static void re_fr_offset_base(char *buffer, const char *mnem, int base,
     sprintf(buffer, "%s $%s, 0x%X($%s)", mnem, sTgt, offset, sBase);
 }
 
-/* mipsType8
- *  Render a Type 8 instruction.
- *  [MNEM] rs
+/** Render a Type 'GPR' instruction.
+ * [MNEM] rs
+ * 
+ * @param buffer string acting as the destination.
+ * @param mnem string containing the mnemonic.
+ * @param i_rs int indicating the source GP register.
  */
 static void re_gr(char *buffer, const char *mnem, int i_rs) {
     const char *rs = mipsRegisterArray[i_rs];
     sprintf(buffer, "%s $%s", mnem, rs);
 }
 
-/** Render a GPR, FPR type instruction.
- * [MNEM] GPR, FPR
+/** Render a Type 'GPR, FPR' instruction.
+ * [MNEM] rt, fs
  * 
  * @param buffer string to act as the destination.
  * @param mnem string containing the mnemonic.
@@ -2278,8 +2286,8 @@ static void re_gr_fr(char *buffer, const char *mnem, int i_rt, int i_fs) {
     sprintf(buffer, "%s $%s, $%s", mnem, rt, fs);
 }
 
-/** Render a GPR, GPR type instruction.
- * [MNEM] GPR, GPR
+/** Render a Type 'GPR, GPR' instruction.
+ * [MNEM] rs, rt
  * 
  * @param buffer string to act as the destination.
  * @param mnem string containing the mnemonic.
@@ -2292,9 +2300,14 @@ static void re_gr_gr(char *buffer, const char *mnem, int i_rs, int i_rt) {
     sprintf(buffer, "%s $%s, $%s", mnem, rs, rt);
 }
 
-/* mipsType9
- *  Render a Type 9 instruction.
- *  [MNEM] rd, rs, cc
+/** Render a Type 'GPR, GPR, CC' instruction.
+ * [MNEM] rd, rs, cc
+ * 
+ * @param buffer string acting as the destination.
+ * @param mnem string containing the mnemonic.
+ * @param i_rd int indicating the destination GP register.
+ * @param i_rs int indicating the source GP register.
+ * @param i_cc int indicating the condition code.
  */
 static void re_gr_gr_cc(char *buffer, const char *mnem, int i_rd, int i_rs, int i_cc) {
     const char *rd = mipsRegisterArray[i_rd];

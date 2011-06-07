@@ -86,19 +86,16 @@ SceModule* ggame_get_module(GGame* prGame) {
 
 SceUInt32 ggame_get_module_start(GGame* prGame) {
     SceUInt32 address = 0;
-    void* pvEntry = NULL;
-    int stubct = 0;
-    int vstubct = 0;
-    SceLibraryEntryTable* prEnt = NULL;
-    SceUInt32* prValue = NULL;
+    GstubMap* prStubMap = NULL;
+    ModStub* prStub = NULL;
+    
     if (prGame != NULL) {
-        prEnt = ggame_get_exporttable(prGame);
-        if (prEnt != NULL) {
-            vstubct = prEnt->vstubcount;
-            stubct = prEnt->stubcount;
-            pvEntry = prEnt->entrytable;
-            prValue = pvEntry + ((vstubct + stubct) * sizeof(SceUInt32));
-            address = *prValue;
+        prStubMap = ggame_get_stubmap(prGame);
+        if (prStubMap != NULL) {
+            prStub = gstubmap_find(prStubMap, GGAME_NID_MODSTART);
+            if (prStub != NULL) {
+                address = prStub->pvStub;
+            }
         }
     }
     return address;
@@ -299,20 +296,41 @@ int ggame_load_imports(GGame* prGame) {
                     case 0x090CCB3F:
                         sprintf(sLabel, "sceKernelPowerTick");
                         break;
+                    case 0x13A5ABEF:
+                        sprintf(sLabel, "sceKernelPrintf");
+                        break;
                     case 0x172D316E:
                         sprintf(sLabel, "sceKernelStdin");
                         break;
                     case 0x20E911AA:
                         sprintf(sLabel, "sceKernelUnloadModule");
                         break;
+                    case 0x27E22EC2:
+                        sprintf(sLabel, "sceKernelResumeDispatchThread");
+                        break;
+                    case 0x27EB27B8:
+                        sprintf(sLabel, "sceIoLseek");
+                        break;
+                    case 0x293B45B8:
+                        sprintf(sLabel, "sceKernelGetThreadId");
+                        break;
+                    case 0x2E0911AA:
+                        sprintf(sLabel, "sceKernelUnloadModule");
+                        break;
                     case 0x3AEE7261:
                         sprintf(sLabel, "sceKernelPowerUnlock");
+                        break;
+                    case 0x446D8DE6:
+                        sprintf(sLabel, "sceKernelCreateThread");
                         break;
                     case 0x4AC57943:
                         sprintf(sLabel, "sceKernelRegisterExitCallback");
                         break;
                     case 0x50F0C1EC:
                         sprintf(sLabel, "sceKernelStartModule");
+                        break;
+                    case 0x7591C7DB:
+                        sprintf(sLabel, "sceKernelSetCompiledSdkVersion");
                         break;
                     case 0x977DE386:
                         sprintf(sLabel, "sceKernelLoadModule");
@@ -325,6 +343,9 @@ int ggame_load_imports(GGame* prGame) {
                         break;
                     case 0xA6BAB2E9:
                         sprintf(sLabel, "sceKernelStdout");
+                        break;
+                    case 0xAA73C935:
+                        sprintf(sLabel, "sceKernelExitThread");
                         break;
                     case 0xBD2F1094:
                         sprintf(sLabel, "sceKernelLoadExec");
@@ -340,6 +361,12 @@ int ggame_load_imports(GGame* prGame) {
                         break;
                     case 0xF0A26395:
                         sprintf(sLabel, "sceKernelGetModuleId");
+                        break;
+                    case 0xF475845D:
+                        sprintf(sLabel, "sceKernelStartThread");
+                        break;
+                    case 0xF77D77CB:
+                        sprintf(sLabel, "sceKernelSetCompilerVersion");
                         break;
                     case 0xF78BA90A:
                         sprintf(sLabel, "sceKernelStderr");
