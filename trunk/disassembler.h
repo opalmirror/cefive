@@ -71,6 +71,9 @@ extern "C" {
     /** The Disassembler struct represents the CeFive Disassembler Applet. */
     Disassembler;
 
+    int disassembler_analog_input(Disassembler* prDasm, unsigned char x, 
+            unsigned char y);
+    
     /** Respond to the user pressing the Circle button.
      * 
      * @param prDasm Pointer to a Disassembler struct representing the

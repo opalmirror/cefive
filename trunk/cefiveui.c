@@ -8,6 +8,7 @@
 #include "cefiveui.h"
 #include "cefive.h"
 
+static void analog_input(CEFiveUi* prUi, unsigned char x, unsigned char y);
 static void button_circle_down(CEFiveUi *prUi);
 static void button_circle_up(CEFiveUi *prUi);
 static void button_cross_down(CEFiveUi *prUi);
@@ -41,6 +42,15 @@ static int init_cheateditor(CEFiveUi *prUi);
 static int init_cheatpanel(CEFiveUi *prUi);
 static int init_disassembler(CEFiveUi *prUi);
 static int init_hexeditor(CEFiveUi* prUi);
+
+static void analog_input(CEFiveUi* prUi, unsigned char x, unsigned char y) {
+    if (prUi == NULL) {
+        return;
+    }
+    if (prUi->applet == 2) {
+        disassembler_analog_input(&prUi->disassembler, x, y);
+    }
+}
 
 static void button_circle_down(CEFiveUi *prUi) {
     if (prUi != NULL) {
@@ -711,6 +721,9 @@ int cefiveui_update_controls(CEFiveUi* prUi) {
             cefiveui_buttoncallback(curr, last, prUi);
             rpt = 0;
         }
+    }
+    if ((rCdata.Lx > 0) || (rCdata.Ly > 0)) {
+        analog_input(prUi, rCdata.Lx, rCdata.Ly);
     }
     last = curr;
     

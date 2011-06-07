@@ -386,7 +386,8 @@ static void showInterface() {
 
     geelog_log(LOG_DEBUG, "showInterface: Initializing frame buffer.");
     //Setup a custom VRAM
-    sceDisplaySetFrameBufferInternal(0, prUi->vram, 512, 0, 1);
+    sceDisplaySetFrameBufferInternal(0, prUi->vram, 512, 
+            PSP_DISPLAY_PIXEL_FORMAT_565, PSP_DISPLAY_SETBUF_NEXTFRAME);
     pspDebugScreenInitEx(prUi->vram, 0, 0);
     pspDebugScreenSetMaxX(69);
     pspDebugScreenSetMaxY(34);
@@ -493,22 +494,17 @@ static void waitForVram() {
     unsigned int a_pixelFormat2 = 0;
     
     /* retrieve the pixel format of the default frame buffer we setted up to print the info line */
-    sceDisplayGetFrameBuf(&a_address, &a_bufferWidth, &a_pixelFormat2, &a_sync);
-
+    sceDisplayGetFrameBuf(&a_address, &a_bufferWidth, &a_pixelFormat2, 
+            PSP_DISPLAY_SETBUF_NEXTFRAME);
     sceDisplayGetFrameBufferInternal(0, &a_address, &a_bufferWidth,
-            &a_pixelFormat, PSP_DISPLAY_SETBUF_IMMEDIATE);
+            &a_pixelFormat, PSP_DISPLAY_SETBUF_NEXTFRAME);
        
 
     if (a_address) {
         krUi.vram = (void*) (0xA0000000 | a_address);
         krStartState = CESS_Finished;     
-    }
-        /* apply the correct color mode so the info line will be printed in correct size */
-        else if(a_pixelFormat2 > 2) {
-            drawLoadedScreen(3);
-        }
-    else {
-            drawLoadedScreen(0);
+    } else {
+        drawLoadedScreen(a_pixelFormat2);
     }
     sceDisplayWaitVblank();
 }
