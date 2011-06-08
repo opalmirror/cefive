@@ -37,6 +37,8 @@ static void dpad_right_up(CEFiveUi *prUi);
 static void dpad_up_down(CEFiveUi *prUi);
 static void dpad_up_up(CEFiveUi *prUi);
 
+static ColorConfig* get_cursor_color(CEFiveUi* prUi);
+static ColorConfig* get_panel_color(CEFiveUi* prUi);
 static int init_appletmenu(CEFiveUi *prUi);
 static int init_cheateditor(CEFiveUi *prUi);
 static int init_cheatpanel(CEFiveUi *prUi);
@@ -141,7 +143,8 @@ static void button_cross_up(CEFiveUi *prUi) {
                     cheatpanel_cross_button(&prUi->cheatpanel);
                     break;
                 case 1:
-                    cheateditorCrossButton(&prUi->cheateditor);
+                    //cheateditorCrossButton(&prUi->cheateditor);
+                    ceditor_button_cross(&prUi->cheatEditor);
                     break;
                 case 2:
                     disassembler_button_cross(&prUi->disassembler);
@@ -534,7 +537,6 @@ void cefiveui_init(CEFiveUi* prUi, CheatEngine* prEngine,
     PanelConfig* prPanel = NULL;
     ColorConfig* prColor = NULL;
     ColorConfig* prSrc = NULL;
-    CheatEditor* prEd = NULL;
     HexEditor* prHex = NULL;
     GGame* prGame = NULL;
 
@@ -748,7 +750,8 @@ static void dpad_down_down(CEFiveUi *prUi) {
                 cheatpanel_dpad_down(&prUi->cheatpanel);
                 break;
             case 1:
-                cheateditorDpadDown(&prUi->cheateditor);
+                //cheateditorDpadDown(&prUi->cheateditor);
+                ceditor_dpad_down(&prUi->cheatEditor);
                 break;
             case 2:
                 if (prUi->buttons.square == 1) {
@@ -807,7 +810,8 @@ static void dpad_left_down(CEFiveUi *prUi) {
                 cheatpanel_dpad_left(&prUi->cheatpanel);
                 break;
             case 1:
-                cheateditorDpadLeft(&prUi->cheateditor);
+                //cheateditorDpadLeft(&prUi->cheateditor);
+                ceditor_dpad_left(&prUi->cheatEditor);
                 break;
             case 2:
                 disassembler_dpad_left(&prUi->disassembler);
@@ -841,7 +845,8 @@ static void dpad_right_down(CEFiveUi *prUi) {
                 cheatpanel_dpad_right(&prUi->cheatpanel);
                 break;
             case 1:
-                cheateditorDpadRight(&prUi->cheateditor);
+                //cheateditorDpadRight(&prUi->cheateditor);
+                ceditor_dpad_right(&prUi->cheatEditor);
                 break;
             case 2:
                 disassembler_dpad_right(&prUi->disassembler);
@@ -878,7 +883,8 @@ static void dpad_up_down(CEFiveUi *prUi) {
                 cheatpanel_dpad_up(&prUi->cheatpanel);
                 break;
             case 1:
-                cheateditorDpadUp(&prUi->cheateditor);
+                //cheateditorDpadUp(&prUi->cheateditor);
+                ceditor_dpad_up(&prUi->cheatEditor);
                 break;
             case 2:
                 if (prUi->buttons.square == 1) {
@@ -932,7 +938,8 @@ static void draw_applet(CEFiveUi *prUi) {
             cheatpanel_redraw(&prUi->cheatpanel);
             break;
         case 1:
-            cheateditorRedraw(&prUi->cheateditor);
+            //cheateditorRedraw(&prUi->cheateditor);
+            ceditor_redraw(&prUi->cheatEditor);
             break;
         case 2:
             if (prUi->drawn == 0) {
@@ -1039,10 +1046,35 @@ static void edit_selected_cheat(CEFiveUi *prUi) {
         return;
     }
     int index = cheatpanel_get_selectedindex(&prUi->cheatpanel);
-    cheateditorSelectCheat(&prUi->cheateditor, index);
+    //cheateditorSelectCheat(&prUi->cheateditor, index);
+    ceditor_set_index(&prUi->cheatEditor, index);
     prUi->applet = 1;
     prUi->drawn = 0;
     prUi->cheateditor.dirty = 1;
+}
+
+static ColorConfig* get_cursor_color(CEFiveUi* prUi) {
+    AppletConfig* prConfig = NULL;
+    if (prUi == NULL) {
+        return NULL;
+    }
+    prConfig = cefiveui_get_appletconfig(prUi);
+    if (prConfig == NULL) {
+        return NULL;
+    }
+    return appletconfig_get_cursorcolor(prConfig);
+}
+
+static ColorConfig* get_panel_color(CEFiveUi* prUi) {
+    AppletConfig* prConfig = NULL;
+    if (prUi == NULL) {
+        return NULL;
+    }
+    prConfig = cefiveui_get_appletconfig(prUi);
+    if (prConfig == NULL) {
+        return NULL;
+    }
+    return appletconfig_get_panelcolor(prConfig);
 }
 
 static int init_appletmenu(CEFiveUi* prUi) {
@@ -1073,9 +1105,11 @@ static int init_appletmenu(CEFiveUi* prUi) {
 }
 
 static int init_cheateditor(CEFiveUi *prUi) {
+    CEditor* prEditor = NULL;
     CheatEditor* prEd = NULL;
     CheatEngine* prEngine = NULL;
     CEFiveConfig* prConfig = NULL;
+    ColorConfig* prColor = NULL;
     
     if (prUi == NULL) {
         return CEFIVEUI_NULLPTR;
@@ -1092,6 +1126,25 @@ static int init_cheateditor(CEFiveUi *prUi) {
     prEd->cheat_count = prEngine->cheat_count;
     prEd->table_height = 30;
     prEd->top_row = 1;
+
+    prEditor = &prUi->cheatEditor;
+    if (ceditor_init(prEditor, prEngine) < 0) {
+        return CEFIVEUI_FAILURE;
+    }
+    prColor = get_panel_color(prUi);
+    if (prColor != NULL) {
+        if (ceditor_set_panelcolor(prEditor, 
+                prColor->background, prColor->text) < 0) {
+            return CEFIVEUI_FAILURE;
+        }
+    }
+    prColor = get_cursor_color(prUi);
+    if (prColor != NULL) {
+        if (ceditor_set_cursorcolor(prEditor,
+                prColor->background, prColor->text) < 0) {
+            return CEFIVEUI_FAILURE;
+        }
+    }
     
     return CEFIVEUI_SUCCESS;
 }

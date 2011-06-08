@@ -1,10 +1,12 @@
 #include "blockview.h"
 
+static int commit_edit(BlockView* prView);
 static int cursorcolor(BlockView* prView);
 static int cursor_down(BlockView* prView);
 static int cursor_left(BlockView* prView);
 static int cursor_right(BlockView* prView);
 static int cursor_up(BlockView* prView);
+static Block* get_block(BlockView* prView, const int row);
 static int panelcolor(BlockView* prView);
 static int render_address_col(BlockView* prView, const int row);
 static int render_comment_col(BlockView* prView, const int row);
@@ -295,7 +297,7 @@ static int commit_edit(BlockView* prView) {
     if (prBlock == NULL) {
         return BLOCKVIEW_FAILURE;
     }
-    if (prView->cursorPos == 0) {
+    if (prView->cursorPos.x == 0) {
         prBlock->address = hexpad_get_value(prPad);
         if (hexpad_reset(prPad) < 0) {
             return BLOCKVIEW_FAILURE;

@@ -1,11 +1,13 @@
 TARGET = CEFive
 OBJS =  addresscolumn.o \
 	block.o \
+	blockview.o \
 	appletconfig.o \
 	appletmenu.o \
 	appletmenuconfig.o \
 	asciicolumn.o \
 	bytecolumn.o \
+	ceditor.o \
 	cefiveconfig.o \
 	cefiveui.o \
 	cheat.o \
