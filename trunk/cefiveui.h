@@ -13,6 +13,7 @@
 
 #include "appletmenu.h"
 #include "buttonstate.h"
+#include "ceditor.h"
 #include "cefiveconfig.h"
 #include "cheateditor.h"
 #include "cheatengine.h"
@@ -138,6 +139,8 @@ extern "C" {
         ButtonState buttons;
         /** Game struct */
         GGame game;
+        /** Cheat Editor Applet */
+        CEditor cheatEditor;
     } 
     /** The Cheat Engine of Five User Interface struct. */
     CEFiveUi;

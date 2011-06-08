@@ -224,6 +224,9 @@ int ceditor_set_index(CEditor* prEd, const int index) {
     prEd->index = index;
     prEd->blockView.blockIndex = prCheat->block;
     prEd->blockView.blockCount = prCheat->len;
+    prEd->blockView.cursorPos.x = 0;
+    prEd->blockView.cursorPos.y = 0;
+    prEd->blockView.pageIndex = 0;
     prEd->blockView.dirty = 1;
     prEd->dirty = 1;
     return CEDITOR_SUCCESS;
