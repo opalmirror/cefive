@@ -161,7 +161,7 @@ static int parse_line(CheatEngine* prEngine, const char* sLine) {
             inname = 1;
         }
         if (sName != NULL) {
-            strcpy(prCheat->name, sName);
+            strncpy(prCheat->name, sName, CHEAT_NAME_LEN);
         }
     }
     if (sLine[0] == ';') {
@@ -192,7 +192,11 @@ static int parse_line(CheatEngine* prEngine, const char* sLine) {
                 block_set_dma(prBlock);
                 prBlock->stdVal = 0xFFFFFFFF;
             } else {
-                prBlock->address = value + 0x08800000;
+                if (value < 0x08800000) {
+                    prBlock->address = value + 0x08800000;
+                } else {
+                    prBlock->address = value;
+                }
             }
             sHex += 10;
             if (*sHex != 'x' && *sHex != 'X') {
