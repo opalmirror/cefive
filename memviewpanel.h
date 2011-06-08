@@ -103,11 +103,24 @@ extern "C" {
     /** The MemViewPanel struct represents a Memory View Panel. */
     MemViewPanel;
 
+    /** Respond to analog input from the analog stick.
+     * 
+     * @param prPanel Pointer to a MemViewPanel struct representing the Memory
+     * View Panel.
+     * @param x unsigned char indicating the horizontal deflection of the
+     * analog stick.
+     * @param y unsigned char indicating the vertical deflection of the
+     * analog stick.
+     * @return 0 indicates success, &lt;0 indicates failure.
+     */
+    int memviewpanel_analog(MemViewPanel* prPanel, 
+            unsigned char x, unsigned char y);
+    
     /** Respond to the user pressing the Circle Button.
      * 
      * @param prPanel Pointer to a MemViewPanel struct representing the Memory
      * View Panel.
-     * @return 0 indicates success, &lt;0 indicates success.
+     * @return 0 indicates success, &lt;0 indicates failure.
      */
     int memviewpanel_button_circle(MemViewPanel* prPanel);
 
@@ -115,7 +128,7 @@ extern "C" {
      * 
      * @param prPanel Pointer to a MemViewPanel struct representing the Memory
      * View Panel.
-     * @return 0 indicates success, &lt;0 indicates success.
+     * @return 0 indicates success, &lt;0 indicates failure.
      */
     int memviewpanel_button_cross(MemViewPanel* prPanel);
 
@@ -123,7 +136,7 @@ extern "C" {
      * 
      * @param prPanel Pointer to a MemViewPanel struct representing the Memory
      * View Panel.
-     * @return 0 indicates success, &lt;0 indicates success.
+     * @return 0 indicates success, &lt;0 indicates failure.
      */
     int memviewpanel_button_ltrigger(MemViewPanel* prPanel);
     
@@ -131,7 +144,7 @@ extern "C" {
      * 
      * @param prPanel Pointer to a MemViewPanel struct representing the Memory
      * View Panel.
-     * @return 0 indicates success, &lt;0 indicates success.
+     * @return 0 indicates success, &lt;0 indicates failure.
      */
     int memviewpanel_button_rtrigger(MemViewPanel* prPanel);
     
@@ -139,7 +152,7 @@ extern "C" {
      * 
      * @param prPanel Pointer to a MemViewPanel struct representing the Memory
      * View Panel.
-     * @return 0 indicates success, &lt;0 indicates success.
+     * @return 0 indicates success, &lt;0 indicates failure.
      */
     int memviewpanel_button_square(MemViewPanel* prPanel);
 
@@ -147,7 +160,7 @@ extern "C" {
      * 
      * @param prPanel Pointer to a MemViewPanel struct representing the Memory
      * View Panel.
-     * @return 0 indicates success, &lt;0 indicates success.
+     * @return 0 indicates success, &lt;0 indicates failure.
      */
     int memviewpanel_button_triangle(MemViewPanel* prPanel);
 

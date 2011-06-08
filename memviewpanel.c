@@ -197,6 +197,36 @@ static int hexpad_show(MemViewPanel* prPanel) {
     return MEMVIEWPANEL_SUCCESS;
 }
 
+int memviewpanel_analog(MemViewPanel* prPanel, unsigned char x, unsigned char y)
+{
+    int iy = 0;
+    int dy = 0;
+    
+    if (prPanel == NULL) {
+        return MEMVIEWPANEL_NULLPTR;
+    }
+    
+    /* The deflections are returned as a value between 0 and 255 with 127 being
+     * the center of the stick.  In order to translate that into an integer
+     * deflection indicating the distance past center of the stick, subtract
+     * 127 from the current deflection.
+     */
+    iy = y - 128;
+    /* I want 8 levels of deflection with the first level being deadzone. */
+    dy = (int)(iy / 16);
+    if (dy < -1) {
+        if (memviewpanel_scroll_up(prPanel, (dy * -1) - 1) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    if (dy > 1) {
+        if (memviewpanel_scroll_down(prPanel, dy - 1) < 0) {
+            return MEMVIEWPANEL_FAILURE;
+        }
+    }
+    return MEMVIEWPANEL_SUCCESS;
+}
+
 int memviewpanel_button_circle(MemViewPanel* prPanel) {
     HexPad* prPad = NULL;
     if (prPanel == NULL) {
