@@ -6,6 +6,7 @@ static int cursor_down(BlockView* prView);
 static int cursor_left(BlockView* prView);
 static int cursor_right(BlockView* prView);
 static int cursor_up(BlockView* prView);
+static int edit_block(BlockView* prView);
 static Block* get_block(BlockView* prView, const int row);
 static int panelcolor(BlockView* prView);
 static int render_address_col(BlockView* prView, const int row);
@@ -38,6 +39,9 @@ int blockview_button_cross(BlockView* prView) {
             return BLOCKVIEW_FAILURE;
         }
         return BLOCKVIEW_SUCCESS;
+    }
+    if (edit_block(prView) < 0) {
+        return BLOCKVIEW_FAILURE;
     }
     return BLOCKVIEW_SUCCESS;
 }
@@ -185,6 +189,12 @@ int blockview_init(BlockView* prView) {
     prView->panelConfig.rTop.y = BLOCKVIEW_POS_Y;
     prView->panelConfig.rSize.width = BLOCKVIEW_SIZE_W;
     prView->panelConfig.rSize.height = BLOCKVIEW_SIZE_H;
+    prView->hexPad.panelConfig.rColor.background = BLOCKVIEW_PANELBG;
+    prView->hexPad.panelConfig.rColor.text = BLOCKVIEW_PANELFG;
+    prView->hexPad.panelConfig.rCursor.background = BLOCKVIEW_CURSORBG;
+    prView->hexPad.panelConfig.rCursor.text = BLOCKVIEW_CURSORFG;
+    prView->hexPad.panelConfig.rTop.x = prView->panelConfig.rTop.x + 4;
+    prView->hexPad.panelConfig.rTop.y = prView->panelConfig.rTop.y + 4;
     return BLOCKVIEW_SUCCESS;
 }
 
@@ -237,6 +247,9 @@ int blockview_set_cursorcolor(BlockView* prView, const u32 background,
     }
     prView->panelConfig.rCursor.background = background;
     prView->panelConfig.rCursor.text = text;
+    if (hexpad_set_cursorcolor(&prView->hexPad, background, text) < 0) {
+        return BLOCKVIEW_FAILURE;
+    }
     return BLOCKVIEW_SUCCESS;
 }
 
@@ -256,6 +269,9 @@ int blockview_set_panelcolor(BlockView* prView, const u32 background,
     }
     prView->panelConfig.rColor.background = background;
     prView->panelConfig.rColor.text = text;
+    if (hexpad_set_panelcolor(&prView->hexPad, background, text) < 0) {
+        return BLOCKVIEW_FAILURE;
+    }
     return BLOCKVIEW_SUCCESS;
 }
 
@@ -401,6 +417,33 @@ static int cursorcolor(BlockView* prView) {
     }
     pspDebugScreenSetBackColor(prView->panelConfig.rCursor.background);
     pspDebugScreenSetTextColor(prView->panelConfig.rCursor.text);
+    return BLOCKVIEW_SUCCESS;
+}
+
+static int edit_block(BlockView* prView) {
+    CursorPos* prCursor = NULL;
+    Block* prBlock = NULL;
+    HexPad* prPad = NULL;
+    if (prView == NULL) {
+        return BLOCKVIEW_NULLPTR;
+    }
+    prCursor = &prView->cursorPos;
+    prBlock = get_block(prView, prCursor->y);
+    if (prBlock == NULL) {
+        return BLOCKVIEW_FAILURE;
+    }
+    prPad = &prView->hexPad;
+    if (prCursor->x == 0) {
+        if (hexpad_set_value(prPad, prBlock->address) < 0) {
+            return BLOCKVIEW_FAILURE;
+        }
+    } else {
+        if (hexpad_set_value(prPad, prBlock->hakVal) < 0) {
+            return BLOCKVIEW_FAILURE;
+        }
+    }
+    prPad->visible = 1;
+    prView->editing = 1;
     return BLOCKVIEW_SUCCESS;
 }
 
