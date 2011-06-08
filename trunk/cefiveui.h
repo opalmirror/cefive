@@ -15,7 +15,6 @@
 #include "buttonstate.h"
 #include "ceditor.h"
 #include "cefiveconfig.h"
-#include "cheateditor.h"
 #include "cheatengine.h"
 #include "cheatpanel.h"
 #include "colorconfig.h"
@@ -101,8 +100,6 @@ extern "C" {
         CheatPanel cheatpanel;
         /** Disassembler Applet struct */
         Disassembler disassembler;
-        /** Cheat Editor Applet struct */
-        CheatEditor cheateditor;
         /** Hex Editor Applet struct */
         HexEditor hexeditor;
         /** Search Panel Applet struct */
@@ -167,14 +164,6 @@ extern "C" {
      * @return A pointer to an AppletMenu struct or NULL is returned.
      */
     AppletMenu* cefiveui_get_appletmenu(CEFiveUi* prUi);
-    
-    /** Return a pointer to a CheatEditor struct representing the cefive Cheat
-     * Editor Applet.
-     * 
-     * @param prUi Pointer to a CEFiveUi struct representing the User Interface.
-     * @return A pointer to a CheatEditor struct or NULL is returned.
-     */
-    CheatEditor* cefiveui_get_cheateditor(CEFiveUi* prUi);
     
     /** Return a pointer to a CheatEngine struct representing the Cheat Engine.
      * 

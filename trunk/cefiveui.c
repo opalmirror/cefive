@@ -64,6 +64,10 @@ static void button_circle_up(CEFiveUi *prUi) {
     if (prUi != NULL) {
         prUi->buttons.circle = 0;
         if (prUi->applet == 1) {
+            if (ceditor_is_editing(&prUi->cheatEditor)) {
+                ceditor_button_circle(&prUi->cheatEditor);
+                return;
+            }
             close_cheat_editor(prUi);
             return;
         }
@@ -186,6 +190,12 @@ static void button_ltrigger_up(CEFiveUi *prUi) {
         }
         /* draw the applet menu */
         if (prMenu->visible == 0) {
+            if (prUi->applet == 1) {
+                if (ceditor_is_editing(&prUi->cheatEditor)) {
+                    ceditor_button_ltrigger(&prUi->cheatEditor);
+                    return;
+                }
+            }
             /* Send ltriggers from the disassembler through if editing. */
             if (prUi->applet == 2) {
                 if (disassembler_is_editing(&prUi->disassembler)) {
@@ -227,6 +237,9 @@ static void button_rtrigger_up(CEFiveUi *prUi) {
         case 0: /* Cheat Panel */
             break;
         case 1: /* Cheat Editor */
+            if (ceditor_is_editing(&prUi->cheatEditor)) {
+                ceditor_button_rtrigger(&prUi->cheatEditor);
+            }
             break;
         case 2: /* Disassembler */
             if (disassembler_is_editing(&prUi->disassembler)) {
@@ -261,6 +274,9 @@ static void button_square_up(CEFiveUi *prUi) {
             case 0:
                 cheatpanel_square_button(&prUi->cheatpanel);
                 break;
+            case 1:
+                ceditor_button_square(&prUi->cheatEditor);
+                break;
             case 2:
                 disassembler_button_square(&prUi->disassembler);
                 break;
@@ -283,6 +299,9 @@ static void button_triangle_up(CEFiveUi *prUi) {
         switch (prUi->applet) {
             case 0:
                 edit_selected_cheat(prUi);
+                break;
+            case 1:
+                ceditor_button_triangle(&prUi->cheatEditor);
                 break;
             case 2:
                 disassembler_button_triangle(&prUi->disassembler);
@@ -365,13 +384,6 @@ AppletConfig* cefiveui_get_appletconfig(CEFiveUi* prUi) {
 AppletMenu* cefiveui_get_appletmenu(CEFiveUi* prUi) {
     if (prUi != NULL) {
         return &prUi->appletmenu;
-    }
-    return NULL;
-}
-
-CheatEditor* cefiveui_get_cheateditor(CEFiveUi* prUi) {
-    if (prUi != NULL) {
-        return &prUi->cheateditor;
     }
     return NULL;
 }
@@ -750,7 +762,6 @@ static void dpad_down_down(CEFiveUi *prUi) {
                 cheatpanel_dpad_down(&prUi->cheatpanel);
                 break;
             case 1:
-                //cheateditorDpadDown(&prUi->cheateditor);
                 ceditor_dpad_down(&prUi->cheatEditor);
                 break;
             case 2:
@@ -810,7 +821,6 @@ static void dpad_left_down(CEFiveUi *prUi) {
                 cheatpanel_dpad_left(&prUi->cheatpanel);
                 break;
             case 1:
-                //cheateditorDpadLeft(&prUi->cheateditor);
                 ceditor_dpad_left(&prUi->cheatEditor);
                 break;
             case 2:
@@ -845,7 +855,6 @@ static void dpad_right_down(CEFiveUi *prUi) {
                 cheatpanel_dpad_right(&prUi->cheatpanel);
                 break;
             case 1:
-                //cheateditorDpadRight(&prUi->cheateditor);
                 ceditor_dpad_right(&prUi->cheatEditor);
                 break;
             case 2:
@@ -883,7 +892,6 @@ static void dpad_up_down(CEFiveUi *prUi) {
                 cheatpanel_dpad_up(&prUi->cheatpanel);
                 break;
             case 1:
-                //cheateditorDpadUp(&prUi->cheateditor);
                 ceditor_dpad_up(&prUi->cheatEditor);
                 break;
             case 2:
@@ -938,7 +946,6 @@ static void draw_applet(CEFiveUi *prUi) {
             cheatpanel_redraw(&prUi->cheatpanel);
             break;
         case 1:
-            //cheateditorRedraw(&prUi->cheateditor);
             ceditor_redraw(&prUi->cheatEditor);
             break;
         case 2:
@@ -1046,11 +1053,9 @@ static void edit_selected_cheat(CEFiveUi *prUi) {
         return;
     }
     int index = cheatpanel_get_selectedindex(&prUi->cheatpanel);
-    //cheateditorSelectCheat(&prUi->cheateditor, index);
     ceditor_set_index(&prUi->cheatEditor, index);
     prUi->applet = 1;
     prUi->drawn = 0;
-    prUi->cheateditor.dirty = 1;
 }
 
 static ColorConfig* get_cursor_color(CEFiveUi* prUi) {
@@ -1106,9 +1111,7 @@ static int init_appletmenu(CEFiveUi* prUi) {
 
 static int init_cheateditor(CEFiveUi *prUi) {
     CEditor* prEditor = NULL;
-    CheatEditor* prEd = NULL;
     CheatEngine* prEngine = NULL;
-    CEFiveConfig* prConfig = NULL;
     ColorConfig* prColor = NULL;
     
     if (prUi == NULL) {
@@ -1118,15 +1121,6 @@ static int init_cheateditor(CEFiveUi *prUi) {
     if (prEngine == NULL) {
         return CEFIVEUI_FAILURE;
     }
-    prEd = &prUi->cheateditor;
-    prConfig = prUi->prCEConfig;
-    cheateditorInit(prEd, prEngine->cheatlist, prEngine->blocklist);
-    prEd->prCeConfig = prConfig;
-    prEd->prEngine = prEngine;
-    prEd->cheat_count = prEngine->cheat_count;
-    prEd->table_height = 30;
-    prEd->top_row = 1;
-
     prEditor = &prUi->cheatEditor;
     if (ceditor_init(prEditor, prEngine) < 0) {
         return CEFIVEUI_FAILURE;
