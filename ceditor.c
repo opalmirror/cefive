@@ -135,6 +135,13 @@ int ceditor_init(CEditor* prEd, CheatEngine* prEngine) {
     return CEDITOR_SUCCESS;
 }
 
+int ceditor_is_editing(CEditor* prEd) {
+    if (prEd != NULL) {
+        return (prEd->blockView.editing == 1);
+    }
+    return 0;
+}
+
 int ceditor_page_down(CEditor* prEd) {
     if (prEd == NULL) {
         return CEDITOR_NULLPTR;

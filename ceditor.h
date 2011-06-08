@@ -69,6 +69,8 @@ extern "C" {
     
     int ceditor_init(CEditor* prEd, CheatEngine* prEngine);
     
+    int ceditor_is_editing(CEditor* prEd);
+    
     int ceditor_page_down(CEditor* prEd);
     
     int ceditor_page_up(CEditor* prEd);

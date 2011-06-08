@@ -29,8 +29,6 @@
       <in>cefiveui.h</in>
       <in>cheat.c</in>
       <in>cheat.h</in>
-      <in>cheateditor.c</in>
-      <in>cheateditor.h</in>
       <in>cheatengine.c</in>
       <in>cheatengine.h</in>
       <in>cheatpanel.c</in>
@@ -217,16 +215,6 @@
       </item>
       <item path="cheat.c" ex="false" tool="0" flavor="2">
         <cTool>
-          <preprocessorList>
-            <Elem>_PSP_FW_VERSION=150</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="cheateditor.c" ex="false" tool="0" flavor="2">
-        <cTool>
-          <incDir>
-            <pElem>/opt/pspsdk/psp/sdk/include</pElem>
-          </incDir>
           <preprocessorList>
             <Elem>_PSP_FW_VERSION=150</Elem>
           </preprocessorList>

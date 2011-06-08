@@ -11,7 +11,6 @@ OBJS =  addresscolumn.o \
 	cefiveconfig.o \
 	cefiveui.o \
 	cheat.o \
-	cheateditor.o \
 	cheatengine.o \
 	cheatpanel.o \
 	colorconfig.o \
