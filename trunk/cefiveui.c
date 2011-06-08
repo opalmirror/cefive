@@ -582,13 +582,10 @@ void cefiveui_init(CEFiveUi* prUi, CheatEngine* prEngine,
     }
 
     geelog_flog(LOG_DEBUG, sFunc, "Initializing Cheat Editor Applet.");
-    prEd = cefiveui_get_cheateditor(prUi);
-    cheateditorInit(prEd, prEngine->cheatlist, prEngine->blocklist);
-    prEd->prCeConfig = prConfig;
-    prEd->prEngine = prEngine;
-    prEd->cheat_count = prEngine->cheat_count;
-    prEd->table_height = 30;
-    prEd->top_row = toprow;
+    if (init_cheateditor(prUi) < 0) {
+        geelog_flog(LOG_WARN, sFunc,
+                "Failed to initialize Cheat Editor Applet.");
+    }
 
     geelog_flog(LOG_DEBUG, sFunc, "Initializing Disassembler Applet.");
     Disassembler *prDasm = &prUi->disassembler;
@@ -1072,6 +1069,30 @@ static int init_appletmenu(CEFiveUi* prUi) {
     appletmenu_additem(prMenu, 4, "Search Panel");
     appletmenu_additem(prMenu, 6, "Game Info");
     appletmenu_additem(prMenu, 5, "Options");
+    return CEFIVEUI_SUCCESS;
+}
+
+static int init_cheateditor(CEFiveUi *prUi) {
+    CheatEditor* prEd = NULL;
+    CheatEngine* prEngine = NULL;
+    CEFiveConfig* prConfig = NULL;
+    
+    if (prUi == NULL) {
+        return CEFIVEUI_NULLPTR;
+    }
+    prEngine = prUi->prEngine;
+    if (prEngine == NULL) {
+        return CEFIVEUI_FAILURE;
+    }
+    prEd = &prUi->cheateditor;
+    prConfig = prUi->prCEConfig;
+    cheateditorInit(prEd, prEngine->cheatlist, prEngine->blocklist);
+    prEd->prCeConfig = prConfig;
+    prEd->prEngine = prEngine;
+    prEd->cheat_count = prEngine->cheat_count;
+    prEd->table_height = 30;
+    prEd->top_row = 1;
+    
     return CEFIVEUI_SUCCESS;
 }
 
