@@ -31,6 +31,9 @@
 /** Indicates a Memory allocation fault in a function. */
 #define CHEAT_MEMORY        (-3)
 
+/** The maximum number of characters in a Cheat Name. */
+#define CHEAT_NAME_LEN (32)
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
@@ -43,7 +46,7 @@ extern "C" {
         /** Cheat Flags */
         unsigned char flags;
         /** Display Name of the Cheat */
-        unsigned char name[32];
+        unsigned char name[CHEAT_NAME_LEN + 1];
     }
     /** The Cheat struct is used to hold a single Cheat in the Cheat Engine.  
      * The structure contains members for the block index, number of blocks, 

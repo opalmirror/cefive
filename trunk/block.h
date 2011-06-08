@@ -7,7 +7,7 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
-#include <stdlib.h>
+#include <stdio.h>
 #include <pspkerneltypes.h>
 
 /** Indicates success */
