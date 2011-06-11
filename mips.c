@@ -1247,6 +1247,10 @@ static void de_vcop(char* buffer, unsigned int i_inst, unsigned int i_addr) {
                     * Vector Integer to Short (Pair/Quad) */
             in_vrd_vrs(buffer, "VI2S", i_inst);
             break;
+        case 0x47: /* VAVG.fmt rs, rd - 
+                    * Vector Average (Pair/Triple/Quad) */
+            in_vrs_vrd(buffer, "VAVG", i_inst);
+            break;
         case 0x4A: /* VSGN.fmt rd, rs - 
                     * Vector Sign (Single/Pair/Triple/Quad) */
             in_vrd_vrs(buffer, "VSGN", i_inst);
@@ -1403,26 +1407,31 @@ static int get_voperand0(unsigned int i_inst) {
     return val;
 }
 
+/* 0000 0000 0111 1111  0000 0000 0000 0000 */
 static int get_voperand1(unsigned int i_inst) {
     int val = (i_inst & 0x007F0000) >> 16;
     return val;
 }
 
+/* 0000 0000 0000 0000  1000 0000 0000 0000 */
 static int get_voperand2(unsigned int i_inst) {
     int val = (i_inst & 0x00008000) >> 15;
     return val;
 }
 
+/* 0000 0000 0000 0000  0111 1111 0000 0000 */
 static int get_voperand3(unsigned int i_inst) {
     int val = (i_inst & 0x00007F00) >> 8;
     return val;
 }
 
+/* 0000 0000 0000 0000  0000 0000 1000 0000 */
 static int get_voperand4(unsigned int i_inst) {
     int val = (i_inst & 0x00000080) >> 7;
     return val;
 }
 
+/* 0000 0000 0000 0000  0000 0000 0111 1111 */
 static int get_voperand5(unsigned int i_inst) {
     int val = i_inst & 0x0000007F;
     return val;

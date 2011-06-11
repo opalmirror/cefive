@@ -27,12 +27,16 @@
       <in>cefiveconfig.h</in>
       <in>cefiveui.c</in>
       <in>cefiveui.h</in>
+      <in>cesearch.c</in>
+      <in>cesearch.h</in>
       <in>cheat.c</in>
       <in>cheat.h</in>
       <in>cheatengine.c</in>
       <in>cheatengine.h</in>
       <in>cheatpanel.c</in>
       <in>cheatpanel.h</in>
+      <in>cheatview.c</in>
+      <in>cheatview.h</in>
       <in>colorconfig.c</in>
       <in>colorconfig.h</in>
       <in>crt0_prx.c</in>
@@ -107,6 +111,7 @@
       <in>searchmode.h</in>
       <in>searchpanel.c</in>
       <in>searchpanel.h</in>
+      <in>searchquery.c</in>
       <in>searchquery.h</in>
       <in>searchsize.h</in>
     </df>
