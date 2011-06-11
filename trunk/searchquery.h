@@ -9,9 +9,15 @@
 #define	SEARCHQUERY_H
 
 #include <stdio.h>
+#include <string.h>
 #include <pspkerneltypes.h>
 #include "searchsize.h"
 #include "searchmode.h"
+
+#define SEARCHQUERY_SUCCESS (0)
+#define SEARCHQUERY_FAILURE (-1)
+#define SEARCHQUERY_NULLPTR (-2)
+#define SEARCHQUERY_MEMORY (-3)
 
 #define SEARCHQUERY_TEXT_LEN (127)
 
@@ -26,7 +32,7 @@ extern "C" {
         ESearchSize searchSize;
         /** Indicates the value to Search for. */
         SceUInt32 value;
-        /** Indicates the startign address of the Search. */
+        /** Indicates the starting address of the Search. */
         SceUInt32 startAddress;
         /** Indicates the ending address of the Search. */
         SceUInt32 endAddress;
@@ -38,6 +44,8 @@ extern "C" {
      * value.
      */
     SearchQuery;
+    
+    int searchquery_init(SearchQuery* prQuery);
 
 
 #ifdef	__cplusplus
