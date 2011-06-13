@@ -400,6 +400,19 @@ static int render_address_col(HexView* prView, const int row) {
     return HEXVIEW_SUCCESS;
 }
 
+static int render_ascii_col(HexView* prView, const int row) {
+    SceChar8* pVal = NULL;
+    SceUInt32 address = 0;
+    char sLine[17];
+    
+    if (prView == NULL) {
+        return HEXVIEW_NULLPTR;
+    }
+    address = row_address(prView, row);
+    
+    return HEXVIEW_SUCCESS;
+}
+
 static int render_row(HexView* prView, const int row) {
     ColorConfig* prPcolor = NULL;
     ColorConfig* prCcolor = NULL;

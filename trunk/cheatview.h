@@ -79,6 +79,21 @@ extern "C" {
     
     int cheatview_redraw(CheatView* prView);
 
+    int cheatview_set_activecolor(CheatView* prView, const u32 color);
+    
+    int cheatview_set_constantcolor(CheatView* prView, const u32 color);
+    
+    int cheatview_set_cursorcolor(CheatView* prView, const u32 background,
+        const u32 text);
+
+    int cheatview_set_panelcolor(CheatView* prView, const u32 background,
+        const u32 text);
+    
+    int cheatview_set_position(CheatView* prView, const int x, const int y);
+    
+    int cheatview_set_size(CheatView* prView, const int width, 
+            const int height);
+    
 #ifdef	__cplusplus
 }
 #endif
