@@ -324,7 +324,7 @@ int cheatengineResetUChar8Block(Block* prBlock) {
     if (prBlock == NULL) {
         return CHEATENGINE_NULLPTR;
     }
-    SceUChar8* pDest = (SceUChar8*)prBlock->address;
+    SceUChar8* pDest = (SceUChar8*)(prBlock->address | 0x40000000);
     SceUChar8 val = (SceUChar)(prBlock->stdVal & 0xFF);
     if (*pDest == val) {
         return CHEATENGINE_SUCCESS;
@@ -340,7 +340,7 @@ int cheatengineResetUInt32Block(Block* prBlock) {
     if (prBlock == NULL) {
         return CHEATENGINE_NULLPTR;
     }
-    SceUInt32* pDest = (SceUInt32*)prBlock->address;
+    SceUInt32* pDest = (SceUInt32*)(prBlock->address | 0x40000000);
     SceUInt32 val = (SceUInt32)(prBlock->stdVal & 0xFFFFFFFF);
     if (*pDest == val) {
         return CHEATENGINE_SUCCESS;
@@ -356,7 +356,7 @@ int cheatengineResetUShort16Block(Block* prBlock) {
     if (prBlock == NULL) {
         return CHEATENGINE_NULLPTR;
     }
-    SceUShort16* pDest = (SceUShort16*)prBlock->address;
+    SceUShort16* pDest = (SceUShort16*)(prBlock->address | 0x40000000);
     SceUShort16 val = (SceUShort16)(prBlock->stdVal & 0xFFFF);
     if (*pDest == val) {
         return CHEATENGINE_SUCCESS;

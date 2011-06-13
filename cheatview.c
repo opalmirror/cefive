@@ -145,6 +145,60 @@ int cheatview_redraw(CheatView* prView) {
     return CHEATVIEW_SUCCESS;
 }
 
+int cheatview_set_activecolor(CheatView* prView, const u32 color) {
+    if (prView == NULL) {
+        return CHEATVIEW_NULLPTR;
+    }
+    prView->activeColor = color;
+    return CHEATVIEW_SUCCESS;
+}
+
+int cheatview_set_constantcolor(CheatView* prView, const u32 color) {
+    if (prView == NULL) {
+        return CHEATVIEW_NULLPTR;
+    }
+    prView->constantColor = color;
+    return CHEATVIEW_SUCCESS;
+}
+
+int cheatview_set_cursorcolor(CheatView* prView, const u32 background,
+        const u32 text) {
+    if (prView == NULL) {
+        return CHEATVIEW_NULLPTR;
+    }
+    prView->panelConfig.rCursor.background = background;
+    prView->panelConfig.rCursor.text = text;
+    return CHEATVIEW_SUCCESS;
+}
+
+int cheatview_set_panelcolor(CheatView* prView, const u32 background,
+        const u32 text) {
+    if (prView == NULL) {
+        return CHEATVIEW_NULLPTR;
+    }
+    prView->panelConfig.rColor.background = background;
+    prView->panelConfig.rColor.text = text;
+    return CHEATVIEW_SUCCESS;
+}
+
+int cheatview_set_position(CheatView* prView, const int x, const int y) {
+    if (prView == NULL) {
+        return CHEATVIEW_NULLPTR;
+    }
+    prView->panelConfig.rTop.x = x;
+    prView->panelConfig.rTop.y = y;
+    return CHEATVIEW_SUCCESS;
+}
+
+int cheatview_set_size(CheatView* prView, const int width, const int height) {
+    if (prView == NULL) {
+        return CHEATVIEW_NULLPTR;
+    }
+    prView->panelConfig.rSize.width = width;
+    prView->panelConfig.rSize.height = height;
+    return CHEATVIEW_SUCCESS;
+}
+
 static int constant_color(CheatView* prView) {
     if (prView == NULL) {
         return CHEATVIEW_NULLPTR;
