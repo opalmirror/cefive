@@ -8,3 +8,19 @@
   # CEFive must run as a Custom Firmware Plugin.
 
 == User Requirements ==
+
+=== Interface Requirements ===
+
+  # CEFive must be rendered on a Debug frame buffer.
+  # CEFive must support the D-Pad for cursor movement.
+  # CEFive should support the Analog Joystick.
+  # CEFive must support the following buttons:
+    * Circle
+    * Cross
+    * Square
+    * Triangle
+    * Left Trigger
+    * Right Trigger
+    * Volume +
+    * Volume -
+    * Music
