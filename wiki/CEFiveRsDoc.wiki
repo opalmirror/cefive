@@ -4,6 +4,8 @@
 
 == System Requirements ==
 
+=== Platform Requirements ===
+
   # CEFive must run on Custom Firmware.
   # CEFive must run as a Custom Firmware Plugin.
 
